@@ -18,55 +18,63 @@ import CurrentDatePicker from "./currentDatePicker";
 export default class InvoiceHeaderRight extends Component {
   render() {
     return (
-      <div>
-        <Container>
-          <Row>
-            <Col sm={{ size: 8, offset: 1 }}>
-              <Form>
-                <FormGroup>
-                  <Label for="invoiceNumber">
-                    Invoice #
-                  </Label>
+      <Container>
+        <Row>
+          <Col xs={{ size: 12, offset: 0.5 }}>
+            <Form>
+              <FormGroup row>
+                <Label for="invoiceNumber" sm={3}>
+                  Invoice #
+                </Label>
+                <Col sm={9}>
                   <Input
                     type="number"
                     name="invoiceNumber"
                     id="invoiceNumber"
                     placeholder="Invoice #"
                   />
-                </FormGroup>
-              </Form>
-            </Col>
-          </Row>
+                </Col>
+              </FormGroup>
 
-          <Row>
-            <Col sm={{ size: 8, offset: 1 }}>
-            <Label for="currentDate">Current Date</Label>
-              <CurrentDatePicker />
-            </Col>
-          </Row>
+              <FormGroup row>
+                <Label for="currentDate" sm={3}>
+                  Current Date
+                </Label>
+                <Col sm={9}>
+                  <CurrentDatePicker />
+                </Col>
+              </FormGroup>
 
-          <Row>
-            <Col sm={{ size: 8, offset: 1 }}>
-            <Label for="dueDate">Due Date</Label>
-              <DueDatePicker />
-            </Col>
-          </Row>
+              <FormGroup row>
+                <Label for="dueDate" sm={3}>
+                  Due Date
+                </Label>
+                <Col sm={9}>
+                  <DueDatePicker />
+                </Col>
+              </FormGroup>
 
-          <Row>
-            <Col sm={{ size: 8, offset: 1 }}>
-            <Label for="amountDue">Amount Due</Label>
-              <InputGroup>
-                <InputGroupAddon addonType="prepend">$</InputGroupAddon>
-                <Input
-                  placeholder={!this.amountDue ? "Amount Due" : this.amountDue}
-                  type="number"
-                  disabled
-                />
-              </InputGroup>
-            </Col>
-          </Row>
-        </Container>
-      </div>
+              <FormGroup row>
+                <Label for="amountDue" sm={3}>
+                  Amount Due
+                </Label>
+                <Col sm={9}>
+                  <InputGroup>
+                    <InputGroupAddon addonType="prepend">$</InputGroupAddon>
+                    <Input
+                      placeholder={
+                        !this.amountDue ? "Amount Due" : this.amountDue
+                      }
+                      type="number"
+                      disabled
+                    />
+                  </InputGroup>
+                </Col>
+              </FormGroup>
+            </Form>
+          </Col>
+        </Row>
+      </Container>
     );
   }
 }
