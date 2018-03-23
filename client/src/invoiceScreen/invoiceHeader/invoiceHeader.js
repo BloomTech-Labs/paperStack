@@ -11,15 +11,14 @@ export default class InvoiceHeader extends Component {
       <div>
       <Container>
         <Row>
-          <Col xl={{ size: 'auto', offset: 1 }}>
+          <Col>
             <InvoiceHeaderLeft />
           </Col>
-          <Col xl={{ size: 'auto', offset: 1 }}>
+          <Col>
             <InvoiceHeaderRight />
           </Col>
         </Row>
       </Container>
-      <currentDatePicker />
       </div>
     );
   }
