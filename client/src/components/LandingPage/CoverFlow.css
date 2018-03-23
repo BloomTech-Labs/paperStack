@@ -1,0 +1,19 @@
+.CoverFlow {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  -webkit-perspective: 600px;
+  overflow: hidden;
+}
+
+.CoverFlow-box {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 200px;
+  height: 200px;
+  margin-left: -85px;
+  margin-top: -85px;
+  transform-style: preserve-3d;
+  transition: all 300ms ease-in;
+}
