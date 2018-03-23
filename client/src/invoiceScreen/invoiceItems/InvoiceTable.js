@@ -3,6 +3,28 @@ import { BootstrapTable, TableHeaderColumn } from "react-bootstrap-table";
 import { Container, Row, Col } from "reactstrap";
 
 export default class InvoiceItemsTable extends Component {
+  // constructor(props) {
+  //   state = {
+  //     data: this.billableItems
+  //   };
+  // }
+
+  itemNameValidator = (value, row) => {
+    const response = {isValid: true, notification: {type: 'success', msg: '', title:''}}
+    if (!value) {
+      response.isValid = false;
+      response.notification.type = 'error';
+      response.notification.msg = 'Please enter an item name';
+      response.notification.title = 'No Item Name';
+    } else if (value.length < 3) {
+      response.isValid = false;
+      response.notification.type = 'error';
+      response.notification.msg = 'Items must be at least three characters';
+      response.notification.title = 'Invalid Item Length'
+    }
+    return response;
+  }
+
   render() {
     const billableItems = [
       {
@@ -35,23 +57,70 @@ export default class InvoiceItemsTable extends Component {
       }
     ];
 
+    const selectRowProp = {
+      mode: "checkbox"
+    };
+
+    const cellEditProp = {
+      mode: "click"
+    };
+
+    const options = {
+      insertText: "Add Line Item",
+      deleteText: "Delete Line Item",
+      noDataText: "No billable items"
+    };
+
     return (
       <Container>
         <Row>
-          <Col >
+          <Col>
+          {/* table options */}
             <BootstrapTable
               data={billableItems}
               striped
               hover
               condensed
-              options={{ noDataText: "No billable items" }}
+              options={options}
               version="4"
+              deleteRow={true}
+              insertRow={true}
+              selectRow={selectRowProp}
+              cellEdit={cellEditProp}
             >
-              <TableHeaderColumn dataField="id" isKey width='10'>#</TableHeaderColumn>
-              <TableHeaderColumn dataField="item" width='200'>Item</TableHeaderColumn>
-              <TableHeaderColumn dataField="qty" width='30'>Quantity</TableHeaderColumn>
-              <TableHeaderColumn dataField="rate" width='30'>Rate</TableHeaderColumn>
-              <TableHeaderColumn dataField="amount" width='30'>Amount</TableHeaderColumn>
+
+            {/* id field */}
+              <TableHeaderColumn dataField="id" isKey width="10">
+                #
+              </TableHeaderColumn>
+
+              {/* item field */}
+              <TableHeaderColumn dataField="item" width="200" editable={{ validator: this.itemNameValidator}} >
+                Item
+              </TableHeaderColumn>
+
+              {/* quantity field */}
+              <TableHeaderColumn
+                dataField="qty"
+                width="30"
+                tdStyle={{ whiteSpace: "tight" }}
+              >
+                Quantity
+              </TableHeaderColumn>
+
+              {/* rate field */}
+              <TableHeaderColumn
+                dataField="rate"
+                width="30"
+                tdStyle={{ whiteSpace: "tight" }}
+              >
+                Rate
+              </TableHeaderColumn>
+
+              {/* amount field */}
+              <TableHeaderColumn dataField="amount" width="30">
+                Amount
+              </TableHeaderColumn>
             </BootstrapTable>
           </Col>
         </Row>

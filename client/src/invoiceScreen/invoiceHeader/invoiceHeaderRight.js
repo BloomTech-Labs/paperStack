@@ -28,7 +28,7 @@ export default class InvoiceHeaderRight extends Component {
                 </Label>
                 <Col sm={9}>
                   <Input
-                    type="number"
+                    type="text"
                     name="invoiceNumber"
                     id="invoiceNumber"
                     placeholder="Invoice #"
