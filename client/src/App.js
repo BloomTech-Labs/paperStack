@@ -1,14 +1,13 @@
-import React, { Component } from 'react';
-import './App.css';
-import InvoiceHeader from './invoiceScreen/invoiceHeader/invoiceHeader';
-import InvoiceFooter from './invoiceScreen/invoiceItems/InvoiceFooter';
+import React, { Component } from "react";
+import "./App.css";
+
+import InvoiceScreen from "./invoiceScreen/InvoiceScreen";
 
 class App extends Component {
   render() {
     return (
       <div className="App">
-        <InvoiceHeader />
-        <InvoiceFooter />
+        <InvoiceScreen />
       </div>
     );
   }
