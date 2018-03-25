@@ -10,7 +10,7 @@ export default class InvoiceItemsTable extends Component {
   // }
 
   itemNameValidator = (value, row) => {
-    const response = {isValid: true, notification: {type: 'success', msg: '', title:''}}
+    const response = {isValid: true, notification: {type: 'success', msg: '', title:''}};
     if (!value) {
       response.isValid = false;
       response.notification.type = 'error';
@@ -24,6 +24,42 @@ export default class InvoiceItemsTable extends Component {
     }
     return response;
   }
+
+  quantityValidator = (value, row) => {
+    const response = {isValid: true, notification: {type: 'success', msg: '', title:''}};
+    const nan = isNaN(parseFloat(value));
+    if (!value) {
+      response.isValid = false;
+      response.notification.type = 'error';
+      response.notification.msg = 'Please enter a quantity';
+      response.notification.title = 'No Quantity Given';
+    } else if (nan) {
+      response.isValid = false;
+      response.notification.type = 'error';
+      response.notification.msg = 'Please use numbers only';
+      response.notification.title = 'Invalid Quantity Type';
+    }
+    return response;
+  }
+
+  rateValidator = (value, row) => {
+    const response = {isValid: true, notification: {type: 'success', msg: '', title:''}};
+    const nan = isNaN(parseFloat(value, 2));
+    if (!value) {
+      response.isValid = false;
+      response.notification.type = 'error';
+      response.notification.msg = 'Please enter a quantity';
+      response.notification.title = 'No Quantity Given';
+    } else if (nan) {
+      response.isValid = false;
+      response.notification.type = 'error';
+      response.notification.msg = 'Please use numbers only';
+      response.notification.title = 'Invalid Quantity Type';
+    }
+    return response;
+  }
+
+
 
   render() {
     const billableItems = [
@@ -56,6 +92,7 @@ export default class InvoiceItemsTable extends Component {
         amount: 350.00
       }
     ];
+    const returnAmount = billableItems.qty * billableItems.rate;
 
     const selectRowProp = {
       mode: "checkbox"
@@ -70,6 +107,10 @@ export default class InvoiceItemsTable extends Component {
       deleteText: "Delete Line Item",
       noDataText: "No billable items"
     };
+
+    function amountFormatter(cell, row) {
+      return ` ${cell}`;
+    }
 
     return (
       <Container>
@@ -103,7 +144,7 @@ export default class InvoiceItemsTable extends Component {
               <TableHeaderColumn
                 dataField="qty"
                 width="30"
-                tdStyle={{ whiteSpace: "tight" }}
+                editable={{ validator: this.quantityValidator}}
               >
                 Quantity
               </TableHeaderColumn>
@@ -112,13 +153,13 @@ export default class InvoiceItemsTable extends Component {
               <TableHeaderColumn
                 dataField="rate"
                 width="30"
-                tdStyle={{ whiteSpace: "tight" }}
+                editable={{ validator: this.rateValidator}}
               >
                 Rate
               </TableHeaderColumn>
 
               {/* amount field */}
-              <TableHeaderColumn dataField="amount" width="30">
+              <TableHeaderColumn dataField='amount' dataFormat={amountFormatter} width="30">
                 Amount
               </TableHeaderColumn>
             </BootstrapTable>
