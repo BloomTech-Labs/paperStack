@@ -5,7 +5,6 @@ import {
   FormGroup,
   Label,
   Input,
-  FormText,
   Container,
   Row,
   Col,
@@ -16,7 +15,7 @@ import {
   DropdownItem
 } from "reactstrap";
 
-import tempLogo from '../invoiceHeader/tempLogo.svg';
+import tempLogo from "../invoiceHeader/tempLogo.svg";
 
 export default class InvoiceHeaderLeft extends Component {
   constructor(props) {
@@ -24,7 +23,7 @@ export default class InvoiceHeaderLeft extends Component {
 
     this.toggleDropDown = this.toggleDropDown.bind(this);
     this.state = {
-      dropdownOpen: false,
+      dropdownOpen: false
     };
   }
 
@@ -39,17 +38,16 @@ export default class InvoiceHeaderLeft extends Component {
       <Container>
         <Row>
           <Col sm={{ size: 12, offset: 0.5 }}>
-          
             <Form>
               <FormGroup row>
                 <Label for="businessLogo" sm={3}>
                   Your Logo
                 </Label>
                 <Col sm={2}>
-                <img src={tempLogo} />
+                  <img src={tempLogo} alt="company logo" />
                 </Col>
                 <Col sm={4}>
-                <p>This logo will appear on your invoice</p>
+                  <p>This logo will appear on your invoice</p>
                 </Col>
                 <Col sm={3}>
                   <Button name="updateLogo">Change Logo</Button>
@@ -71,7 +69,7 @@ export default class InvoiceHeaderLeft extends Component {
                     >
                       <DropdownToggle caret>Select Address</DropdownToggle>
                       <DropdownMenu>
-                        <DropdownItem >Primary Address</DropdownItem>
+                        <DropdownItem>Primary Address</DropdownItem>
                         <DropdownItem divider />
                         <DropdownItem disabled>Secondary Address</DropdownItem>
                       </DropdownMenu>

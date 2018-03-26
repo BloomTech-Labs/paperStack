@@ -1,7 +1,8 @@
 import React, { Component } from "react";
-import { Container, Row, Col, Button } from "reactstrap";
-import InvoiceItemsTable from "./invoiceItems/InvoiceTable";
+import { Button } from "reactstrap";
+
 import InvoiceHeader from "./invoiceHeader/invoiceHeader";
+import InvoiceItemsTable from "./invoiceItems/InvoiceTable";
 import InvoiceFooter from "./invoiceFooter/InvoiceFooter";
 
 export default class InvoiceScreen extends Component {

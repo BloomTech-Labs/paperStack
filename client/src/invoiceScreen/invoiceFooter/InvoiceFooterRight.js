@@ -1,11 +1,9 @@
 import React, { Component } from "react";
 import {
-  Button,
   Form,
   FormGroup,
   Label,
   Input,
-  FormText,
   Container,
   Row,
   Col
@@ -18,7 +16,7 @@ export default class InvoiceFooterRight extends Component {
         <Container>
           <Row>
             <Col xs={{ size: 12, offset: 0.5 }}>
-              <Form>
+
                 <FormGroup row>
                   <Label for="subtotal" sm={2}>
                     Subtotal
@@ -68,7 +66,7 @@ export default class InvoiceFooterRight extends Component {
                     <Input type="number" disabled />
                   </Col>
                 </FormGroup>
-              </Form>
+
             </Col>
           </Row>
         </Container>
