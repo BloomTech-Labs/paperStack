@@ -113,10 +113,8 @@ export default class InvoiceItemsTable extends Component {
     }
 
     return (
-      <Container>
-        <Row>
-          <Col>
-          {/* table options */}
+      <div>
+
             <BootstrapTable
               data={billableItems}
               striped
@@ -130,17 +128,14 @@ export default class InvoiceItemsTable extends Component {
               cellEdit={cellEditProp}
             >
 
-            {/* id field */}
               <TableHeaderColumn dataField="id" isKey width="10">
                 #
               </TableHeaderColumn>
 
-              {/* item field */}
               <TableHeaderColumn dataField="item" width="200" editable={{ validator: this.itemNameValidator}} >
                 Item
               </TableHeaderColumn>
 
-              {/* quantity field */}
               <TableHeaderColumn
                 dataField="qty"
                 width="30"
@@ -149,7 +144,6 @@ export default class InvoiceItemsTable extends Component {
                 Quantity
               </TableHeaderColumn>
 
-              {/* rate field */}
               <TableHeaderColumn
                 dataField="rate"
                 width="30"
@@ -158,14 +152,11 @@ export default class InvoiceItemsTable extends Component {
                 Rate
               </TableHeaderColumn>
 
-              {/* amount field */}
               <TableHeaderColumn dataField='amount' dataFormat={amountFormatter} width="30">
                 Amount
               </TableHeaderColumn>
             </BootstrapTable>
-          </Col>
-        </Row>
-      </Container>
+      </div>
     );
   }
 }

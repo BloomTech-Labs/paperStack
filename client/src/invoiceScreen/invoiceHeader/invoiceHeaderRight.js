@@ -15,18 +15,19 @@ import {
 import DueDatePicker from "./dueDatePicker";
 import CurrentDatePicker from "./currentDatePicker";
 
+
 export default class InvoiceHeaderRight extends Component {
   render() {
     return (
       <Container>
         <Row>
-          <Col xs={{ size: 12, offset: 0.5 }}>
+          <Col xs={{ size: 12}}>
             <Form>
               <FormGroup row>
-                <Label for="invoiceNumber" sm={3}>
+                <Label for="invoiceNumber" sm={4}>
                   Invoice #
                 </Label>
-                <Col sm={9}>
+                <Col sm={8}>
                   <Input
                     type="text"
                     name="invoiceNumber"
@@ -37,28 +38,28 @@ export default class InvoiceHeaderRight extends Component {
               </FormGroup>
 
               <FormGroup row>
-                <Label for="currentDate" sm={3}>
+                <Label for="currentDate" sm={4}>
                   Current Date
                 </Label>
-                <Col sm={9}>
+                <Col sm={8}>
                   <CurrentDatePicker />
                 </Col>
               </FormGroup>
 
               <FormGroup row>
-                <Label for="dueDate" sm={3}>
+                <Label for="dueDate" sm={4}>
                   Due Date
                 </Label>
-                <Col sm={9}>
+                <Col sm={8}>
                   <DueDatePicker />
                 </Col>
               </FormGroup>
 
               <FormGroup row>
-                <Label for="amountDue" sm={3}>
+                <Label for="amountDue" sm={4}>
                   Amount Due
                 </Label>
-                <Col sm={9}>
+                <Col sm={8}>
                   <InputGroup>
                     <InputGroupAddon addonType="prepend">$</InputGroupAddon>
                     <Input
