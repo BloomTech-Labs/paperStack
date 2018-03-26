@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import { BootstrapTable, TableHeaderColumn } from "react-bootstrap-table";
-import { Container, Row, Col } from "reactstrap";
 
 export default class InvoiceItemsTable extends Component {
   // constructor(props) {
@@ -10,56 +9,63 @@ export default class InvoiceItemsTable extends Component {
   // }
 
   itemNameValidator = (value, row) => {
-    const response = {isValid: true, notification: {type: 'success', msg: '', title:''}};
+    const response = {
+      isValid: true,
+      notification: { type: "success", msg: "", title: "" }
+    };
     if (!value) {
       response.isValid = false;
-      response.notification.type = 'error';
-      response.notification.msg = 'Please enter an item name';
-      response.notification.title = 'No Item Name';
+      response.notification.type = "error";
+      response.notification.msg = "Please enter an item name";
+      response.notification.title = "No Item Name";
     } else if (value.length < 3) {
       response.isValid = false;
-      response.notification.type = 'error';
-      response.notification.msg = 'Items must be at least three characters';
-      response.notification.title = 'Invalid Item Length'
+      response.notification.type = "error";
+      response.notification.msg = "Items must be at least three characters";
+      response.notification.title = "Invalid Item Length";
     }
     return response;
-  }
+  };
 
   quantityValidator = (value, row) => {
-    const response = {isValid: true, notification: {type: 'success', msg: '', title:''}};
+    const response = {
+      isValid: true,
+      notification: { type: "success", msg: "", title: "" }
+    };
     const nan = isNaN(parseFloat(value));
     if (!value) {
       response.isValid = false;
-      response.notification.type = 'error';
-      response.notification.msg = 'Please enter a quantity';
-      response.notification.title = 'No Quantity Given';
+      response.notification.type = "error";
+      response.notification.msg = "Please enter a quantity";
+      response.notification.title = "No Quantity Given";
     } else if (nan) {
       response.isValid = false;
-      response.notification.type = 'error';
-      response.notification.msg = 'Please use numbers only';
-      response.notification.title = 'Invalid Quantity Type';
+      response.notification.type = "error";
+      response.notification.msg = "Please use numbers only";
+      response.notification.title = "Invalid Quantity Type";
     }
     return response;
-  }
+  };
 
   rateValidator = (value, row) => {
-    const response = {isValid: true, notification: {type: 'success', msg: '', title:''}};
+    const response = {
+      isValid: true,
+      notification: { type: "success", msg: "", title: "" }
+    };
     const nan = isNaN(parseFloat(value, 2));
     if (!value) {
       response.isValid = false;
-      response.notification.type = 'error';
-      response.notification.msg = 'Please enter a quantity';
-      response.notification.title = 'No Quantity Given';
+      response.notification.type = "error";
+      response.notification.msg = "Please enter a quantity";
+      response.notification.title = "No Quantity Given";
     } else if (nan) {
       response.isValid = false;
-      response.notification.type = 'error';
-      response.notification.msg = 'Please use numbers only';
-      response.notification.title = 'Invalid Quantity Type';
+      response.notification.type = "error";
+      response.notification.msg = "Please use numbers only";
+      response.notification.title = "Invalid Quantity Type";
     }
     return response;
-  }
-
-
+  };
 
   render() {
     const billableItems = [
@@ -89,7 +95,7 @@ export default class InvoiceItemsTable extends Component {
         item: "Labor",
         qty: 5,
         rate: 70,
-        amount: 350.00
+        amount: 350.0
       }
     ];
     const returnAmount = billableItems.qty * billableItems.rate;
@@ -113,49 +119,59 @@ export default class InvoiceItemsTable extends Component {
     }
 
     return (
-      <div>
+      <div style={{ width: "90%", margin: "auto" }}>
+        <link
+          rel="stylesheet"
+          href="https://npmcdn.com/react-bootstrap-table/dist/react-bootstrap-table-all.min.css"
+        />
+        <BootstrapTable
+          data={billableItems}
+          striped
+          hover
+          condensed
+          options={options}
+          version="4"
+          deleteRow={true}
+          insertRow={true}
+          selectRow={selectRowProp}
+          cellEdit={cellEditProp}
+        >
+          <TableHeaderColumn dataField="id" isKey width="10">
+            #
+          </TableHeaderColumn>
 
-            <BootstrapTable
-              data={billableItems}
-              striped
-              hover
-              condensed
-              options={options}
-              version="4"
-              deleteRow={true}
-              insertRow={true}
-              selectRow={selectRowProp}
-              cellEdit={cellEditProp}
-            >
+          <TableHeaderColumn
+            dataField="item"
+            width="200"
+            editable={{ validator: this.itemNameValidator }}
+          >
+            Item
+          </TableHeaderColumn>
 
-              <TableHeaderColumn dataField="id" isKey width="10">
-                #
-              </TableHeaderColumn>
+          <TableHeaderColumn
+            dataField="qty"
+            width="30"
+            editable={{ validator: this.quantityValidator }}
+          >
+            Quantity
+          </TableHeaderColumn>
 
-              <TableHeaderColumn dataField="item" width="200" editable={{ validator: this.itemNameValidator}} >
-                Item
-              </TableHeaderColumn>
+          <TableHeaderColumn
+            dataField="rate"
+            width="30"
+            editable={{ validator: this.rateValidator }}
+          >
+            Rate
+          </TableHeaderColumn>
 
-              <TableHeaderColumn
-                dataField="qty"
-                width="30"
-                editable={{ validator: this.quantityValidator}}
-              >
-                Quantity
-              </TableHeaderColumn>
-
-              <TableHeaderColumn
-                dataField="rate"
-                width="30"
-                editable={{ validator: this.rateValidator}}
-              >
-                Rate
-              </TableHeaderColumn>
-
-              <TableHeaderColumn dataField='amount' dataFormat={amountFormatter} width="30">
-                Amount
-              </TableHeaderColumn>
-            </BootstrapTable>
+          <TableHeaderColumn
+            dataField="amount"
+            dataFormat={amountFormatter}
+            width="30"
+          >
+            Amount
+          </TableHeaderColumn>
+        </BootstrapTable>
       </div>
     );
   }

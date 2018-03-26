@@ -4,15 +4,20 @@ import InvoiceItemsTable from "./invoiceItems/InvoiceTable";
 import InvoiceHeader from "./invoiceHeader/invoiceHeader";
 import InvoiceFooter from "./invoiceFooter/InvoiceFooter";
 
-
 export default class InvoiceScreen extends Component {
   render() {
     return (
       <div>
         <InvoiceHeader />
+        <hr />
         <InvoiceItemsTable />
+        <hr />
         <InvoiceFooter />
-        <Button type="submit">Submit</Button>
+        <div style={{ width: "90%", margin: "auto" }}>
+          <Button type="submit" block>
+            Submit
+          </Button>
+        </div>
       </div>
     );
   }
