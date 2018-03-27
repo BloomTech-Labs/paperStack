@@ -2,7 +2,6 @@ const mongoose = require("mongoose");
 const { Schema } = mongoose
 
 const CustomersSchema = new Schema({
-    _id: mongoose.Types.ObjectId,
     custName: {
         type: String,
         required: true

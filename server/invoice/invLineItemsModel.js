@@ -2,8 +2,7 @@ const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
 const InvLineSchema = new Schema({
-    _id: mongoose.Types.ObjectId,
-    InvNumber: {
+    invId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Invoices',
         required: true
