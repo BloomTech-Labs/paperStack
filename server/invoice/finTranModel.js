@@ -2,13 +2,12 @@ const mongoose = require("mongoose");
 const { Schema } = mongoose
 
 const FinTranSchema = new Schema({
-    _id: mongoose.Types.ObjectId,
     usersId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Users',
         required: true
     },
-    InvNumber: {
+    invId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Invoices',
         required: true
