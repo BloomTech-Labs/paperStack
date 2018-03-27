@@ -7,14 +7,14 @@ import InvoiceHeaderRight from "./invoiceHeaderRight";
 export default class InvoiceHeader extends Component {
   render() {
     return (
-      <div>
-        <Container>
-          <Row>
-            <Col>
+      <div className="invoiceHeader">
+        <Container className='invoiceHeaderContainer'>
+          <Row className='invoiceHeaderContainerOuterRow'>
+            <Col className='invoiceHeaderContainerOuterColLeft'>
               <InvoiceHeaderLeft />
             </Col>
 
-            <Col>
+            <Col className='invoiceHeaderContainerOuterColRight'>
               <InvoiceHeaderRight />
             </Col>
           </Row>

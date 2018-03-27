@@ -5,10 +5,12 @@ import InvoiceHeader from "./invoiceHeader/invoiceHeader";
 import InvoiceItemsTable from "./invoiceItems/InvoiceTable";
 import InvoiceFooter from "./invoiceFooter/InvoiceFooter";
 
+import 'react-datepicker/dist/react-datepicker.css';
+
 export default class InvoiceScreen extends Component {
   render() {
     return (
-      <div>
+      <div className="invoiceForm">
         <InvoiceHeader />
         <hr />
         <InvoiceItemsTable />

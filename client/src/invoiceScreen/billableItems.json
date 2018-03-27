@@ -1,0 +1,30 @@
+[
+  {
+    "id": 1,
+    "item": "Primer - Gallon",
+    "qty": 1,
+    "rate": 21.99,
+    "amount": ""
+  },
+  {
+    "id": 2,
+    "item": "Gravity Grey Paint - Gallon",
+    "qty": 3,
+    "rate": 24.99,
+    "amount": ""
+  },
+  {
+    "id": 3,
+    "item": "Misc. Supplies",
+    "qty": 1,
+    "rate": 45.32,
+    "amount": ""
+  },
+  {
+    "id": 4,
+    "item": "Labor",
+    "qty": 5,
+    "rate": 70.00,
+    "amount": ""
+  }
+]

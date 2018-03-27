@@ -1,13 +1,23 @@
 import React, { Component } from "react";
 import { BootstrapTable, TableHeaderColumn } from "react-bootstrap-table";
+import currencyFormatter from 'currency-formatter';
+
+import billableItems from '../billableItems.json'
 
 export default class InvoiceItemsTable extends Component {
-  // constructor(props) {
-  //   state = {
-  //     data: this.billableItems
-  //   };
-  // }
+  constructor(props) {
+    super(props);
+    this.state = {
+      data: billableItems,
 
+    // ^^ data must be presented as an array per docs
+    };
+  }
+
+  /*
+    These functions edit the modal for adding new rows of data
+  */
+  // items should not be blank, and should have at least 3 characters
   itemNameValidator = (value, row) => {
     const response = {
       isValid: true,
@@ -27,6 +37,7 @@ export default class InvoiceItemsTable extends Component {
     return response;
   };
 
+  // quantity should not be blank, and should only accept numbers
   quantityValidator = (value, row) => {
     const response = {
       isValid: true,
@@ -47,17 +58,18 @@ export default class InvoiceItemsTable extends Component {
     return response;
   };
 
+  // rate should not be blank, and should only accept numbers
   rateValidator = (value, row) => {
     const response = {
       isValid: true,
       notification: { type: "success", msg: "", title: "" }
     };
-    const nan = isNaN(parseFloat(value));
+    const nan = isNaN(parseInt(value, 10));
     if (!value) {
       response.isValid = false;
       response.notification.type = "error";
-      response.notification.msg = "Please enter a price";
-      response.notification.title = "No Quantity Given";
+      response.notification.msg = "Please enter a rate";
+      response.notification.title = "No Rate Given";
     } else if (nan) {
       response.isValid = false;
       response.notification.type = "error";
@@ -68,65 +80,41 @@ export default class InvoiceItemsTable extends Component {
   };
 
   render() {
-    const billableItems = [
-      {
-        id: 1,
-        item: "Primer - Gallon",
-        qty: 1,
-        rate: 2199,
-        amount: 2199
-      },
-      {
-        id: 2,
-        item: "Gravity Grey Paint - Gallon",
-        qty: 3,
-        rate: 2499,
-        amount: 7497
-      },
-      {
-        id: 3,
-        item: "Misc. Supplies",
-        qty: 1,
-        rate: 4532,
-        amount: 4532
-      },
-      {
-        id: 4,
-        item: "Labor",
-        qty: 5,
-        rate: 7000,
-        amount: 35000
-      }
-    ];
 
+    // select a row, for use in delete row
     const selectRowProp = {
       mode: "checkbox"
     };
 
+    // click to edit a cell
     const cellEditProp = {
       mode: "click"
     };
 
+    // table options -> custom text for buttons and when there is no data (new invoice)
     const options = {
       insertText: "Add Line Item",
       deleteText: "Delete Line Item",
       noDataText: "No billable items"
+      // onModalClose: this.handleModalClose
     };
 
-    function amountFormatter(cell, row) {
-      return `$ ${(cell/(100)).toFixed(2)}`;
-    }
-
+    // format the rate field to be in USD, 2 decimal positions -> could use toLocale to provide support for other countries
     function rateFormatter(cell, row) {
-      return `$ ${(cell/(100)).toFixed(2)}`;
+      return currencyFormatter.format(cell, {code: 'USD'});
     }
 
-    // function calculateAmount(cell, row) {
-    //   return 
-    // }
+    // format the amount field to be in USD, 2 decimal positions
+    function amountFormatter2(cell, row) {
+      return currencyFormatter.format((row.rate * row.qty), {code: 'USD'});
+    }
+
+    function idFormatter(cell, row) {
+      console.log(row);
+    }
 
     return (
-      <div style={{ width: "90%", margin: "auto" }}>
+      <div className="invoiceTable" style={{ width: "90%", margin: "auto" }}>
         <link
           rel="stylesheet"
           href="https://npmcdn.com/react-bootstrap-table/dist/react-bootstrap-table-all.min.css"
@@ -143,7 +131,12 @@ export default class InvoiceItemsTable extends Component {
           selectRow={selectRowProp}
           cellEdit={cellEditProp}
         >
-          <TableHeaderColumn dataField="id" isKey width="10">
+          <TableHeaderColumn
+            dataField="id"
+            isKey
+            dataFormat={idFormatter}
+            width="15"
+          >
             #
           </TableHeaderColumn>
 
@@ -166,7 +159,7 @@ export default class InvoiceItemsTable extends Component {
           <TableHeaderColumn
             dataField="rate"
             dataFormat={rateFormatter}
-            width="30"
+            width="40"
             editable={{ validator: this.rateValidator }}
           >
             Rate
@@ -174,8 +167,10 @@ export default class InvoiceItemsTable extends Component {
 
           <TableHeaderColumn
             dataField="amount"
-            dataFormat={amountFormatter}
-            width="30"
+            dataFormat={amountFormatter2}
+            width="40"
+            editable={{ readOnly: true }}
+            disabled
           >
             Amount
           </TableHeaderColumn>
