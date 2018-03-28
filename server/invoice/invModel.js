@@ -2,7 +2,6 @@ const mongoose = require("mongoose");
 const { Schema } = mongoose
 
 const InvoicesSchema = new Schema({
-    _id: mongoose.Types.ObjectId,
     customerId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Customers',
@@ -14,8 +13,9 @@ const InvoicesSchema = new Schema({
         required: true
     },
     invNumber: {
-        autoIncrement: true,
-        required: true
+        type: String,
+        autoIncrement: false,
+        required: false
     },
     invDate: {
         type: Date,
