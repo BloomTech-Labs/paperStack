@@ -1,18 +1,18 @@
 import React, { Component } from "react";
 import { BootstrapTable, TableHeaderColumn } from "react-bootstrap-table";
-import currencyFormatter from 'currency-formatter';
+import currencyFormatter from "currency-formatter";
 
-import billableItems from '../billableItems.json'
+import billableItems from "../billableItems.json";
 
 export default class InvoiceItemsTable extends Component {
   constructor(props) {
     super(props);
     this.state = {
       data: billableItems,
-
-    // ^^ data must be presented as an array per docs
+      // ^^ data must be presented as an array per docs
     };
   }
+
 
   /*
     These functions edit the modal for adding new rows of data
@@ -80,6 +80,24 @@ export default class InvoiceItemsTable extends Component {
   };
 
   render() {
+    // footerData presents the subtotal for the footer of the table
+    const footerData = [
+      [
+        {
+          label: 'Subtotal',
+          columnIndex: 4,
+          formatter: (tableData) => {
+            let label = 0;
+            for (let i = 0, tableDataLen = tableData.length; i < tableDataLen; i++) {
+              label += (tableData[i].qty * tableData[i].rate);
+            }
+            return (
+              <i>{ currencyFormatter.format(label, {code: 'USD'}) }</i>
+            );
+          }
+        }
+      ]
+    ];
 
     // select a row, for use in delete row
     const selectRowProp = {
@@ -96,25 +114,26 @@ export default class InvoiceItemsTable extends Component {
       insertText: "Add Line Item",
       deleteText: "Delete Line Item",
       noDataText: "No billable items"
-      // onModalClose: this.handleModalClose
     };
 
     // format the rate field to be in USD, 2 decimal positions -> could use toLocale to provide support for other countries
     function rateFormatter(cell, row) {
-      return currencyFormatter.format(cell, {code: 'USD'});
+      return currencyFormatter.format(cell, { code: "USD" });
     }
 
     // format the amount field to be in USD, 2 decimal positions
     function amountFormatter2(cell, row) {
-      return currencyFormatter.format((row.rate * row.qty), {code: 'USD'});
+      return currencyFormatter.format(row.rate * row.qty, { code: "USD" });
     }
 
-    function idFormatter(cell, row) {
-      console.log(row);
+    // format the index to be a line number -> used to override the autoNumber creation, which is alphaNumeric and very long
+    function idFormatter(cell, row, enumObject, index) {
+      return index + 1;
     }
 
     return (
       <div className="invoiceTable" style={{ width: "90%", margin: "auto" }}>
+      {/*had to link the style sheet, wasn't loading correctly*/}
         <link
           rel="stylesheet"
           href="https://npmcdn.com/react-bootstrap-table/dist/react-bootstrap-table-all.min.css"
@@ -124,6 +143,8 @@ export default class InvoiceItemsTable extends Component {
           striped
           hover
           condensed
+          footerData={footerData}
+          footer
           options={options}
           version="4"
           deleteRow={true}
@@ -131,11 +152,14 @@ export default class InvoiceItemsTable extends Component {
           selectRow={selectRowProp}
           cellEdit={cellEditProp}
         >
+          {/*This is column 0, the checkmark column doesn't count and can't be modified here*/}
           <TableHeaderColumn
             dataField="id"
+            autoValue={true}
             isKey
             dataFormat={idFormatter}
             width="15"
+            hiddenOnInsert
           >
             #
           </TableHeaderColumn>
@@ -165,15 +189,18 @@ export default class InvoiceItemsTable extends Component {
             Rate
           </TableHeaderColumn>
 
+          {/*this is column 4, which is blank in the data, use rate and qty fields to fill */}
           <TableHeaderColumn
             dataField="amount"
             dataFormat={amountFormatter2}
             width="40"
             editable={{ readOnly: true }}
             disabled
+            hiddenOnInsert
           >
             Amount
           </TableHeaderColumn>
+          
         </BootstrapTable>
       </div>
     );

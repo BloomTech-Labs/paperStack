@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import "./App.css";
 
-import InvoiceScreen from "./invoiceScreen/InvoiceScreen";
+import InvoiceScreen from "./components/invoiceScreen/";
 import 'react-datepicker/dist/react-datepicker.css';
 
 class App extends Component {
