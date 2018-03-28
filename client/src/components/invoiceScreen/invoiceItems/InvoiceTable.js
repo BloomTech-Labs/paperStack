@@ -200,8 +200,9 @@ export default class InvoiceItemsTable extends Component {
           >
             Amount
           </TableHeaderColumn>
-          
+
         </BootstrapTable>
+
       </div>
     );
   }
