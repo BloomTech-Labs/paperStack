@@ -15,13 +15,14 @@ import {
   DropdownMenu,
   DropdownItem
 } from "reactstrap";
+import currencyFormatter from "currency-formatter";
 
 import tempLogo from "../invoiceHeader/tempLogo.svg";
 
 import DueDatePicker from "./dueDatePicker";
 import CurrentDatePicker from "./currentDatePicker";
 
-import 'react-datepicker/dist/react-datepicker.css';
+import "react-datepicker/dist/react-datepicker.css";
 
 export default class InvoiceHeader extends Component {
   constructor(props) {
@@ -29,9 +30,16 @@ export default class InvoiceHeader extends Component {
 
     this.toggleDropDown = this.toggleDropDown.bind(this);
     this.state = {
-      dropdownOpen: false
+      dropdownOpen: false,
     };
   }
+
+  // this updates the AmountDue line in response to changes in the footer
+  // componentWillReceiveProps(nextProps) {
+  //   if (nextProps.amountDue !== this.props.amountDue) {
+  //     this.setState({ count: nextProps.amountDue });
+  //   }
+  // }
 
   toggleDropDown() {
     this.setState({
@@ -45,16 +53,15 @@ export default class InvoiceHeader extends Component {
         {/* This container holds everything */}
         <Container>
           <Row>
-          {/* Left side of header */}
+            {/* Left side of header */}
             <Col>
               {/* holds left items */}
               <Container>
                 <Row>
-                {/* constrains the size of the column */}
+                  {/* constrains the size of the column */}
                   <Col sm={{ size: 12, offset: 0.5 }}>
                     <Form>
-
-                    {/* display the company logo -> currently hard wired */}
+                      {/* display the company logo -> currently hard wired */}
                       <FormGroup row>
                         <Label for="businessLogo" sm={3}>
                           Your Logo
@@ -121,11 +128,10 @@ export default class InvoiceHeader extends Component {
             <Col>
               <Container>
                 <Row>
-                {/* constrain the proportions */}
+                  {/* constrain the proportions */}
                   <Col xs={{ size: 12 }}>
                     <Form>
-
-                    {/* invoice number, currently accepts alpha numberic typing -> should pre-populate */}
+                      {/* invoice number, currently accepts alpha numberic typing -> should pre-populate */}
                       <FormGroup row>
                         <Label for="invoiceNumber" sm={4}>
                           Invoice #
@@ -174,7 +180,7 @@ export default class InvoiceHeader extends Component {
                             </InputGroupAddon>
                             <Input
                               placeholder={
-                                !this.amountDue ? "Amount Due" : this.amountDue
+                                !this.props.amountDue ? "Amount Due" : currencyFormatter.format(this.props.amountDue, {code: 'USD'})
                               }
                               type="number"
                               disabled
@@ -182,12 +188,10 @@ export default class InvoiceHeader extends Component {
                           </InputGroup>
                         </Col>
                       </FormGroup>
-
                     </Form>
                   </Col>
                 </Row>
               </Container>
-
             </Col>
           </Row>
         </Container>
