@@ -11,7 +11,7 @@ export default class DueDatePicker extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      startDate: moment()
+      startDate: moment().add(1, "days")
     };
 
     this.handleChange = this.handleChange.bind(this);
@@ -28,6 +28,7 @@ export default class DueDatePicker extends Component {
       <DatePicker
         selected={this.state.startDate}
         onChange={this.handleChange}
+        minDate={moment().add(1, "days")}
         highlightDates={[
           moment().add(7, "days"),
           moment().add(14, "days"),
