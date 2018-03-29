@@ -57,6 +57,10 @@ export default class InvoiceScreen extends Component {
   render() {
     return (
       <div className="invoiceForm">
+      {this.state.tax}
+      {this.state.discount}
+      {this.state.deposit}
+      {this.state.shipping}
         <InvoiceHeader
           amountDue={this.state.amountDue}
           calculateAmountDue={this.calculateAmountDue.bind(this)}

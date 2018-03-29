@@ -137,7 +137,6 @@ export default class InvoiceFooter extends Component {
                         </Col>
                       </FormGroup>
 
-                      {/* (((subtotal - discount) + tax) + shipping) */}
                       <FormGroup row>
                         <Label for="grandTotal" sm={2}>
                           Grand Total

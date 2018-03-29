@@ -38,12 +38,6 @@ export default class InvoiceHeader extends Component {
     const amountDue = event.target.value;
     this.props.calculateAmountDue(amountDue);
   }
-  // this updates the AmountDue line in response to changes in the footer
-  // componentWillReceiveProps(nextProps) {
-  //   if (nextProps.amountDue !== this.props.amountDue) {
-  //     this.setState({ count: nextProps.amountDue });
-  //   }
-  // }
 
   toggleDropDown() {
     this.setState({
