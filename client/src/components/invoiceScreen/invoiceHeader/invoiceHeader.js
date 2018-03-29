@@ -34,6 +34,10 @@ export default class InvoiceHeader extends Component {
     };
   }
 
+  handleAmountDueChange(event) {
+    const amountDue = event.target.value;
+    this.props.calculateAmountDue(amountDue);
+  }
   // this updates the AmountDue line in response to changes in the footer
   // componentWillReceiveProps(nextProps) {
   //   if (nextProps.amountDue !== this.props.amountDue) {
@@ -142,6 +146,7 @@ export default class InvoiceHeader extends Component {
                             name="invoiceNumber"
                             id="invoiceNumber"
                             placeholder="Invoice #"
+                            onChange={this.handleAmountDueChange.bind(this)}
                           />
                         </Col>
                       </FormGroup>

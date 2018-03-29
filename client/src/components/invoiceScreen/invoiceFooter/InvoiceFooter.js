@@ -1,21 +1,52 @@
 import React, { Component } from "react";
 import { Container, Row, Col, Form, FormGroup, Label, Input } from "reactstrap";
+import currencyFormatter from "currency-formatter";
 
 export default class InvoiceFooter extends Component {
+  handleTaxChange(event) {
+    const tax = event.target.value;
+    this.props.changeTax(tax);
+  }
+
+  handleDiscountChange(e) {
+    const discount = e.target.value;
+    this.props.changeDiscount(discount);
+  }
+
+  handleDepositChange(e) {
+    const deposit = e.target.value;
+    this.props.changeDeposit(deposit);
+  }
+
+  handleGrandTotalChange(e) {
+    const grandTotal = e.target.value;
+    this.props.calculateGrandTotal(grandTotal);
+  }
+
+  handleShippingChange(e) {
+    const shipping = e.target.value;
+    this.props.changeShipping(shipping);
+  }
+
+  handleSubtotalChange(e) {
+    const subtotal = e.target.value;
+    this.props.changeSubtotal(subtotal);
+  }
+
   render() {
     return (
       <div>
-      {/* this container holds everything */}
+        {/* this container holds everything */}
         <Container>
           <Row>
-          {/* left side of footer */}
+            {/* left side of footer */}
             <Col>
               <Container>
                 <Row>
-                {/* restricts the size of the form */}
+                  {/* restricts the size of the form */}
                   <Col xs={{ size: 12, offset: 0.5 }}>
                     <Form>
-                    {/* Notes from company to customer */}
+                      {/* Notes from company to customer */}
                       <FormGroup row>
                         <Label for="Notes" sm={2}>
                           Notes
@@ -34,7 +65,6 @@ export default class InvoiceFooter extends Component {
                           <Input type="text" />
                         </Col>
                       </FormGroup>
-
                     </Form>
                   </Col>
                 </Row>
@@ -43,21 +73,31 @@ export default class InvoiceFooter extends Component {
 
             {/* Right side of footer*/}
             <Col>
-
-            {/* Form first because of multiple columns */}
+              {/* Form first because of multiple columns */}
               <Form>
                 <Container>
                   <Row>
-                  {/* constrains the size of the items below */}
+                    {/* constrains the size of the items below */}
                     <Col xs={{ size: 12, offset: 0.5 }}>
-
-                    {/* subtotal will inherit it's state from the index, which is passed from the table*/}
+                      {/* subtotal will inherit it's state from the index, which is passed from the table*/}
                       <FormGroup row>
                         <Label for="subtotal" sm={2}>
                           Subtotal
                         </Label>
                         <Col sm={10}>
-                          <Input type="text" disabled />
+                          <Input
+                            type="text"
+                            disabled
+                            placeholder={
+                              !this.props.subtotal
+                                ? "$"
+                                : currencyFormatter.format(
+                                    this.props.subtotal,
+                                    { code: "USD" }
+                                  )
+                            }
+                            onChange={this.handleSubtotalChange.bind(this)}
+                          />
                         </Col>
                       </FormGroup>
 
@@ -67,7 +107,7 @@ export default class InvoiceFooter extends Component {
                           Tax
                         </Label>
                         <Col sm={4}>
-                          <Input type="number" placeholder="%" />
+                          <Input type="number" placeholder="%" onChange={this.handleTaxChange.bind(this)} />
                         </Col>
 
                         {/* shipping field increases the total plus tax -> tax is paid by the company, should be passed on to the customer */}
@@ -75,7 +115,7 @@ export default class InvoiceFooter extends Component {
                           Shipping
                         </Label>
                         <Col sm={4}>
-                          <Input type="number" placeholder="$" />
+                          <Input type="number" placeholder="$" onChange={this.handleShippingChange.bind(this)} />
                         </Col>
                       </FormGroup>
 
@@ -85,7 +125,7 @@ export default class InvoiceFooter extends Component {
                           Discount
                         </Label>
                         <Col sm={4}>
-                          <Input type="number" placeholder="%" />
+                          <Input type="number" placeholder="%" onChange={this.handleDiscountChange.bind(this)} />
                         </Col>
 
                         {/* displays the amount the customer pre-paid */}
@@ -93,7 +133,7 @@ export default class InvoiceFooter extends Component {
                           Deposit
                         </Label>
                         <Col sm={4}>
-                          <Input type="number" placeholder="$" />
+                          <Input type="number" placeholder="$" onChange={this.handleDepositChange.bind(this)} />
                         </Col>
                       </FormGroup>
 
@@ -103,15 +143,25 @@ export default class InvoiceFooter extends Component {
                           Grand Total
                         </Label>
                         <Col sm={10}>
-                          <Input type="number" disabled />
+                          <Input
+                            type="number"
+                            disabled
+                            placeholder={
+                              !this.props.grandTotal
+                                ? "$"
+                                : currencyFormatter.format(
+                                    this.props.grandTotal,
+                                    { code: "USD" }
+                                  )
+                            }
+                            onChange={this.handleGrandTotalChange.bind(this)} 
+                          />
                         </Col>
                       </FormGroup>
-
                     </Col>
                   </Row>
                 </Container>
               </Form>
-              
             </Col>
           </Row>
         </Container>
