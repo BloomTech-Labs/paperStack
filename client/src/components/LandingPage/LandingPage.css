@@ -1,0 +1,163 @@
+.Landing {
+  font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Fira Sans,Droid Sans,Helvetica Neue,sans-serif;
+  text-rendering: optimizeLegibility;
+}
+
+.Landing h1 {
+  font-weight: 500;
+  font-size: 50px;
+  line-height: 47px;
+}
+
+.Landing header {
+  height: 60px;
+  width: 100%;
+  background-color: #fff;
+  position: fixed;
+  z-index: 1000;
+}
+
+.Landing header h1 {
+  color: #2d6f8e;
+  color: rgba(11,79,108, 0.8);
+  position: absolute;
+  left: 10px;
+  margin: 0;
+}
+
+.Landing-nav-btns {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+.Landing-nav-btns a {
+  display: inline-block;
+  font-weight: 500;
+  font-size: 30px;
+  line-height: 38px;
+  text-decoration: none;
+  color: #f17f29;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.Landing-nav-btns a:hover {
+  color: #797;
+}
+
+.Landing-nav-btns span {
+  color: #f17f29;
+  font-weight: 500;
+  font-size: 30px;
+  line-height: 38px;
+}
+
+.Landing-slider {
+  height: 600px;
+  background-color: #ffd454;
+}
+
+.Landing-info {
+  height: auto;
+  background-color: #fff;
+}
+
+.Landing-info h2 {
+  text-align: center;
+  color: #f17f29;
+  font-weight: 500;
+  font-size: 30px;
+  line-height: 38px;
+}
+
+.Landing-info .Landing-paragraph {
+  width: 550px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.Landing-info .Landing-paragraph p {
+  color: #222;
+  color: hsla(204,12.449720506%,0%,0.77);
+<<<<<<< HEAD
+  font-size: 24px;
+  font-weight: 400;
+  word-wrap: break-word;
+  text-align: justify;
+}
+
+.Landing-info .Landing-buy-btn a {
+=======
+  font-size: 26px;
+  font-weight: 400;
+  word-wrap: break-word;
+}
+
+.Landing-info .Landing-buy-btn {
+>>>>>>> 7ed120e862bafcd4593f71684a6491e56b596720
+  display: block;
+  background-color: #be1931;
+  font-weight: 500;
+  font-size: 24px;
+  line-height: 56px;
+  text-decoration: none;
+  text-align: center;
+  color: #fff;
+  width: 200px;
+  height: 56px;
+  margin-left: auto;
+  margin-right: auto;
+  -webkit-box-shadow: 1px 0px 10px 0px rgba(51, 50, 50, 1);
+  -moz-box-shadow: 1px 0px 10px 0px rgba(51, 50, 50, 1);
+  box-shadow: 1px 0px 10px 0px rgba(51, 50, 50, 1);
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  border-radius: 4px;
+}
+
+.Landing footer {
+  text-align: center;
+  height: 60px;
+  background-color: #ffd454;
+}
+
+.Landing footer p {
+  color: #be1931;
+  font-size: 26px;
+  line-height: 56px;
+  font-weight: 400;
+  word-wrap: break-word;
+}
+
+@media (max-width: 600px) {
+<<<<<<< HEAD
+  .Landing header {
+    height: 90px;
+  }
+  .Landing header h1 {
+    position: static;
+    text-align: center;
+  }
+  .Landing-nav-btns {
+    position: static;
+    text-align: center;
+  }
+  .Landing-nav-btns a {
+    font-size: 24px;
+  }
+  .Landing-info .Landing-paragraph {
+    width: 280px;    
+  }
+
+  .Landing-info .Landing-paragraph p {
+    text-align: left;
+=======
+  .Landing header h1 {
+    display: none;
+  }
+  .Landing-info .Landing-paragraph {
+    width: 280px;
+>>>>>>> 7ed120e862bafcd4593f71684a6491e56b596720
+  }
+}

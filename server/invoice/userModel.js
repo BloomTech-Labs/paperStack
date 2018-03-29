@@ -11,13 +11,10 @@ const UsersSchema = new Schema({
         type: Date,
         default: Date.now
     },
-    userName: {
-        type: String,
-        required: true
-    },
     email: {
         type: String,
-        required: true
+        required: true,
+        unique: true
     },
     hashPassword: {
         type: String,

@@ -1,0 +1,32 @@
+.CoverFlow {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  -webkit-perspective: 600px;
+  overflow: hidden;
+}
+
+.CoverFlow-box {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 200px;
+  height: 200px;
+  margin-left: -85px;
+<<<<<<< HEAD
+  margin-top: -80px;
+  transform-style: preserve-3d;
+  transition: all 300ms ease-in;
+}
+
+@media (max-width: 600px) {
+  .CoverFlow-box {
+    margin-left: -100px;
+    margin-top: -70px;
+  }
+=======
+  margin-top: -85px;
+  transform-style: preserve-3d;
+  transition: all 300ms ease-in;
+>>>>>>> 7ed120e862bafcd4593f71684a6491e56b596720
+}
