@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { BootstrapTable, TableHeaderColumn } from "react-bootstrap-table";
 import currencyFormatter from "currency-formatter";
+import formatMoney from "accounting-js/lib/formatMoney.js";
 
 import billableItems from "../billableItems.json";
 
@@ -8,10 +9,13 @@ export default class InvoiceItemsTable extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      total: 0,
       data: billableItems,
       // ^^ data must be presented as an array per docs
     };
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return false;
   }
 
   /* 
@@ -80,10 +84,10 @@ export default class InvoiceItemsTable extends Component {
     return response;
   };
 
-  handleSubtotalChange(total) {
-    const subtotal = total;
-    this.props.changeSubtotal(subtotal);
-  }
+  // handleSubtotalChange(total) {
+  //   const subtotal = localStorage.getItem('tableSubtotal');
+  //   this.props.changeSubtotal(subtotal);
+  // }
 
   
 
@@ -100,7 +104,8 @@ export default class InvoiceItemsTable extends Component {
             for (let i = 0; i < tableData.length; i++) {
               total += (tableData[i].qty * tableData[i].rate);
             }
-            console.log(total)
+            localStorage.setItem("tableSubtotal", formatMoney(total));
+            // console.log(total)
             return (
               <div>
               {/*{this.handleSubtotalChange(total)}*/}
@@ -153,6 +158,7 @@ export default class InvoiceItemsTable extends Component {
           href="https://npmcdn.com/react-bootstrap-table/dist/react-bootstrap-table-all.min.css"
         />
         <BootstrapTable
+          id="table"
           data={billableItems}
           striped
           hover
@@ -217,7 +223,7 @@ export default class InvoiceItemsTable extends Component {
 
         </BootstrapTable>
 
-        {console.log(footerData[0][0].formatter)}
+        {console.log(localStorage.getItem('tableSubtotal'))}
       </div>
     );
   }
