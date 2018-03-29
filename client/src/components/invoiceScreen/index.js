@@ -1,5 +1,7 @@
 import React, { Component } from "react";
 import { Button } from "reactstrap";
+import formatNumber from 'accounting-js/lib/formatNumber.js'
+import formatMoney from 'accounting-js/lib/formatMoney.js'
 
 import InvoiceHeader from "./invoiceHeader/invoiceHeader";
 import InvoiceItemsTable from "./invoiceItems/InvoiceTable";
@@ -19,7 +21,7 @@ export default class InvoiceScreen extends Component {
       amountDue: 0,
       shipping: 0
     };
-  }
+  } 
 
   changeTax(tax) {
     this.setState({ tax });
@@ -43,8 +45,8 @@ export default class InvoiceScreen extends Component {
 
   calculateGrandTotal = (discountApplied, taxApplied) => {
     discountApplied =
-      this.state.subtotal - this.state.subtotal * this.state.discount;
-    taxApplied = discountApplied + discountApplied * this.state.tax;
+      this.state.subtotal - (this.state.subtotal * (formatNumber(this.state.discount) / 100));
+    taxApplied = discountApplied + (discountApplied * (formatNumber(this.state.tax) / 100));
 
     this.setState({
       grandTotal: taxApplied + this.state.shipping
@@ -57,16 +59,18 @@ export default class InvoiceScreen extends Component {
   render() {
     return (
       <div className="invoiceForm">
-      {this.state.tax}
-      {this.state.discount}
-      {this.state.deposit}
-      {this.state.shipping}
+      {/*these are temporary until state is complete*/}
+      {`tax: ${this.state.tax}%`}{' '}
+      {`discount: ${this.state.discount}%`}{' '}
+      {`deposit: ${formatMoney(this.state.deposit)}`}{' '}
+      {`shipping: ${formatMoney(this.state.shipping)}`}{' '}
+
         <InvoiceHeader
           amountDue={this.state.amountDue}
           calculateAmountDue={this.calculateAmountDue.bind(this)}
         />
         <hr />
-        <InvoiceItemsTable subtotal={this.state.subtotal} />
+        <InvoiceItemsTable subtotal={this.state.subtotal} changeSubtotal={this.changeSubtotal.bind(this)} />
         <hr />
         <InvoiceFooter
           tax={this.state.tax}

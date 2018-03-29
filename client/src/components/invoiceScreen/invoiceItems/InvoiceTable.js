@@ -8,15 +8,16 @@ export default class InvoiceItemsTable extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      total: 0,
       data: billableItems,
       // ^^ data must be presented as an array per docs
     };
   }
 
-
-  /*
+  /* 
     These functions edit the modal for adding new rows of data
   */
+
   // items should not be blank, and should have at least 3 characters
   itemNameValidator = (value, row) => {
     const response = {
@@ -79,7 +80,15 @@ export default class InvoiceItemsTable extends Component {
     return response;
   };
 
+  handleSubtotalChange(total) {
+    const subtotal = total;
+    this.props.changeSubtotal(subtotal);
+  }
+
+  
+
   render() {
+    // let total = this.state.footerData;
     // footerData presents the subtotal for the footer of the table
     const footerData = [
       [
@@ -87,21 +96,26 @@ export default class InvoiceItemsTable extends Component {
           label: 'Subtotal',
           columnIndex: 4,
           formatter: (tableData) => {
-            let label = 0;
-            for (let i = 0, tableDataLen = tableData.length; i < tableDataLen; i++) {
-              label += (tableData[i].qty * tableData[i].rate);
+            let total = 0;
+            for (let i = 0; i < tableData.length; i++) {
+              total += (tableData[i].qty * tableData[i].rate);
             }
+            console.log(total)
             return (
-              <i>{ currencyFormatter.format(label, {code: 'USD'}) }</i>
+              <div>
+              {/*{this.handleSubtotalChange(total)}*/}
+              <i id='subtotal'>{ currencyFormatter.format(total, {code: 'USD'}) }</i>
+              </div>
             );
           }
         }
       ]
     ];
+    
 
     // select a row, for use in delete row
     const selectRowProp = {
-      mode: "checkbox"
+      mode: "checkbox",
     };
 
     // click to edit a cell
@@ -203,6 +217,7 @@ export default class InvoiceItemsTable extends Component {
 
         </BootstrapTable>
 
+        {console.log(footerData[0][0].formatter)}
       </div>
     );
   }
