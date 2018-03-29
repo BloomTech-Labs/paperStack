@@ -7326,7 +7326,7 @@ Trace:
   Exit code: 3221225786
   Command: C:\WINDOWS\system32\cmd.exe
   Arguments: /d /s /c react-scripts start
-  Directory: C:\Users\brian\Desktop\dan\lambda\paperStack\client
+  Directory: C:\Users\brian\Desktop\dan\lambda\st\paperStack\client
   Output:
   
       at ProcessTermError.MessageError (C:\Program Files (x86)\Yarn\lib\cli.js:186:110)

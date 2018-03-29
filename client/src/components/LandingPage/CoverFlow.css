@@ -13,7 +13,6 @@
   width: 200px;
   height: 200px;
   margin-left: -85px;
-<<<<<<< HEAD
   margin-top: -80px;
   transform-style: preserve-3d;
   transition: all 300ms ease-in;
@@ -24,9 +23,4 @@
     margin-left: -100px;
     margin-top: -70px;
   }
-=======
-  margin-top: -85px;
-  transform-style: preserve-3d;
-  transition: all 300ms ease-in;
->>>>>>> 7ed120e862bafcd4593f71684a6491e56b596720
 }

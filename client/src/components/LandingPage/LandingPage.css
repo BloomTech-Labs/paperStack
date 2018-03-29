@@ -80,7 +80,6 @@
 .Landing-info .Landing-paragraph p {
   color: #222;
   color: hsla(204,12.449720506%,0%,0.77);
-<<<<<<< HEAD
   font-size: 24px;
   font-weight: 400;
   word-wrap: break-word;
@@ -88,14 +87,6 @@
 }
 
 .Landing-info .Landing-buy-btn a {
-=======
-  font-size: 26px;
-  font-weight: 400;
-  word-wrap: break-word;
-}
-
-.Landing-info .Landing-buy-btn {
->>>>>>> 7ed120e862bafcd4593f71684a6491e56b596720
   display: block;
   background-color: #be1931;
   font-weight: 500;
@@ -131,7 +122,6 @@
 }
 
 @media (max-width: 600px) {
-<<<<<<< HEAD
   .Landing header {
     height: 90px;
   }
@@ -152,12 +142,5 @@
 
   .Landing-info .Landing-paragraph p {
     text-align: left;
-=======
-  .Landing header h1 {
-    display: none;
-  }
-  .Landing-info .Landing-paragraph {
-    width: 280px;
->>>>>>> 7ed120e862bafcd4593f71684a6491e56b596720
   }
 }
