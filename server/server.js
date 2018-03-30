@@ -2,8 +2,11 @@ const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const cors = require("cors");
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const STATUS_USER_ERROR = 422;
 const STATUS_SERVER_ERROR = 500;
+const STATUS_UNAUTHORIZED_ERROR = 401;
 
 const Users = require("./invoice/userModel.js");
 const Customers = require("./invoice/custModel.js");
@@ -14,6 +17,8 @@ const InvLine = require("./invoice/invLineItemsModel.js");
 const server = express();
 server.use(bodyParser.json());
 server.use(cors());
+
+require('dotenv').config();
 
 mongoose.Promise = global.Promise;
 mongoose
@@ -34,33 +39,6 @@ mongoose
 
   let userName, email, hashPassword;
 
-/**
- * Post Users
- */
-server.post("/users", function(req, res) {
-  const newCust = new Users(req.body);
-  // do checks here to make sure the user has all the data
-  if (
-    newCust.userName === "" ||
-    newCust.email === "" ||
-    newCust.hashPassword === ""
-  ) {
-    res
-      .status(STATUS_USER_ERROR)
-      .json({ error: "Could not create user due to missing fields" });
-    return;
-  } else {
-    newCust.save(function(err, user) {
-      if (err) {
-        res
-          .status(STATUS_SERVER_ERROR)
-          .json({ error: "Could not create the user." });
-      } else {
-        res.status(201).json(user);
-      }
-    });
-  }
-});
 /**
  * Update a User
  */
@@ -478,3 +456,109 @@ server.delete("/invline/:id", function(req, res) {
   });
 });
 
+/**
+ * User authentication endpoints
+ */
+
+/**
+ * Middleware for password hashing
+ */
+const BCRYPT_COST = 11;
+const hashedPassword = (req, res, next) => {
+  const { password } = req.body;
+  if (!password) {
+    return res.status(STATUS_USER_ERROR)
+              .json({ error: "Password can\'t be blank" });
+  }
+  bcrypt
+    .hash(password, BCRYPT_COST)
+    .then(pw => {
+      req.password = pw;
+      next();
+    })
+    .catch(err => {
+      throw new Error("The password wasn't hashed");
+    });
+};
+
+/**
+ * Create a new user
+ */
+
+server.post("/new-user", hashedPassword, (req, res) => {
+  const { email } = req.body;
+  if (!email) {
+    return res.status(STATUS_USER_ERROR)
+              .json({ error: "Email is required" });
+  }
+  // since our users can disable js on the client
+  // and email address serves as a unique username
+  // this validation will be enough
+  const isEmailValid = /^(?:[a-z0-9!#$%&amp;'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&amp;'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])$/;
+  if (!isEmailValid.test(email)) {
+    return res.status(STATUS_USER_ERROR)
+              .json({ error: "The Email Address is in an invalid format." });
+  }
+  const hashPassword = req.password;
+  const newUser = new Users({ email, hashPassword });
+  newUser.save((err, savedUser) => {
+    if (err) {
+      if (err.code === 11000) { 
+        return res.status(409).json({ error: "This email is already taken" }) 
+      }
+      return res.status(STATUS_SERVER_ERROR)
+                .json({ error: "User wasn't saved to the database" });
+    }
+    const token = jwt.sign({ id: savedUser._id }, process.env.SECRET);
+    res.status(200).send({ token });
+  });
+});
+
+/**
+ * User Login
+ */
+
+server.post("/login", (req, res) => {
+  const { email, password } = req.body;
+  if (!email) {
+    return res.status(STATUS_USER_ERROR)
+              .json({ error: "Email can't be blank" });
+  }
+  if (!password) {
+    return res.status(STATUS_USER_ERROR)
+              .json({ error: "Password can't be blank" });
+  }
+  Users.findOne({ email }, (err, user) => {
+    if (err || user === null) {
+      return res.status(STATUS_SERVER_ERROR)
+                .json({ error: "Incorrect email/password combination" });
+    }
+    const hashedPw = user.hashPassword;
+    bcrypt 
+      .compare(password, hashedPw)
+      .then(response => {
+        if (!response) throw new Error("Password hashes weren't compared");
+      })
+      .then(() => {
+        const token = jwt.sign({ id: user._id }, process.env.SECRET);
+        res.status(200).send({ token });
+      })
+      .catch(error => {
+        res.status(STATUS_SERVER_ERROR)
+           .json({ error: "Incorrect creditentials" });
+      });
+  });
+});
+
+/**
+ * Token validation
+ */
+
+server.get("/jwt", (req, res) => {
+  const tkn = req.get('Authorization');
+  if (!tkn) return res.status(STATUS_UNAUTHORIZED_ERROR).json({ authenticated: false });
+  jwt.verify(tkn, process.env.SECRET, (err, decoded) => {
+    if (err) return res.status(STATUS_UNAUTHORIZED_ERROR).json({ authenticated: false });
+    res.status(200).json({ authenticated: true });
+  });
+});
