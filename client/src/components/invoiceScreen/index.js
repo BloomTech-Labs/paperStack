@@ -15,7 +15,7 @@ export default class InvoiceScreen extends Component {
 
     this.state = {
       tableTotal: 0,
-      subtotal: 0,
+      subtotal: localStorage.getItem('tableSubtotal'),
       tax: 0,
       discount: 0,
       deposit: 0,
@@ -50,7 +50,7 @@ export default class InvoiceScreen extends Component {
   }
 
   changeSubtotal(subtotal) {
-    this.setState({ subtotal: localStorage.getItem('tableSubtotal') });
+    this.setState({ subtotal: localStorage.getItem("tableSubtotal") });
   }
 
   calculateGrandTotal = (discountApplied, taxApplied) => {
@@ -61,18 +61,19 @@ export default class InvoiceScreen extends Component {
     //   discountApplied + discountApplied * (formatNumber(this.state.tax) / 100);
 
     discountApplied =
-      this.subtotal -
-      this.subtotal * (formatNumber(this.state.discount) / 100);
+      this.subtotal - this.subtotal * (formatNumber(this.state.discount) / 100);
     taxApplied =
       discountApplied + discountApplied * (formatNumber(this.state.tax) / 100);
 
     this.setState({
-      grandTotal: taxApplied + (formatNumber(this.state.shipping) / 100)
-    });
+      grandTotal: taxApplied + this.state.shipping
+    })
   };
 
   calculateAmountDue = () => {
-    this.setState({ amountDue: this.state.grandTotal - formatNumber(this.state.deposit) });
+    this.setState({
+      amountDue: this.state.grandTotal - formatNumber(this.state.deposit)
+    });
   };
   render() {
     return (
@@ -81,6 +82,7 @@ export default class InvoiceScreen extends Component {
         {`tax: ${this.state.tax}%`} {`discount: ${this.state.discount}%`}{" "}
         {`deposit: ${formatMoney(this.state.deposit)}`}{" "}
         {`shipping: ${formatMoney(this.state.shipping)}`}{" "}
+        {`subtotal: ${formatMoney(localStorage.getItem("tableSubtotal"))}`}{" "}
         <InvoiceHeader
           amountDue={this.state.amountDue}
           calculateAmountDue={this.calculateAmountDue.bind(this)}
@@ -88,7 +90,7 @@ export default class InvoiceScreen extends Component {
         <hr />
         <InvoiceItemsTable
           subtotal={this.state.subtotal}
-          // changeSubtotal={this.changeSubtotal.bind(this)}
+          changeSubtotal={this.changeSubtotal.bind(this)}
         />
         <hr />
         <InvoiceFooter

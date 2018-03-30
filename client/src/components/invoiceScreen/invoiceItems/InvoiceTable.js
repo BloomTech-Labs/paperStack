@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { BootstrapTable, TableHeaderColumn } from "react-bootstrap-table";
-import currencyFormatter from "currency-formatter";
 import formatMoney from "accounting-js/lib/formatMoney.js";
+import formatNumber from "accounting-js/lib/formatNumber.js";
 
 import billableItems from "../billableItems.json";
 
@@ -84,71 +84,69 @@ export default class InvoiceItemsTable extends Component {
     return response;
   };
 
-  // handleSubtotalChange(total) {
-  //   const subtotal = localStorage.getItem('tableSubtotal');
-  //   this.props.changeSubtotal(subtotal);
-  // }
+  handleSubtotalChange(total) {
+    const subtotal = localStorage.getItem('tableSubtotal');
+    this.props.changeSubtotal(subtotal);
+  }
 
+      // format the rate field to be in USD, 2 decimal positions -> could use toLocale to provide support for other countries
+      rateFormatter(cell, row) {
+        return formatMoney(cell);
+      }
   
+      // format the amount field to be in USD, 2 decimal positions
+      amountFormatter2(cell, row) {
+        return formatMoney(row.rate * row.qty);
+      }
+  
+      // format the index to be a line number -> used to override the autoNumber creation, which is alphaNumeric and very long
+      idFormatter(cell, row, enumObject, index) {
+        return index + 1;
+      }
 
   render() {
     // let total = this.state.footerData;
-    // footerData presents the subtotal for the footer of the table
-    const footerData = [
-      [
-        {
-          label: 'Subtotal',
-          columnIndex: 4,
-          formatter: (tableData) => {
-            let total = 0;
-            for (let i = 0; i < tableData.length; i++) {
-              total += (tableData[i].qty * tableData[i].rate);
+      // select a row, for use in delete row
+      const selectRowProp = {
+        mode: "checkbox",
+      };
+  
+      // click to edit a cell
+      const cellEditProp = {
+        mode: "click"
+      };
+  
+      // table options -> custom text for buttons and when there is no data (new invoice)
+      const options = {
+        insertText: "Add Line Item",
+        deleteText: "Delete Line Item",
+        noDataText: "No billable items"
+      };
+
+      // footerData presents the subtotal for the footer of the table
+      const footerData = [
+        [
+          {
+            label: 'Subtotal',
+            columnIndex: 4,
+            formatter: (tableData) => {
+              let total = 0;
+              for (let i = 0; i < tableData.length; i++) {
+                total += (tableData[i].qty * tableData[i].rate);
+              }
+              localStorage.setItem("tableSubtotal", total);
+              // onChange={this.props.handleSubtotalChange(subtotal)}
+              // console.log(total)
+              return (
+                <div>
+                <i id='subtotal' onChange={this.handleSubtotalChange(total)}>{ total }</i>
+                <i>{console.log(this)}</i>
+                </div>
+              );
             }
-            localStorage.setItem("tableSubtotal", formatMoney(total));
-            // console.log(total)
-            return (
-              <div>
-              {/*{this.handleSubtotalChange(total)}*/}
-              <i id='subtotal'>{ currencyFormatter.format(total, {code: 'USD'}) }</i>
-              </div>
-            );
           }
-        }
-      ]
-    ];
-    
-
-    // select a row, for use in delete row
-    const selectRowProp = {
-      mode: "checkbox",
-    };
-
-    // click to edit a cell
-    const cellEditProp = {
-      mode: "click"
-    };
-
-    // table options -> custom text for buttons and when there is no data (new invoice)
-    const options = {
-      insertText: "Add Line Item",
-      deleteText: "Delete Line Item",
-      noDataText: "No billable items"
-    };
-
-    // format the rate field to be in USD, 2 decimal positions -> could use toLocale to provide support for other countries
-    function rateFormatter(cell, row) {
-      return currencyFormatter.format(cell, { code: "USD" });
-    }
-
-    // format the amount field to be in USD, 2 decimal positions
-    function amountFormatter2(cell, row) {
-      return currencyFormatter.format(row.rate * row.qty, { code: "USD" });
-    }
-
-    // format the index to be a line number -> used to override the autoNumber creation, which is alphaNumeric and very long
-    function idFormatter(cell, row, enumObject, index) {
-      return index + 1;
-    }
+        ]
+      ];
 
     return (
       <div className="invoiceTable" style={{ width: "90%", margin: "auto" }}>
@@ -171,13 +169,14 @@ export default class InvoiceItemsTable extends Component {
           insertRow={true}
           selectRow={selectRowProp}
           cellEdit={cellEditProp}
+          onChange={this.handleSubtotalChange.bind(this)}
         >
           {/*This is column 0, the checkmark column doesn't count and can't be modified here*/}
           <TableHeaderColumn
             dataField="id"
             autoValue={true}
             isKey
-            dataFormat={idFormatter}
+            dataFormat={this.idFormatter}
             width="15"
             hiddenOnInsert
           >
@@ -202,7 +201,7 @@ export default class InvoiceItemsTable extends Component {
 
           <TableHeaderColumn
             dataField="rate"
-            dataFormat={rateFormatter}
+            dataFormat={this.rateFormatter}
             width="40"
             editable={{ validator: this.rateValidator }}
           >
@@ -212,7 +211,7 @@ export default class InvoiceItemsTable extends Component {
           {/*this is column 4, which is blank in the data, use rate and qty fields to fill */}
           <TableHeaderColumn
             dataField="amount"
-            dataFormat={amountFormatter2}
+            dataFormat={this.amountFormatter2}
             width="40"
             editable={{ readOnly: true }}
             disabled

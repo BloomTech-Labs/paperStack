@@ -4,6 +4,7 @@ import { Container, Row, Col, Form, FormGroup, Label, Input } from "reactstrap";
 export default class InvoiceFooter extends Component {
   // tax changes by user input, passed up to state and received back
   handleTaxChange(event) {
+    event.preventDefault()
     const tax = event.target.value;
     this.props.changeTax(tax);
   }
@@ -28,10 +29,10 @@ export default class InvoiceFooter extends Component {
     this.props.changeShipping(shipping);
   }
 
-  // handleSubtotalChange(e) {
-  //   const subtotal = e.target.value;
-  //   this.props.changeSubtotal(subtotal);
-  // }
+  handleSubtotalChange(e) {
+    const subtotal = e.target.value;
+    this.props.changeSubtotal(subtotal);
+  }
 
   render() {
     return (

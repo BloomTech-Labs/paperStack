@@ -15,7 +15,6 @@ import {
   DropdownMenu,
   DropdownItem
 } from "reactstrap";
-import currencyFormatter from "currency-formatter";
 
 import tempLogo from "../invoiceHeader/tempLogo.svg";
 
@@ -179,7 +178,7 @@ export default class InvoiceHeader extends Component {
                             </InputGroupAddon>
                             <Input
                               placeholder={
-                                !this.props.amountDue ? "Amount Due" : currencyFormatter.format(this.props.amountDue, {code: 'USD'})
+                                !this.props.amountDue ? "Amount Due" : this.props.amountDue
                               }
                               type="number"
                               disabled
