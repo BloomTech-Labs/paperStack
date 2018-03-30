@@ -87,7 +87,7 @@ class SignUpForm extends Component {
 
   render() {
     return (
-      <form>
+      <form onSubmit={this.handleSubmit}>
         <h2 className="Auth-Form-header">Sign Up for Free</h2>
         <label>Email:</label>
         <input type="text" className="Auth-Form-field" spellCheck="false"
@@ -101,7 +101,7 @@ class SignUpForm extends Component {
         <input type="password" className="Auth-Form-field" 
           value={this.state.confirmPassword} onChange={this.handleConfirmPasswordChange} />
         <span>{this.state.confirmPasswordErr}</span>
-        <div onClick={this.handleSubmit} className="Auth-Form-submit-btn">GET STARTED</div>
+        <button type="submit" className="Auth-Form-submit-btn">GET STARTED</button>
       </form>
     );
   }

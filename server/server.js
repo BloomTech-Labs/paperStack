@@ -521,11 +521,11 @@ server.post("/new-user", hashedPassword, (req, res) => {
 server.post("/login", (req, res) => {
   const { email, password } = req.body;
   if (!email) {
-    return res.status(STATUS_SERVER_ERROR)
+    return res.status(STATUS_USER_ERROR)
               .json({ error: "Email can't be blank" });
   }
   if (!password) {
-    return res.status(STATUS_SERVER_ERROR)
+    return res.status(STATUS_USER_ERROR)
               .json({ error: "Password can't be blank" });
   }
   Users.findOne({ email }, (err, user) => {

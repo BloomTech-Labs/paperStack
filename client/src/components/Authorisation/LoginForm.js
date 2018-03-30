@@ -52,7 +52,7 @@ class LoginForm extends Component {
 
   render() {
     return (
-      <form>
+      <form onSubmit={this.handleSubmit}>
         <h2 className="Auth-Form-header">Welcome Back!</h2>
         <label>Email:</label>
         <input className="Auth-Form-field" type="text" spellCheck="false"
@@ -62,7 +62,7 @@ class LoginForm extends Component {
         <input className="Auth-Form-field" type="password" 
           value={this.state.password} onChange={this.handlePasswordChange} />
         <span>{this.state.passwordErr}</span>
-        <div onClick={this.handleSubmit} className="Auth-Form-submit-btn">LOGIN</div>
+        <button type="submit" className="Auth-Form-submit-btn">LOGIN</button>
       </form>
     );
   }

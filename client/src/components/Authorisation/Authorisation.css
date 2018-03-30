@@ -98,4 +98,7 @@
   font-weight: 400;
   position: absolute;
   bottom: 0;
+  display: block;
+  outline: none;
+  border: none;
 }
