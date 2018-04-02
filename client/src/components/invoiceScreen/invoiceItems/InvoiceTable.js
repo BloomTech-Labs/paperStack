@@ -1,15 +1,31 @@
 import React, { Component } from "react";
 import { BootstrapTable, TableHeaderColumn } from "react-bootstrap-table";
 import formatMoney from "accounting-js/lib/formatMoney.js";
-import formatNumber from "accounting-js/lib/formatNumber.js";
 
 import billableItems from "../billableItems.json";
+
+// select a row, for use in delete row
+const selectRowProp = {
+  mode: "checkbox"
+};
+
+// click to edit a cell
+const cellEditProp = {
+  mode: "click"
+};
+
+// table options -> custom text for buttons and when there is no data (ie. new invoice)
+const options = {
+  insertText: "Add Line Item",
+  deleteText: "Delete Line Item",
+  noDataText: "No billable items"
+};
 
 export default class InvoiceItemsTable extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      data: billableItems,
+      data: billableItems
       // ^^ data must be presented as an array per docs
     };
   }
@@ -17,6 +33,35 @@ export default class InvoiceItemsTable extends Component {
   shouldComponentUpdate(nextProps, nextState) {
     return false;
   }
+
+  // componentWillMount() {
+  //   // footerData calculates the subtotal
+  //   this.footerData = [
+  //     [
+  //       {
+  //         label: "Subtotal",
+  //         columnIndex: 4,
+  //         formatter: tableData => {
+  //           let total = 0;
+  //           for (let i = 0; i < tableData.length; i++) {
+  //             total += tableData[i].qty * tableData[i].rate;
+  //           }
+  //           localStorage.setItem("tableSubtotal", total);
+  //           return (
+  //             <div>
+  //               <i
+  //                 id="subtotal"
+  //                 onChange={this.handleSubtotalChange.bind(this, total)}
+  //               >
+  //                 {total}
+  //               </i>
+  //             </div>
+  //           );
+  //         }
+  //       }
+  //     ]
+  //   ];
+  // }
 
   /* 
     These functions edit the modal for adding new rows of data
@@ -84,73 +129,56 @@ export default class InvoiceItemsTable extends Component {
     return response;
   };
 
+  // handles the update to subtotal
   handleSubtotalChange(total) {
-    const subtotal = localStorage.getItem('tableSubtotal');
+    const subtotal = localStorage.getItem("tableSubtotal");
     this.props.changeSubtotal(subtotal);
   }
 
-      // format the rate field to be in USD, 2 decimal positions -> could use toLocale to provide support for other countries
-      rateFormatter(cell, row) {
-        return formatMoney(cell);
-      }
-  
-      // format the amount field to be in USD, 2 decimal positions
-      amountFormatter2(cell, row) {
-        return formatMoney(row.rate * row.qty);
-      }
-  
-      // format the index to be a line number -> used to override the autoNumber creation, which is alphaNumeric and very long
-      idFormatter(cell, row, enumObject, index) {
-        return index + 1;
-      }
+  // format the rate field to be in USD, 2 decimal positions
+  rateFormatter(cell, row) {
+    return formatMoney(cell);
+  }
+
+  // format the amount field to be in USD, 2 decimal positions
+  amountFormatter2(cell, row) {
+    return formatMoney(row.rate * row.qty);
+  }
+
+  // format the index to be a line number -> used to override the autoNumber creation, which is alphaNumeric and very long
+  idFormatter(cell, row, enumObject, index) {
+    return index + 1;
+  }
 
   render() {
-    // let total = this.state.footerData;
-      // select a row, for use in delete row
-      const selectRowProp = {
-        mode: "checkbox",
-      };
-  
-      // click to edit a cell
-      const cellEditProp = {
-        mode: "click"
-      };
-  
-      // table options -> custom text for buttons and when there is no data (new invoice)
-      const options = {
-        insertText: "Add Line Item",
-        deleteText: "Delete Line Item",
-        noDataText: "No billable items"
-      };
-
-      // footerData presents the subtotal for the footer of the table
-      const footerData = [
-        [
-          {
-            label: 'Subtotal',
-            columnIndex: 4,
-            formatter: (tableData) => {
-              let total = 0;
-              for (let i = 0; i < tableData.length; i++) {
-                total += (tableData[i].qty * tableData[i].rate);
-              }
-              localStorage.setItem("tableSubtotal", total);
-              // onChange={this.props.handleSubtotalChange(subtotal)}
-              // console.log(total)
-              return (
-                <div>
-                <i id='subtotal' onChange={this.handleSubtotalChange(total)}>{ total }</i>
-                <i>{console.log(this)}</i>
-                </div>
-              );
+    const footerData = [
+      [
+        {
+          label: "Subtotal",
+          columnIndex: 4,
+          formatter: tableData => {
+            let total = 0;
+            for (let i = 0; i < tableData.length; i++) {
+              total += tableData[i].qty * tableData[i].rate;
             }
+            localStorage.setItem("tableSubtotal", total);
+            return (
+              <div>
+                <i
+                  id="subtotal"
+                  onChange={this.handleSubtotalChange(total)}
+                >
+                  {total}
+                </i>
+              </div>
+            );
           }
-        ]
-      ];
-
+        }
+      ]
+    ];
     return (
       <div className="invoiceTable" style={{ width: "90%", margin: "auto" }}>
-      {/*had to link the style sheet, wasn't loading correctly*/}
+        {/*had to link the style sheet, wasn't loading correctly*/}
         <link
           rel="stylesheet"
           href="https://npmcdn.com/react-bootstrap-table/dist/react-bootstrap-table-all.min.css"
@@ -162,7 +190,7 @@ export default class InvoiceItemsTable extends Component {
           hover
           condensed
           footerData={footerData}
-          footer
+          footer // <- disbled the display of the footer, not needed at bottom of table
           options={options}
           version="4"
           deleteRow={true}
@@ -171,7 +199,7 @@ export default class InvoiceItemsTable extends Component {
           cellEdit={cellEditProp}
           onChange={this.handleSubtotalChange.bind(this)}
         >
-          {/*This is column 0, the checkmark column doesn't count and can't be modified here*/}
+          {/*This is column 0 - line item number, the checkmark column doesn't count and can't be modified here*/}
           <TableHeaderColumn
             dataField="id"
             autoValue={true}
@@ -183,14 +211,16 @@ export default class InvoiceItemsTable extends Component {
             #
           </TableHeaderColumn>
 
+          {/*Column 1 - Item/Description field*/}
           <TableHeaderColumn
             dataField="item"
             width="200"
             editable={{ validator: this.itemNameValidator }}
           >
-            Item
+            Item/Description
           </TableHeaderColumn>
 
+          {/*Column 2 - Qty field*/}
           <TableHeaderColumn
             dataField="qty"
             width="30"
@@ -199,6 +229,7 @@ export default class InvoiceItemsTable extends Component {
             Quantity
           </TableHeaderColumn>
 
+          {/*Column 3 - Rate Field*/}
           <TableHeaderColumn
             dataField="rate"
             dataFormat={this.rateFormatter}
@@ -208,7 +239,7 @@ export default class InvoiceItemsTable extends Component {
             Rate
           </TableHeaderColumn>
 
-          {/*this is column 4, which is blank in the data, use rate and qty fields to fill */}
+          {/*Column 4 - Amount field, calculates from rate and qty fields*/}
           <TableHeaderColumn
             dataField="amount"
             dataFormat={this.amountFormatter2}
@@ -219,10 +250,7 @@ export default class InvoiceItemsTable extends Component {
           >
             Amount
           </TableHeaderColumn>
-
         </BootstrapTable>
-
-        {console.log(localStorage.getItem('tableSubtotal'))}
       </div>
     );
   }

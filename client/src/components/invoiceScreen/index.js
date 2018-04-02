@@ -50,10 +50,10 @@ export default class InvoiceScreen extends Component {
   }
 
   changeSubtotal(subtotal) {
-    this.setState({ subtotal: localStorage.getItem("tableSubtotal") });
+    this.setState({ subtotal });
   }
 
-  calculateGrandTotal = (discountApplied, taxApplied) => {
+  calculateGrandTotal(discountApplied, taxApplied) {
     // discountApplied =
     //   this.state.subtotal -
     //   this.state.subtotal * (formatNumber(this.state.discount) / 100);
@@ -61,20 +61,21 @@ export default class InvoiceScreen extends Component {
     //   discountApplied + discountApplied * (formatNumber(this.state.tax) / 100);
 
     discountApplied =
-      this.subtotal - this.subtotal * (formatNumber(this.state.discount) / 100);
+      formatNumber(this.state.subtotal) - formatNumber(this.state.subtotal) * (formatNumber(this.state.discount) / 100);
     taxApplied =
       discountApplied + discountApplied * (formatNumber(this.state.tax) / 100);
 
     this.setState({
-      grandTotal: taxApplied + this.state.shipping
-    })
-  };
+      grandTotal: formatMoney((taxApplied + formatNumber(this.state.shipping)))
+    });
+  }
 
-  calculateAmountDue = () => {
+  calculateAmountDue(){
     this.setState({
       amountDue: this.state.grandTotal - formatNumber(this.state.deposit)
     });
   };
+
   render() {
     return (
       <div className="invoiceForm">
@@ -83,6 +84,8 @@ export default class InvoiceScreen extends Component {
         {`deposit: ${formatMoney(this.state.deposit)}`}{" "}
         {`shipping: ${formatMoney(this.state.shipping)}`}{" "}
         {`subtotal: ${formatMoney(localStorage.getItem("tableSubtotal"))}`}{" "}
+        {`grandtotal: ${formatMoney(this.state.grandTotal)}`}{" "}
+        {`index subtotal: ${formatMoney(this.state.subtotal)}`}
         <InvoiceHeader
           amountDue={this.state.amountDue}
           calculateAmountDue={this.calculateAmountDue.bind(this)}

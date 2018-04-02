@@ -5,8 +5,8 @@ import { Route, Switch } from 'react-router-dom';
 import LandingPage from './components/LandingPage';
 import Authorisation from './components/Authorisation';
 import RequireAuth from './components/RequireAuthHOC';
-import InvoiceList from './components/InvoiceList';
 import NotFound from './components/NotFound';
+import InvoiceScreen from './components/invoiceScreen'
 
 
 class App extends Component {
@@ -16,7 +16,8 @@ class App extends Component {
         <Switch>
           <Route exact path="/" component={LandingPage} />
           <Route path="/authorisation" component={Authorisation} />
-          <Route path="/preview" component={RequireAuth(InvoiceList)} />
+          {/*<Route path="/preview" component={RequireAuth(InvoiceList)} />*/}
+          <Route path='/createNewInvoice' component={InvoiceScreen} />
           <Route component={NotFound} />
         </Switch>
       </Router>

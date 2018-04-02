@@ -6,12 +6,16 @@ export default class InvoiceFooter extends Component {
   handleTaxChange(event) {
     event.preventDefault()
     const tax = event.target.value;
+    const grandTotal = this.props.grandTotal;
     this.props.changeTax(tax);
+    this.props.calculateGrandTotal(grandTotal);
   }
 
   handleDiscountChange(e) {
     const discount = e.target.value;
+    const grandTotal = this.props.grandTotal;
     this.props.changeDiscount(discount);
+    this.props.calculateGrandTotal(grandTotal);
   }
 
   handleDepositChange(e) {
@@ -19,19 +23,23 @@ export default class InvoiceFooter extends Component {
     this.props.changeDeposit(deposit);
   }
 
-  // handleGrandTotalChange(e) {
-  //   const grandTotal = e.target.value;
-  //   this.props.calculateGrandTotal(grandTotal);
-  // }
+  handleGrandTotalChange(e) {
+    const grandTotal = this.props.grandTotal;
+    this.props.calculateGrandTotal(grandTotal);
+  }
 
   handleShippingChange(e) {
     const shipping = e.target.value;
+    const grandTotal = this.props.grandTotal;
     this.props.changeShipping(shipping);
+    this.props.calculateGrandTotal(grandTotal);
   }
 
   handleSubtotalChange(e) {
     const subtotal = e.target.value;
+    const grandTotal = this.props.grandTotal;
     this.props.changeSubtotal(subtotal);
+    this.props.calculateGrandTotal(grandTotal);
   }
 
   render() {
@@ -93,7 +101,6 @@ export default class InvoiceFooter extends Component {
                             value={
                               !this.props.subtotal ? "$" : this.props.subtotal
                             }
-                            // onChange={this.handleSubtotalChange.bind(this)}
                           />
                         </Col>
                       </FormGroup>
@@ -156,11 +163,10 @@ export default class InvoiceFooter extends Component {
                         </Label>
                         <Col sm={10}>
                           <Input
-                            type="number"
+                            type="text"
                             disabled
                             placeholder={"$"}
-                            // onChange={this.handleGrandTotalChange.bind(this)}
-                            value={!this.grandTotal ? "$" : this.grandTotal}
+                            value={!this.props.grandTotal ? 0 : this.props.grandTotal}
                           />
                         </Col>
                       </FormGroup>
