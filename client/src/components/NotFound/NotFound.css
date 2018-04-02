@@ -1,0 +1,35 @@
+.Not-Found-outer {
+  display: table;
+  position: absolute;
+  background-color: #ffd454;
+  height: 100%;
+  width: 100%;
+}
+
+.Not-Found-middle {
+  display: table-cell;
+  vertical-align: middle;
+}
+
+.Not-Found-inner {
+  margin-left: auto;
+  margin-right: auto;
+  width: 300px;
+}
+
+.Not-Found {
+  text-align: center;
+  font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Fira Sans,Droid Sans,Helvetica Neue,sans-serif;
+  text-rendering: optimizeLegibility;
+  color: #444;
+}
+
+.Not-Found h1 {
+  font-size: 150px;
+  margin: 0;
+}
+
+.Not-Found h2 {
+  font-size: 30px;
+  margin: 0;
+}
