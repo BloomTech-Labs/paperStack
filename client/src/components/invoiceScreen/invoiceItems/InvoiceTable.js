@@ -30,6 +30,7 @@ export default class InvoiceItemsTable extends Component {
     };
   }
 
+  // see https://engineering.musefind.com/how-to-benchmark-react-components-the-quick-and-dirty-guide-f595baf1014c for more information on why this is being used to prevent un-necessary re-renders (causes loss of line items which weren't saved)
   shouldComponentUpdate(nextProps, nextState) {
     return false;
   }
@@ -152,7 +153,8 @@ export default class InvoiceItemsTable extends Component {
 
   render() {
     const footerData = [
-      [
+      [{label: "Subtotal",
+    columnIndex:1},
         {
           label: "Subtotal",
           columnIndex: 4,
@@ -164,12 +166,12 @@ export default class InvoiceItemsTable extends Component {
             localStorage.setItem("tableSubtotal", total);
             return (
               <div>
-                <i
+                <b
                   id="subtotal"
                   onChange={this.handleSubtotalChange(total)}
                 >
                   {total}
-                </i>
+                </b>
               </div>
             );
           }
@@ -190,7 +192,7 @@ export default class InvoiceItemsTable extends Component {
           hover
           condensed
           footerData={footerData}
-          footer // <- disbled the display of the footer, not needed at bottom of table
+          footer // <- cannot be disbled or updated subtotal will not be pushed to localStorage
           options={options}
           version="4"
           deleteRow={true}

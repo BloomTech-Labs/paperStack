@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Button, ButtonGroup } from "reactstrap";
 import formatNumber from "accounting-js/lib/formatNumber.js";
 import formatMoney from "accounting-js/lib/formatMoney.js";
+import toFixed from "accounting-js/lib/toFixed.js";
 
 import InvoiceHeader from "./invoiceHeader/invoiceHeader";
 import InvoiceItemsTable from "./invoiceItems/InvoiceTable";
@@ -14,8 +15,7 @@ export default class InvoiceScreen extends Component {
     super(props);
 
     this.state = {
-      tableTotal: 0,
-      subtotal: localStorage.getItem('tableSubtotal'),
+      subtotal: localStorage.getItem("tableSubtotal"),
       tax: 0,
       discount: 0,
       deposit: 0,
@@ -25,6 +25,7 @@ export default class InvoiceScreen extends Component {
     };
   }
 
+  // this function just toggles the button selection for the double button at the bottom of the page -> may become a triple button
   onRadioBtnClick(rSelected) {
     this.setState({ rSelected });
   }
@@ -34,19 +35,19 @@ export default class InvoiceScreen extends Component {
   generatePDF() {}
 
   changeTax(tax) {
-    this.setState({ tax });
+    this.setState(state => ({ tax }));
   }
 
   changeDiscount(discount) {
-    this.setState({ discount });
+    this.setState(state => ({ discount }));
   }
 
   changeDeposit(deposit) {
-    this.setState({ deposit });
+    this.setState(state => ({ deposit }));
   }
 
   changeShipping(shipping) {
-    this.setState({ shipping });
+    this.setState(state => ({ shipping }));
   }
 
   changeSubtotal(subtotal) {
@@ -54,38 +55,38 @@ export default class InvoiceScreen extends Component {
   }
 
   calculateGrandTotal(discountApplied, taxApplied) {
-    // discountApplied =
-    //   this.state.subtotal -
-    //   this.state.subtotal * (formatNumber(this.state.discount) / 100);
+    discountApplied = 
+      this.state.subtotal * (1 - toFixed(this.state.discount / 100, 2));
+
     // taxApplied =
-    //   discountApplied + discountApplied * (formatNumber(this.state.tax) / 100);
+    //   formatNumber(discountApplied) * (1 + toFixed(this.state.tax / 100, 2));
 
-    discountApplied =
-      formatNumber(this.state.subtotal) - formatNumber(this.state.subtotal) * (formatNumber(this.state.discount) / 100);
     taxApplied =
-      discountApplied + discountApplied * (formatNumber(this.state.tax) / 100);
+      formatNumber(discountApplied) * (1 + (toFixed(this.state.tax / 100, 2)));
 
+    // this.setState({
+    //   grandTotal:  this.totalWithTax + formatNumber(this.state.shipping)
+    // });
     this.setState({
-      grandTotal: formatMoney((taxApplied + formatNumber(this.state.shipping)))
+      grandTotal: formatNumber(1 + formatNumber(toFixed(this.state.tax/100, 2)))
     });
   }
 
-  calculateAmountDue(){
+  calculateAmountDue() {
     this.setState({
       amountDue: this.state.grandTotal - formatNumber(this.state.deposit)
     });
-  };
+  }
 
   render() {
     return (
       <div className="invoiceForm">
         {/*these are temporary until state is complete*/}
-        {`tax: ${this.state.tax}%`} {`discount: ${this.state.discount}%`}{" "}
+        {`tax: ${this.state.tax}%`} {`discount: ${this.state.discount}`}{" "}
         {`deposit: ${formatMoney(this.state.deposit)}`}{" "}
         {`shipping: ${formatMoney(this.state.shipping)}`}{" "}
         {`subtotal: ${formatMoney(localStorage.getItem("tableSubtotal"))}`}{" "}
-        {`grandtotal: ${formatMoney(this.state.grandTotal)}`}{" "}
-        {`index subtotal: ${formatMoney(this.state.subtotal)}`}
+        {`grandtotal: ${this.state.grandTotal}`}{" "}
         <InvoiceHeader
           amountDue={this.state.amountDue}
           calculateAmountDue={this.calculateAmountDue.bind(this)}
