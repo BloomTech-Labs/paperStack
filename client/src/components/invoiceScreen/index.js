@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { Button, ButtonGroup } from "reactstrap";
 import formatNumber from "accounting-js/lib/formatNumber.js";
-import formatMoney from "accounting-js/lib/formatMoney.js";
 import toFixed from "accounting-js/lib/toFixed.js";
 
 import InvoiceHeader from "./invoiceHeader/invoiceHeader";
@@ -52,12 +51,12 @@ export default class InvoiceScreen extends Component {
 
   calculateGrandTotal(discountApplied, taxApplied, includesShipping) {
     discountApplied = 
-      formatNumber(this.state.subtotal) * (1 - formatNumber(toFixed(this.state.discount / 100, 2)));
+      +formatNumber(this.state.subtotal) * (1 - +formatNumber(toFixed(this.state.discount / 100, 2)));
 
     taxApplied =
-      formatNumber(discountApplied) * (1 + +formatNumber((toFixed(this.state.tax / 100, 2))));
+      +formatNumber(discountApplied) * (1 + +formatNumber((toFixed(this.state.tax / 100, 2))));
 
-    includesShipping = formatNumber(taxApplied) + +formatNumber(this.state.shipping);
+    includesShipping = +formatNumber(taxApplied) + +formatNumber(this.state.shipping);
 
     this.setState({
       grandTotal: (includesShipping)
@@ -95,6 +94,10 @@ export default class InvoiceScreen extends Component {
         <InvoiceItemsTable
           subtotal={this.state.subtotal}
           changeSubtotal={this.changeSubtotal.bind(this)}
+          amountDue={this.state.amountDue}
+          calculateAmountDue={this.calculateAmountDue.bind(this)}
+          grandTotal={this.state.grandTotal}
+          calculateGrandTotal={this.calculateGrandTotal.bind(this)}
         />
         <hr />
         <InvoiceFooter2
@@ -114,17 +117,6 @@ export default class InvoiceScreen extends Component {
           calculateAmountDue={this.calculateAmountDue.bind(this)}
         />
         <div style={{ width: "90%", margin: "auto" }}>
-          {/*} <Col xs={{ size: 12 }}>
-            <Button type="submit" block>
-              Save and Close
-            </Button>
-          </Col>
-          <Col xs={{ size: 12 }}>
-            <Button type="submit" block>
-              Generate PDF
-            </Button>
-    </Col>*/}
-
           <ButtonGroup size="lg">
             <Button
               color="secondary"

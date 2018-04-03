@@ -35,6 +35,10 @@ export default class InvoiceItemsTable extends Component {
     return false;
   }
 
+  componentDidMount() {
+    this.handleSubtotalChange();
+  }
+  
   componentDidUpdate() {
     this.handleSubtotalChange();
   }

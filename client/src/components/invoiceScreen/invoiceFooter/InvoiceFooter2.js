@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import {
-  Container,
   Row,
   Col,
   Form,
@@ -116,6 +115,8 @@ export default class InvoiceFooter2 extends Component {
                 <InputGroup>
                   <Input
                     type="number"
+                    step='.01'
+                    placeholder="use 0 for no discount"
                     onBlur={this.handleDiscountChange.bind(this)}
                   />
                   <InputGroupAddon addonType="append">%</InputGroupAddon>
@@ -130,13 +131,15 @@ export default class InvoiceFooter2 extends Component {
                 <InputGroup>
                   <Input
                     type="number"
+                    step='.01'
+                    placeholder="use 0 for no tax"
                     onBlur={this.handleTaxChange.bind(this)}
                   />
                   <InputGroupAddon addonType="append">%</InputGroupAddon>
                 </InputGroup>
               </Col>
 
-              {/* shipping field increases the total plus tax -> tax is paid by the company, should be passed on to the customer */}
+              {/* shipping field increases the total plus tax -> tax is paid by the invoicing company, should be passed on to the customer */}
               <Label for="shipping" sm={1}>
                 Shipping
               </Label>
@@ -145,6 +148,8 @@ export default class InvoiceFooter2 extends Component {
                   <InputGroupAddon addonType="prepend">$</InputGroupAddon>
                   <Input
                     type="number"
+                    step='.01'
+                    placeholder="use 0 for no shipping"
                     onBlur={this.handleShippingChange.bind(this)}
                   />
                 </InputGroup>
@@ -153,6 +158,7 @@ export default class InvoiceFooter2 extends Component {
 
             <Row>
               <Col>
+              {/* grandTotal includes discount, tax, and shipping, but NOT deposit */}
                 <FormGroup row>
                   <Label for="grandTotal" sm={1}>
                     Total
@@ -161,7 +167,8 @@ export default class InvoiceFooter2 extends Component {
                   <InputGroup>
                   <InputGroupAddon addonType="prepend">$</InputGroupAddon>
                     <Input
-                      type="text"
+                      type="number"
+                      step='.01'
                       disabled
                       value={this.props.grandTotal}
                     />
@@ -179,12 +186,14 @@ export default class InvoiceFooter2 extends Component {
                   <InputGroupAddon addonType="prepend">$</InputGroupAddon>
                     <Input
                       type="number"
+                      step='.01'
                       onBlur={this.handleDepositChange.bind(this)}
                     />
                     </InputGroup>
                   </Col>
                 </FormGroup>
 
+                {/* amountDue is grandTotal less deposit */}
                 <FormGroup row>
                   <Label for="amountDue" sm={1}>
                     Amount Due
@@ -193,7 +202,8 @@ export default class InvoiceFooter2 extends Component {
                   <InputGroup>
                   <InputGroupAddon addonType="prepend">$</InputGroupAddon>
                     <Input
-                      type="text"
+                      type="number"
+                      step='.01'
                       disabled
                       value={this.props.amountDue.toFixed(2)}
                     />
@@ -204,7 +214,7 @@ export default class InvoiceFooter2 extends Component {
             </Row>
             <Row>
               <Col>
-                {/* Notes from company to customer */}
+                {/* Notes from invoicing company to customer */}
                 <FormGroup row>
                   <Label for="Notes" sm={1}>
                     Notes
@@ -215,7 +225,7 @@ export default class InvoiceFooter2 extends Component {
                   </FormGroup>
 
                   <FormGroup row>
-                  {/* repayment terms -> might pull from dueDatePicker */}
+                  {/* payment terms -> might pull from dueDatePicker later, presently filled in by hand */}
                   <Label for="Terms" sm={1}>
                     Terms
                   </Label>

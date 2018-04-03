@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import {
-  Container,
   Row,
   Col,
   Button,
@@ -84,7 +83,6 @@ export default class InvoiceHeader extends Component {
                           addonType="append"
                           isOpen={this.state.dropdownOpen}
                           toggle={this.toggleDropDown}
-                          multiline="true"
                         >
                           <DropdownToggle caret>Select Address</DropdownToggle>
                           <DropdownMenu>
