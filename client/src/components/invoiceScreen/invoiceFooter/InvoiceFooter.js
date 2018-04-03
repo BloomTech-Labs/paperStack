@@ -39,9 +39,11 @@ export default class InvoiceFooter extends Component {
   // }
 
   // tax changes by user input, passed up to state and received back
-  handleTaxChange(event) {
-    const tax = event.target.value;
+  handleTaxChange(e) {
+    const tax = e.target.value;
     const grandTotal = this.props.grandTotal;
+    const amountDue = this.props.amountDue;
+    this.props.calculateAmountDue(amountDue);
     this.props.changeTax(tax);
     this.props.calculateGrandTotal(grandTotal);
   }
@@ -49,13 +51,17 @@ export default class InvoiceFooter extends Component {
   handleDiscountChange(e) {
     const discount = e.target.value;
     const grandTotal = this.props.grandTotal;
+    const amountDue = this.props.amountDue;
+    this.props.calculateAmountDue(amountDue);
     this.props.changeDiscount(discount);
     this.props.calculateGrandTotal(grandTotal);
   }
 
   handleDepositChange(e) {
     const deposit = e.target.value;
+    const amountDue = this.props.amountDue;
     this.props.changeDeposit(deposit);
+    this.props.calculateAmountDue(amountDue);
   }
 
   handleGrandTotalChange(e) {
@@ -66,6 +72,8 @@ export default class InvoiceFooter extends Component {
   handleShippingChange(e) {
     const shipping = e.target.value;
     const grandTotal = this.props.grandTotal;
+    const amountDue = this.props.amountDue;
+    this.props.calculateAmountDue(amountDue);
     this.props.changeShipping(shipping);
     this.props.calculateGrandTotal(grandTotal);
   }
@@ -73,8 +81,15 @@ export default class InvoiceFooter extends Component {
   handleSubtotalChange(e) {
     const subtotal = e.target.value;
     const grandTotal = this.props.grandTotal;
+    const amountDue = this.props.amountDue;
+    this.props.calculateAmountDue(amountDue);
     this.props.changeSubtotal(subtotal);
     this.props.calculateGrandTotal(grandTotal);
+  }
+
+  handleAmountDueChange(e) {
+    const amountDue = this.props.amountDue;
+    this.props.calculateAmountDue(amountDue);
   }
 
   render() {
@@ -165,7 +180,7 @@ export default class InvoiceFooter extends Component {
                           />
                         </Col>
                       </FormGroup>
-                      
+
                       {/* tax increases the subtotal by x% -> for now, will be applied AFTER the discount */}
                       <FormGroup row>
                         <Label for="tax" sm={2}>
@@ -194,7 +209,7 @@ export default class InvoiceFooter extends Component {
 
                       <FormGroup row>
                         <Label for="grandTotal" sm={2}>
-                          Grand Total
+                          Total
                         </Label>
                         <Col sm={10}>
                           <Input
@@ -202,11 +217,26 @@ export default class InvoiceFooter extends Component {
                             disabled
                             placeholder={"$"}
                             value={
-                              !this.props.grandTotal ? 0 : this.props.grandTotal
+                              this.props.grandTotal
                             }
                           />
                         </Col>
                       </FormGroup>
+                      <FormGroup row>
+                      <Label for="amountDue" sm={2}>
+                        Total
+                      </Label>
+                      <Col sm={10}>
+                        <Input
+                          type="text"
+                          disabled
+                          placeholder={"$"}
+                          value={
+                            this.props.amountDue
+                          }
+                        />
+                      </Col>
+                    </FormGroup>
                     </Col>
                   </Row>
                 </Container>

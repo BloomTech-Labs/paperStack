@@ -54,28 +54,26 @@ export default class InvoiceScreen extends Component {
     this.setState({ subtotal });
   }
 
-  calculateGrandTotal(discountApplied, taxApplied) {
+  calculateGrandTotal(discountApplied, taxApplied, includesShipping) {
     discountApplied = 
       this.state.subtotal * (1 - toFixed(this.state.discount / 100, 2));
 
-    // taxApplied =
-    //   formatNumber(discountApplied) * (1 + toFixed(this.state.tax / 100, 2));
-
     taxApplied =
-      formatNumber(discountApplied) * (1 + (toFixed(this.state.tax / 100, 2)));
+      formatNumber(discountApplied) * (1 + +(toFixed(this.state.tax / 100, 2)));
 
-    // this.setState({
-    //   grandTotal:  this.totalWithTax + formatNumber(this.state.shipping)
-    // });
+    includesShipping = taxApplied + +this.state.shipping
+
     this.setState({
-      grandTotal: formatNumber(1 + formatNumber(toFixed(this.state.tax/100, 2)))
+      grandTotal: (includesShipping)
     });
   }
 
-  calculateAmountDue() {
-    this.setState({
-      amountDue: this.state.grandTotal - formatNumber(this.state.deposit)
-    });
+  calculateAmountDue(depositApplied) {
+    depositApplied = this.state.grandTotal - this.state.deposit;
+    this.setState(state => ({
+      amountDue: depositApplied
+    }));
+    console.log(typeof depositApplied)
   }
 
   render() {
@@ -87,6 +85,7 @@ export default class InvoiceScreen extends Component {
         {`shipping: ${formatMoney(this.state.shipping)}`}{" "}
         {`subtotal: ${formatMoney(localStorage.getItem("tableSubtotal"))}`}{" "}
         {`grandtotal: ${this.state.grandTotal}`}{" "}
+        {`amount Due: ${formatMoney(this.state.amountDue)}`}
         <InvoiceHeader
           amountDue={this.state.amountDue}
           calculateAmountDue={this.calculateAmountDue.bind(this)}
@@ -110,6 +109,8 @@ export default class InvoiceScreen extends Component {
           changeShipping={this.changeShipping.bind(this)}
           subtotal={this.state.subtotal}
           changeSubtotal={this.changeSubtotal.bind(this)}
+          amountDue={this.state.amountDue}
+          calculateAmountDue={this.calculateAmountDue.bind(this)}
         />
         <div style={{ width: "90%", margin: "auto" }}>
           {/*} <Col xs={{ size: 12 }}>

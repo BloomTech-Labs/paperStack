@@ -181,6 +181,7 @@ export default class InvoiceHeader extends Component {
                                 !this.props.amountDue ? "Amount Due" : this.props.amountDue
                               }
                               type="number"
+                              value={(this.props.amountDue)}
                               disabled
                             />
                           </InputGroup>
