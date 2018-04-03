@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { BootstrapTable, TableHeaderColumn } from "react-bootstrap-table";
-import formatMoney from "accounting-js/lib/formatMoney.js";
+import currency from "currency.js";
 
 import billableItems from "../billableItems.json";
 
@@ -123,12 +123,12 @@ export default class InvoiceItemsTable extends Component {
    */
   // format the rate field to be in USD, 2 decimal positions
   rateFormatter(cell, row) {
-    return formatMoney(cell);
+    return currency(cell);
   }
 
   // format the amount field to be in USD, 2 decimal positions
   amountFormatter2(cell, row) {
-    return formatMoney(row.rate * row.qty);
+    return currency(row.rate).multiply(row.qty);
   }
 
   // format the index to be a line number -> used to override the autoNumber creation, which is alphaNumeric and very long
@@ -156,7 +156,7 @@ export default class InvoiceItemsTable extends Component {
               <div>
                 <b
                   id="subtotal"
-                  onChange={this.handleSubtotalChange(total)}
+                  onChange={this.handleSubtotalChange(currency(total, {formatWithSymbol: true}).format())}
                 >
                   {total}
                 </b>

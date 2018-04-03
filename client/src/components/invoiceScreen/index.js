@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { Button, ButtonGroup } from "reactstrap";
-import formatNumber from "accounting-js/lib/formatNumber.js";
-import toFixed from "accounting-js/lib/toFixed.js";
+import currency from "currency.js";
 
 import InvoiceHeader from "./invoiceHeader/invoiceHeader";
 import InvoiceItemsTable from "./invoiceItems/InvoiceTable";
@@ -50,16 +49,18 @@ export default class InvoiceScreen extends Component {
   }
 
   calculateGrandTotal(discountApplied, taxApplied, includesShipping) {
-    discountApplied = 
-      +formatNumber(this.state.subtotal) * (1 - +formatNumber(toFixed(this.state.discount / 100, 2)));
+    discountApplied =
+      currency(this.state.subtotal).multiply(1-Number(this.state.discount/100));
 
-    taxApplied =
-      +formatNumber(discountApplied) * (1 + +formatNumber((toFixed(this.state.tax / 100, 2))));
+      taxApplied =
+      currency(discountApplied).multiply(1+Number(this.state.tax/100));
 
-    includesShipping = +formatNumber(taxApplied) + +formatNumber(this.state.shipping);
+    includesShipping =
+      // +formatNumber(taxApplied) + +formatNumber(this.state.shipping);
+      currency(taxApplied).add(this.state.shipping);
 
     this.setState({
-      grandTotal: (includesShipping)
+      grandTotal: includesShipping.format()
     });
   }
 
@@ -68,24 +69,29 @@ export default class InvoiceScreen extends Component {
   }
 
   calculateAmountDue(depositApplied) {
-    depositApplied = this.state.grandTotal - this.state.deposit;
+    depositApplied = 
+    currency(this.state.grandTotal).subtract(this.state.deposit);
     this.setState(state => ({
-      amountDue: depositApplied
+      amountDue: depositApplied.format()
     }));
-    console.log(typeof depositApplied)
   }
 
   render() {
     return (
-      <div className="invoiceForm" >
+      <div className="invoiceForm">
         {/*these are temporary until state is complete*/}
         {`tax: ${this.state.tax}% type: ${typeof this.state.tax};`}{" "}
-        {`discount: ${this.state.discount} type: ${typeof this.state.discount};`}{" "}
-        {`deposit: ${(this.state.deposit)} type: ${typeof this.state.deposit};`}{" "}
-        {`shipping: ${(this.state.shipping)} type: ${typeof this.state.shipping};`}{" "}
-        {`subtotal: ${(localStorage.getItem("tableSubtotal"))} type: ${typeof this.state.subtotal};`}{" "}
-        {`grandtotal: ${this.state.grandTotal} type: ${typeof this.state.grandTotal};`}{" "}
-        {`amount Due: ${this.state.amountDue} type: ${typeof this.state.amountDue}`}
+        {`discount: ${this.state.discount} type: ${typeof this.state
+          .discount};`}{" "}
+        {`deposit: ${this.state.deposit} type: ${typeof this.state.deposit};`}{" "}
+        {`shipping: ${this.state.shipping} type: ${typeof this.state
+          .shipping};`}{" "}
+        {`subtotal: ${localStorage.getItem("tableSubtotal")} type: ${typeof this
+          .state.subtotal};`}{" "}
+        {`grandtotal: ${this.state.grandTotal} type: ${typeof this.state
+          .grandTotal};`}{" "}
+        {`amount Due: ${this.state.amountDue} type: ${typeof this.state
+          .amountDue}`}
         <InvoiceHeader
           amountDue={this.state.amountDue}
           calculateAmountDue={this.calculateAmountDue.bind(this)}

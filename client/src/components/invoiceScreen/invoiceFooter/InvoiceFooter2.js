@@ -114,8 +114,8 @@ export default class InvoiceFooter2 extends Component {
               <Col sm={3}>
                 <InputGroup>
                   <Input
-                    type="number"
-                    step='.01'
+                    type="text"
+                    pattern='[0-9.,$]*'
                     placeholder="use 0 for no discount"
                     onBlur={this.handleDiscountChange.bind(this)}
                   />
@@ -130,7 +130,7 @@ export default class InvoiceFooter2 extends Component {
               <Col sm={3}>
                 <InputGroup>
                   <Input
-                    type="number"
+                    type="text"
                     step='.01'
                     placeholder="use 0 for no tax"
                     onBlur={this.handleTaxChange.bind(this)}
@@ -147,7 +147,7 @@ export default class InvoiceFooter2 extends Component {
                 <InputGroup>
                   <InputGroupAddon addonType="prepend">$</InputGroupAddon>
                   <Input
-                    type="number"
+                    type="text"
                     step='.01'
                     placeholder="use 0 for no shipping"
                     onBlur={this.handleShippingChange.bind(this)}
@@ -167,7 +167,7 @@ export default class InvoiceFooter2 extends Component {
                   <InputGroup>
                   <InputGroupAddon addonType="prepend">$</InputGroupAddon>
                     <Input
-                      type="number"
+                      type="text"
                       step='.01'
                       disabled
                       value={this.props.grandTotal}
@@ -185,7 +185,7 @@ export default class InvoiceFooter2 extends Component {
                   <InputGroup>
                   <InputGroupAddon addonType="prepend">$</InputGroupAddon>
                     <Input
-                      type="number"
+                      type="text"
                       step='.01'
                       onBlur={this.handleDepositChange.bind(this)}
                     />
@@ -202,10 +202,10 @@ export default class InvoiceFooter2 extends Component {
                   <InputGroup>
                   <InputGroupAddon addonType="prepend">$</InputGroupAddon>
                     <Input
-                      type="number"
+                      type="text"
                       step='.01'
                       disabled
-                      value={this.props.amountDue.toFixed(2)}
+                      value={this.props.amountDue}
                     />
                     </InputGroup>
                   </Col>
