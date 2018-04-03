@@ -1,5 +1,7 @@
+# ignore node modules
 **/node_modules
-**/server/coverage
+
+# ignore .env files
 .env
 
 # Ignore test-related files
