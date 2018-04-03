@@ -20,13 +20,9 @@ server.use(cors());
 
 require("dotenv").config();
 
-let uri =
-  "mongodb://heroku_3111qtlf:pvh7tob6jji3aaabkafnqprpje@ds231719.mlab.com:31719/heroku_3111qtlf";
-
 mongoose.Promise = global.Promise;
 mongoose
-  .connect(uri)
-  // .connect("mongodb://localhost:27017/users")
+  .connect(process.env.MONGO_URI)
   .then(function(db) {
     console.log("All your dbs belong to us!");
     server.listen(3001, function() {
