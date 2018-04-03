@@ -35,6 +35,10 @@ export default class InvoiceItemsTable extends Component {
     return false;
   }
 
+  componentDidUpdate() {
+    this.handleSubtotalChange();
+  }
+
   /* 
    * These functions edit the modal for adding new rows of data -> validators for the fields in the modal
    */
