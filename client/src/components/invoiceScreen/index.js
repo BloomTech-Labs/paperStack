@@ -6,7 +6,7 @@ import toFixed from "accounting-js/lib/toFixed.js";
 
 import InvoiceHeader from "./invoiceHeader/invoiceHeader";
 import InvoiceItemsTable from "./invoiceItems/InvoiceTable";
-import InvoiceFooter from "./invoiceFooter/InvoiceFooter";
+import InvoiceFooter2 from "./invoiceFooter/InvoiceFooter2";
 
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -34,38 +34,38 @@ export default class InvoiceScreen extends Component {
 
   generatePDF() {}
 
-  changeTax(tax) {
-    this.setState(state => ({ tax }));
+  changeSubtotal(subtotal) {
+    this.setState({ subtotal });
   }
 
   changeDiscount(discount) {
     this.setState(state => ({ discount }));
   }
 
-  changeDeposit(deposit) {
-    this.setState(state => ({ deposit }));
+  changeTax(tax) {
+    this.setState(state => ({ tax }));
   }
 
   changeShipping(shipping) {
     this.setState(state => ({ shipping }));
   }
 
-  changeSubtotal(subtotal) {
-    this.setState({ subtotal });
-  }
-
   calculateGrandTotal(discountApplied, taxApplied, includesShipping) {
     discountApplied = 
-      this.state.subtotal * (1 - toFixed(this.state.discount / 100, 2));
+      formatNumber(this.state.subtotal) * (1 - formatNumber(toFixed(this.state.discount / 100, 2)));
 
     taxApplied =
-      formatNumber(discountApplied) * (1 + +(toFixed(this.state.tax / 100, 2)));
+      formatNumber(discountApplied) * (1 + +formatNumber((toFixed(this.state.tax / 100, 2))));
 
-    includesShipping = taxApplied + +this.state.shipping
+    includesShipping = formatNumber(taxApplied) + +formatNumber(this.state.shipping);
 
     this.setState({
       grandTotal: (includesShipping)
     });
+  }
+
+  changeDeposit(deposit) {
+    this.setState(state => ({ deposit }));
   }
 
   calculateAmountDue(depositApplied) {
@@ -78,7 +78,15 @@ export default class InvoiceScreen extends Component {
 
   render() {
     return (
-      <div className="invoiceForm">
+      <div className="invoiceForm" >
+        {/*these are temporary until state is complete*/}
+        {`tax: ${this.state.tax}% type: ${typeof this.state.tax};`}{" "}
+        {`discount: ${this.state.discount} type: ${typeof this.state.discount};`}{" "}
+        {`deposit: ${(this.state.deposit)} type: ${typeof this.state.deposit};`}{" "}
+        {`shipping: ${(this.state.shipping)} type: ${typeof this.state.shipping};`}{" "}
+        {`subtotal: ${(localStorage.getItem("tableSubtotal"))} type: ${typeof this.state.subtotal};`}{" "}
+        {`grandtotal: ${this.state.grandTotal} type: ${typeof this.state.grandTotal};`}{" "}
+        {`amount Due: ${this.state.amountDue} type: ${typeof this.state.amountDue}`}
         <InvoiceHeader
           amountDue={this.state.amountDue}
           calculateAmountDue={this.calculateAmountDue.bind(this)}
@@ -89,7 +97,7 @@ export default class InvoiceScreen extends Component {
           changeSubtotal={this.changeSubtotal.bind(this)}
         />
         <hr />
-        <InvoiceFooter
+        <InvoiceFooter2
           tax={this.state.tax}
           changeTax={this.changeTax.bind(this)}
           discount={this.state.discount}

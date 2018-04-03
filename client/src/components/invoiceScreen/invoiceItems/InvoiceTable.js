@@ -35,38 +35,9 @@ export default class InvoiceItemsTable extends Component {
     return false;
   }
 
-  // componentWillMount() {
-  //   // footerData calculates the subtotal
-  //   this.footerData = [
-  //     [
-  //       {
-  //         label: "Subtotal",
-  //         columnIndex: 4,
-  //         formatter: tableData => {
-  //           let total = 0;
-  //           for (let i = 0; i < tableData.length; i++) {
-  //             total += tableData[i].qty * tableData[i].rate;
-  //           }
-  //           localStorage.setItem("tableSubtotal", total);
-  //           return (
-  //             <div>
-  //               <i
-  //                 id="subtotal"
-  //                 onChange={this.handleSubtotalChange.bind(this, total)}
-  //               >
-  //                 {total}
-  //               </i>
-  //             </div>
-  //           );
-  //         }
-  //       }
-  //     ]
-  //   ];
-  // }
-
   /* 
-    These functions edit the modal for adding new rows of data
-  */
+   * These functions edit the modal for adding new rows of data -> validators for the fields in the modal
+   */
 
   // items should not be blank, and should have at least 3 characters
   itemNameValidator = (value, row) => {
@@ -130,12 +101,18 @@ export default class InvoiceItemsTable extends Component {
     return response;
   };
 
+  /* 
+   * This pushes the table total to localStorage for use in the header/footer
+   */
   // handles the update to subtotal
   handleSubtotalChange(total) {
     const subtotal = localStorage.getItem("tableSubtotal");
     this.props.changeSubtotal(subtotal);
   }
-
+  
+  /*
+   * these edit the table itself, formatting fields
+   */
   // format the rate field to be in USD, 2 decimal positions
   rateFormatter(cell, row) {
     return formatMoney(cell);
@@ -152,6 +129,9 @@ export default class InvoiceItemsTable extends Component {
   }
 
   render() {
+  {/*
+  This creates the data for the table to render in the footer
+  */}
     const footerData = [
       [{label: "Subtotal",
     columnIndex:1},
@@ -163,7 +143,7 @@ export default class InvoiceItemsTable extends Component {
             for (let i = 0; i < tableData.length; i++) {
               total += tableData[i].qty * tableData[i].rate;
             }
-            localStorage.setItem("tableSubtotal", total);
+            localStorage.setItem("tableSubtotal", Number(total));
             return (
               <div>
                 <b
@@ -178,6 +158,7 @@ export default class InvoiceItemsTable extends Component {
         }
       ]
     ];
+
     return (
       <div className="invoiceTable" style={{ width: "90%", margin: "auto" }}>
         {/*had to link the style sheet, wasn't loading correctly*/}

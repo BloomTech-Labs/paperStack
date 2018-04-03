@@ -2,30 +2,31 @@ import React, { Component } from "react";
 import { Container, Row, Col, Form, FormGroup, Label, Input } from "reactstrap";
 
 export default class InvoiceFooter extends Component {
-  // componentDidMount() {
-  // will need this later when database is connected, for editing an existing invoice
+  componentDidMount() {
+  this.handleAmountDueChange();
+  this.handleGrandTotalChange();
   // axios calls here to retreive data
-  // }
+  }
 
   // did not give the desired result
   // shouldComponentUpdate(nextProps, nextState) {
   //   return this.props.tax !== nextProps.tax || this.props.discount !== nextProps.discount || this.props.deposit !== nextProps.deposit || this.props.shipping !== nextProps.shipping || this.props.grandTotal !== nextProps.grandTotal
   // }
 
-  getDerivedStateFromProps(nextProps) {
-    if (nextProps.discount !== this.props.discount) {
-      this.setState({ discount: nextProps.discount });
-    }
-    if (nextProps.tax !== this.props.tax) {
-      this.setState({ tax: nextProps.tax });
-    }
-    if (nextProps.shipping !== this.props.shipping) {
-      this.setState({ shipping: nextProps.shipping });
-    }
-    if (nextProps.deposit !== this.props.deposit) {
-      this.setState({ deposit: nextProps.deposit });
-    }
-  }
+  // getDerivedStateFromProps(nextProps) {
+  //   if (nextProps.discount !== this.props.discount) {
+  //     this.setState({ discount: nextProps.discount });
+  //   }
+  //   if (nextProps.tax !== this.props.tax) {
+  //     this.setState({ tax: nextProps.tax });
+  //   }
+  //   if (nextProps.shipping !== this.props.shipping) {
+  //     this.setState({ shipping: nextProps.shipping });
+  //   }
+  //   if (nextProps.deposit !== this.props.deposit) {
+  //     this.setState({ deposit: nextProps.deposit });
+  //   }
+  // }
 
   // componentDidUpdate(_, previousState) {
   //   // might not use this exploring componentWillReceiveProps
@@ -94,7 +95,7 @@ export default class InvoiceFooter extends Component {
 
   render() {
     return (
-      <div>
+      <div style={{ width: "90%", margin: "auto" }}>
         {/* this container holds everything */}
         <Container>
           <Row>
@@ -224,7 +225,7 @@ export default class InvoiceFooter extends Component {
                       </FormGroup>
                       <FormGroup row>
                       <Label for="amountDue" sm={2}>
-                        Total
+                        Amount Due
                       </Label>
                       <Col sm={10}>
                         <Input
