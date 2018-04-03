@@ -1,5 +1,5 @@
 **/node_modules
-**/coverage
+**/server/coverage
 .env
 
 # Ignore test-related files
