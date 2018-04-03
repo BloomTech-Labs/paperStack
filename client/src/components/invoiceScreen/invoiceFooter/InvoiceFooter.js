@@ -164,7 +164,7 @@ export default class InvoiceFooter extends Component {
                           <Input
                             type="number"
                             // placeholder="%"
-                            onChange={this.handleDiscountChange.bind(this)}
+                            onBlur={this.handleDiscountChange.bind(this)}
                           />
                         </Col>
 
@@ -176,7 +176,7 @@ export default class InvoiceFooter extends Component {
                           <Input
                             type="number"
                             placeholder="$"
-                            onChange={this.handleDepositChange.bind(this)}
+                            onBlur={this.handleDepositChange.bind(this)}
                           />
                         </Col>
                       </FormGroup>
@@ -190,7 +190,7 @@ export default class InvoiceFooter extends Component {
                           <Input
                             type="number"
                             placeholder="%"
-                            onChange={this.handleTaxChange.bind(this)}
+                            onBlur={this.handleTaxChange.bind(this)}
                           />
                         </Col>
 
@@ -202,7 +202,7 @@ export default class InvoiceFooter extends Component {
                           <Input
                             type="number"
                             placeholder="$"
-                            onChange={this.handleShippingChange.bind(this)}
+                            onBlur={this.handleShippingChange.bind(this)}
                           />
                         </Col>
                       </FormGroup>

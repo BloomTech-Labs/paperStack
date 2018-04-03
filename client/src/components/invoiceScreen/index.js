@@ -79,13 +79,6 @@ export default class InvoiceScreen extends Component {
   render() {
     return (
       <div className="invoiceForm">
-        {/*these are temporary until state is complete*/}
-        {`tax: ${this.state.tax}%`} {`discount: ${this.state.discount}`}{" "}
-        {`deposit: ${formatMoney(this.state.deposit)}`}{" "}
-        {`shipping: ${formatMoney(this.state.shipping)}`}{" "}
-        {`subtotal: ${formatMoney(localStorage.getItem("tableSubtotal"))}`}{" "}
-        {`grandtotal: ${this.state.grandTotal}`}{" "}
-        {`amount Due: ${formatMoney(this.state.amountDue)}`}
         <InvoiceHeader
           amountDue={this.state.amountDue}
           calculateAmountDue={this.calculateAmountDue.bind(this)}
