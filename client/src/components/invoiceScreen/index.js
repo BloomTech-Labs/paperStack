@@ -13,7 +13,7 @@ export default class InvoiceScreen extends Component {
     super(props);
 
     this.state = {
-      subtotal: localStorage.getItem("tableSubtotal"),
+      subtotal: sessionStorage.getItem("tableSubtotal"),
       tax: 0,
       discount: 0,
       deposit: 0,
@@ -32,9 +32,7 @@ export default class InvoiceScreen extends Component {
 
   generatePDF() {}
 
-  /*this.setState((prevState) => {
-  return {count: prevState.count + 1};
-})*/
+  // pass function as callback to mimic synchronous setState: https://vasanthk.gitbooks.io/react-bits/patterns/19.async-nature-of-setState.html
   changeSubtotal(subtotal) {
     this.setState({ subtotal }, () => { this.recalculate() }, () => { this.calculateGrandTotal() });
   }

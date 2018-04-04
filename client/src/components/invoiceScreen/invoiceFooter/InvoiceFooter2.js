@@ -18,45 +18,15 @@ export default class InvoiceFooter2 extends Component {
     // axios calls here to retreive data
   }
 
-  // did not give the desired result
-  // shouldComponentUpdate(nextProps, nextState) {
-  //   return this.props.tax !== nextProps.tax || this.props.discount !== nextProps.discount || this.props.deposit !== nextProps.deposit || this.props.shipping !== nextProps.shipping || this.props.grandTotal !== nextProps.grandTotal
-  // }
-
-  getDerivedStateFromProps(nextProps) {
-    if (nextProps.discount !== this.props.discount) {
-      this.setState({ discount: nextProps.discount });
-    }
-    if (nextProps.tax !== this.props.tax) {
-      this.setState({ tax: nextProps.tax });
-    }
-    if (nextProps.shipping !== this.props.shipping) {
-      this.setState({ shipping: nextProps.shipping });
-    }
-    if (nextProps.deposit !== this.props.deposit) {
-      this.setState({ deposit: nextProps.deposit });
-    }
-  }
-
-  // componentDidUpdate(_, previousState) {
-  //   // might not use this exploring componentWillReceiveProps
-  //   // but is used in cases where you don't know why something is updating
-  //   console.log(previousState);
-  //   console.log(this.state)
-  // }
-
   // componentWillUnmount() {
   //   // use this later to save the current state of the invoice when we go change the logo
   // }
 
   // tax changes by user input, passed up to state and received back
   handleTaxChange(e) {
-    const tax = e.target.value;
-    const grandTotal = this.props.grandTotal;
-    const amountDue = this.props.amountDue;
-    this.props.calculateAmountDue(amountDue);
-    this.props.changeTax(tax);
-    this.props.calculateGrandTotal(grandTotal);
+    this.props.changeTax(e.target.value);
+    this.props.calculateGrandTotal(this.props.grandTotal);
+    this.props.calculateAmountDue(this.props.amountDue);
   }
 
   handleDiscountChange(e) {
@@ -115,9 +85,9 @@ export default class InvoiceFooter2 extends Component {
               <Col sm={3}>
                 <InputGroup>
                   <Input
-                    type="text"
-                    pattern='[0-9.,$]*'
-                    placeholder="use 0 for no discount"
+                    type="number"
+                    step='0.01'
+                    placeholder="reduces the subtotal by a percentage"
                     onBlur={this.handleDiscountChange.bind(this)}
                     onFocusOut={this.handleGrandTotalChange.bind(this)}
                   />
@@ -132,9 +102,9 @@ export default class InvoiceFooter2 extends Component {
               <Col sm={3}>
                 <InputGroup>
                   <Input
-                    type="text"
+                    type="number"
                     step='.01'
-                    placeholder="use 0 for no tax"
+                    placeholder="increases by your tax rate"
                     onBlur={this.handleTaxChange.bind(this)}
                   />
                   <InputGroupAddon addonType="append">%</InputGroupAddon>
@@ -149,9 +119,9 @@ export default class InvoiceFooter2 extends Component {
                 <InputGroup>
                   <InputGroupAddon addonType="prepend">$</InputGroupAddon>
                   <Input
-                    type="text"
+                    type="number"
                     step='.01'
-                    placeholder="use 0 for no shipping"
+                    placeholder="your full shipping charges"
                     onBlur={this.handleShippingChange.bind(this)}
                   />
                 </InputGroup>
@@ -170,7 +140,6 @@ export default class InvoiceFooter2 extends Component {
                   <InputGroupAddon addonType="prepend">$</InputGroupAddon>
                     <Input
                       type="text"
-                      step='.01'
                       disabled
                       value={this.props.grandTotal}
                     />
@@ -187,8 +156,9 @@ export default class InvoiceFooter2 extends Component {
                   <InputGroup>
                   <InputGroupAddon addonType="prepend">$</InputGroupAddon>
                     <Input
-                      type="text"
+                      type="number"
                       step='.01'
+                      placeholder='amount pre-paid by the customer, if any'
                       onBlur={this.handleDepositChange.bind(this)}
                     />
                     </InputGroup>
@@ -205,7 +175,6 @@ export default class InvoiceFooter2 extends Component {
                   <InputGroupAddon addonType="prepend">$</InputGroupAddon>
                     <Input
                       type="text"
-                      step='.01'
                       disabled
                       value={this.props.amountDue}
                     />
@@ -222,7 +191,7 @@ export default class InvoiceFooter2 extends Component {
                     Notes
                   </Label>
                   <Col sm={11}>
-                    <Input type="text" />
+                    <Input type="text" placeholder='any notes for the customer' />
                   </Col>
                   </FormGroup>
 
@@ -232,7 +201,7 @@ export default class InvoiceFooter2 extends Component {
                     Terms
                   </Label>
                   <Col sm={11}>
-                    <Input type="text" />
+                    <Input type="text" placeholder='payment terms' />
                   </Col>
                 </FormGroup>
               </Col>

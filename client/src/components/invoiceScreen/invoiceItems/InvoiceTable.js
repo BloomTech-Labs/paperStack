@@ -111,11 +111,11 @@ export default class InvoiceItemsTable extends Component {
   };
 
   /* 
-   * This pushes the table total to localStorage for use in the header/footer
+   * This pushes the table total to sessionStorage for use in the header/footer
    */
   // handles the update to subtotal
   handleSubtotalChange(total) {
-    const subtotal = localStorage.getItem("tableSubtotal");
+    const subtotal = sessionStorage.getItem("tableSubtotal");
     this.props.changeSubtotal(subtotal);
   }
   
@@ -152,7 +152,7 @@ export default class InvoiceItemsTable extends Component {
             for (let i = 0; i < tableData.length; i++) {
               total += tableData[i].qty * tableData[i].rate;
             }
-            localStorage.setItem("tableSubtotal", Number(total));
+            sessionStorage.setItem("tableSubtotal", Number(total));
             return (
               <div>
                 <b
@@ -182,7 +182,7 @@ export default class InvoiceItemsTable extends Component {
           hover
           condensed
           footerData={footerData}
-          footer // <- cannot be disbled or updated subtotal will not be pushed to localStorage
+          footer // <- cannot be disbled or updated subtotal will not be pushed to sessionStorage
           options={options}
           version="4"
           deleteRow={true}
