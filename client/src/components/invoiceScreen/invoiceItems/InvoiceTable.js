@@ -31,6 +31,7 @@ export default class InvoiceItemsTable extends Component {
   }
 
   // see https://engineering.musefind.com/how-to-benchmark-react-components-the-quick-and-dirty-guide-f595baf1014c for more information on why this is being used to prevent un-necessary re-renders (causes loss of line items which weren't saved)
+  // lies ^^ is a good article, but this is where I got it from https://engineering.musefind.com/react-lifecycle-methods-how-and-when-to-use-them-2111a1b692b1
   shouldComponentUpdate(nextProps, nextState) {
     return false;
   }

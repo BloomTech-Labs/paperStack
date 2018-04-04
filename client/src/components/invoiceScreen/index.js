@@ -32,12 +32,15 @@ export default class InvoiceScreen extends Component {
 
   generatePDF() {}
 
+  /*this.setState((prevState) => {
+  return {count: prevState.count + 1};
+})*/
   changeSubtotal(subtotal) {
-    this.setState({ subtotal });
+    this.setState(prevState => {return { subtotal: subtotal }});
   }
 
   changeDiscount(discount) {
-    this.setState(state => ({ discount }));
+    this.setState(prevState => {return { discount }});
   }
 
   changeTax(tax) {
@@ -62,10 +65,11 @@ export default class InvoiceScreen extends Component {
     this.setState({
       grandTotal: includesShipping.format()
     });
+    this.calculateAmountDue();
   }
 
   changeDeposit(deposit) {
-    this.setState(state => ({ deposit }));
+    this.setState({ deposit });
   }
 
   calculateAmountDue(depositApplied) {

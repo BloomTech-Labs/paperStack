@@ -11,6 +11,7 @@ import {
 } from "reactstrap";
 
 export default class InvoiceFooter2 extends Component {
+
   componentDidMount() {
     this.handleAmountDueChange();
     this.handleGrandTotalChange();
@@ -118,6 +119,7 @@ export default class InvoiceFooter2 extends Component {
                     pattern='[0-9.,$]*'
                     placeholder="use 0 for no discount"
                     onBlur={this.handleDiscountChange.bind(this)}
+                    onFocusOut={this.handleGrandTotalChange.bind(this)}
                   />
                   <InputGroupAddon addonType="append">%</InputGroupAddon>
                 </InputGroup>
