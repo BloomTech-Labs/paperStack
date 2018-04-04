@@ -1,0 +1,11 @@
+.nav-link {
+  cursor: pointer;
+}
+
+.navbar-brand {
+  cursor: pointer;
+}
+
+.navbar-toggler:focus {
+  outline: none;
+}

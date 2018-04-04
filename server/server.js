@@ -2,8 +2,8 @@ const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const cors = require("cors");
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 const STATUS_USER_ERROR = 422;
 const STATUS_SERVER_ERROR = 500;
 const STATUS_UNAUTHORIZED_ERROR = 401;
@@ -18,11 +18,11 @@ const server = express();
 server.use(bodyParser.json());
 server.use(cors());
 
-require('dotenv').config();
+require("dotenv").config();
 
 mongoose.Promise = global.Promise;
 mongoose
-  .connect("mongodb://localhost:27017/users")
+  .connect(process.env.MONGO_URI)
   .then(function(db) {
     console.log("All your dbs belong to us!");
     server.listen(3001, function() {
@@ -37,18 +37,21 @@ mongoose
  * CRUD for Users
  */
 
-  let userName, email, hashPassword;
+let userName, email, hashPassword;
 
 /**
  * Update a User
  */
-server.put('/users/:id', function(req, res) {
+server.put("/users/:id", function(req, res) {
   const { dateAccountOpened, userName, email, hashPassword } = req.body;
-  Users.findByIdAndUpdate(req.params.id,{$set:req.body}, function(err, users) {
+  Users.findByIdAndUpdate(req.params.id, { $set: req.body }, function(
+    err,
+    users
+  ) {
     if (err) {
       res.status(STATUS_USER_ERROR).json({ error: "Could not update user" });
     } else {
-      res.status(200).json({ success: "User updated!"});
+      res.status(200).json({ success: "User updated!" });
     }
   });
 });
@@ -88,7 +91,7 @@ server.delete("/users/:id", function(req, res) {
     if (err) {
       res.status(STATUS_USER_ERROR).json({ error: "Could not delete user" });
     } else {
-      res.status(200).json({ success: "User deleted!"});
+      res.status(200).json({ success: "User deleted!" });
     }
   });
 });
@@ -97,7 +100,14 @@ server.delete("/users/:id", function(req, res) {
  * CRUD for Customers
  */
 
-let custName, custPhoneNbr, custEmail, custStreetAddress, custCity, custState, custCountry, custZipCode;
+let custName,
+  custPhoneNbr,
+  custEmail,
+  custStreetAddress,
+  custCity,
+  custState,
+  custCountry,
+  custZipCode;
 
 /**
  * Post Customers
@@ -134,13 +144,27 @@ server.post("/customers", function(req, res) {
 /**
  * Update a Customer
  */
-server.put('/customers/:id', function(req, res) {
-  const { custName, custPhoneNbr, custEmail, custStreetAddress, custCity, custState, custCountry, custZipCode } = req.body;
-  Customers.findByIdAndUpdate(req.params.id,{$set:req.body}, function(err, customers) {
+server.put("/customers/:id", function(req, res) {
+  const {
+    custName,
+    custPhoneNbr,
+    custEmail,
+    custStreetAddress,
+    custCity,
+    custState,
+    custCountry,
+    custZipCode
+  } = req.body;
+  Customers.findByIdAndUpdate(req.params.id, { $set: req.body }, function(
+    err,
+    customers
+  ) {
     if (err) {
-      res.status(STATUS_USER_ERROR).json({ error: "Could not update customer" });
+      res
+        .status(STATUS_USER_ERROR)
+        .json({ error: "Could not update customer" });
     } else {
-      res.status(200).json({ success: "Customer updated!"});
+      res.status(200).json({ success: "Customer updated!" });
     }
   });
 });
@@ -165,7 +189,9 @@ server.get("/customers/:id", function(req, res) {
   const { id } = req.params;
   Customers.findById(id, function(err, customers) {
     if (err) {
-      res.status(STATUS_USER_ERROR).json({ error: "Could not retrieve customer" });
+      res
+        .status(STATUS_USER_ERROR)
+        .json({ error: "Could not retrieve customer" });
     } else {
       res.status(200).json(customers);
     }
@@ -178,9 +204,11 @@ server.delete("/customers/:id", function(req, res) {
   const { id } = req.params;
   Customers.findByIdAndRemove(id, function(err, customers) {
     if (err) {
-      res.status(STATUS_USER_ERROR).json({ error: "Could not delete customer" });
+      res
+        .status(STATUS_USER_ERROR)
+        .json({ error: "Could not delete customer" });
     } else {
-      res.status(200).json({ success: "Customer deleted!"});
+      res.status(200).json({ success: "Customer deleted!" });
     }
   });
 });
@@ -223,13 +251,16 @@ server.post("/invoices", function(req, res) {
 /**
  * Update an Invoice
  */
-server.put('/invoices/:id', function(req, res) {
-  const { invNumber, invDate, invDueDate, invComments } = req.body
-  Invoices.findByIdAndUpdate(req.params.id,{$set:req.body}, function(err, invoices) {
+server.put("/invoices/:id", function(req, res) {
+  const { invNumber, invDate, invDueDate, invComments } = req.body;
+  Invoices.findByIdAndUpdate(req.params.id, { $set: req.body }, function(
+    err,
+    invoices
+  ) {
     if (err) {
       res.status(STATUS_USER_ERROR).json({ error: "Could not update invoice" });
     } else {
-      res.status(200).json({ success: "Invoice updated!"});
+      res.status(200).json({ success: "Invoice updated!" });
     }
   });
 });
@@ -254,7 +285,9 @@ server.get("/invoices/:id", function(req, res) {
   const { id } = req.params;
   Invoices.findById(id, function(err, invoices) {
     if (err) {
-      res.status(STATUS_USER_ERROR).json({ error: "Could not retrieve invoice" });
+      res
+        .status(STATUS_USER_ERROR)
+        .json({ error: "Could not retrieve invoice" });
     } else {
       res.status(200).json(invoices);
     }
@@ -269,7 +302,7 @@ server.delete("/invoices/:id", function(req, res) {
     if (err) {
       res.status(STATUS_USER_ERROR).json({ error: "Could not delete invoice" });
     } else {
-      res.status(200).json({ success: "Invoice deleted!"});
+      res.status(200).json({ success: "Invoice deleted!" });
     }
   });
 });
@@ -278,7 +311,14 @@ server.delete("/invoices/:id", function(req, res) {
  * CRUD for FinTran
  */
 
-let invId, transDate, transSubtotal, transDisc, transTax, transShipping, transAmountPaid, transComment;
+let invId,
+  transDate,
+  transSubtotal,
+  transDisc,
+  transTax,
+  transShipping,
+  transAmountPaid,
+  transComment;
 
 /**
  * Post FinTran
@@ -316,13 +356,25 @@ server.post("/fintran", function(req, res) {
 /**
  * Update a FinTran
  */
-server.put('/fintran/:id', function(req, res) {
-  const { transDate, transDisc, transTax, transShipping, transAmountPaid, transComment } = req.body;
-  FinTran.findByIdAndUpdate(req.params.id,{$set:req.body}, function(err, fintran) {
+server.put("/fintran/:id", function(req, res) {
+  const {
+    transDate,
+    transDisc,
+    transTax,
+    transShipping,
+    transAmountPaid,
+    transComment
+  } = req.body;
+  FinTran.findByIdAndUpdate(req.params.id, { $set: req.body }, function(
+    err,
+    fintran
+  ) {
     if (err) {
-      res.status(STATUS_USER_ERROR).json({ error: "Could not update transaction" });
+      res
+        .status(STATUS_USER_ERROR)
+        .json({ error: "Could not update transaction" });
     } else {
-      res.status(200).json({ success: "Transaction updated!"});
+      res.status(200).json({ success: "Transaction updated!" });
     }
   });
 });
@@ -347,7 +399,9 @@ server.get("/fintran/:id", function(req, res) {
   const { id } = req.params;
   FinTran.findById(id, function(err, fintran) {
     if (err) {
-      res.status(STATUS_USER_ERROR).json({ error: "Could not retrieve transaction" });
+      res
+        .status(STATUS_USER_ERROR)
+        .json({ error: "Could not retrieve transaction" });
     } else {
       res.status(200).json(fintran);
     }
@@ -360,9 +414,11 @@ server.delete("/fintran/:id", function(req, res) {
   const { id } = req.params;
   FinTran.findByIdAndRemove(id, function(err, fintran) {
     if (err) {
-      res.status(STATUS_USER_ERROR).json({ error: "Could not delete transaction" });
+      res
+        .status(STATUS_USER_ERROR)
+        .json({ error: "Could not delete transaction" });
     } else {
-      res.status(200).json({ success: "Transaction deleted!"});
+      res.status(200).json({ success: "Transaction deleted!" });
     }
   });
 });
@@ -405,13 +461,18 @@ server.post("/invline", function(req, res) {
 /**
  * Update a InvLine
  */
-server.put('/invline/:id', function(req, res) {
+server.put("/invline/:id", function(req, res) {
   const { itemName, itemQuantity, itemRate, invNotes } = req.body;
-  InvLine.findByIdAndUpdate(req.params.id,{$set:req.body}, function(err, invline) {
+  InvLine.findByIdAndUpdate(req.params.id, { $set: req.body }, function(
+    err,
+    invline
+  ) {
     if (err) {
-      res.status(STATUS_USER_ERROR).json({ error: "Could not update line item" });
+      res
+        .status(STATUS_USER_ERROR)
+        .json({ error: "Could not update line item" });
     } else {
-      res.status(200).json({ success: "Line item updated!"});
+      res.status(200).json({ success: "Line item updated!" });
     }
   });
 });
@@ -436,7 +497,9 @@ server.get("/invline/:id", function(req, res) {
   const { id } = req.params;
   InvLine.findById(id, function(err, invline) {
     if (err) {
-      res.status(STATUS_USER_ERROR).json({ error: "Could not retrieve line item" });
+      res
+        .status(STATUS_USER_ERROR)
+        .json({ error: "Could not retrieve line item" });
     } else {
       res.status(200).json(invline);
     }
@@ -449,9 +512,11 @@ server.delete("/invline/:id", function(req, res) {
   const { id } = req.params;
   InvLine.findByIdAndRemove(id, function(err, invline) {
     if (err) {
-      res.status(STATUS_USER_ERROR).json({ error: "Could not delete line item" });
+      res
+        .status(STATUS_USER_ERROR)
+        .json({ error: "Could not delete line item" });
     } else {
-      res.status(200).json({ success: "Line item deleted!"});
+      res.status(200).json({ success: "Line item deleted!" });
     }
   });
 });
@@ -467,8 +532,9 @@ const BCRYPT_COST = 11;
 const hashedPassword = (req, res, next) => {
   const { password } = req.body;
   if (!password) {
-    return res.status(STATUS_USER_ERROR)
-              .json({ error: "Password can\'t be blank" });
+    return res
+      .status(STATUS_USER_ERROR)
+      .json({ error: "Password can't be blank" });
   }
   bcrypt
     .hash(password, BCRYPT_COST)
@@ -488,26 +554,27 @@ const hashedPassword = (req, res, next) => {
 server.post("/new-user", hashedPassword, (req, res) => {
   const { email } = req.body;
   if (!email) {
-    return res.status(STATUS_USER_ERROR)
-              .json({ error: "Email is required" });
+    return res.status(STATUS_USER_ERROR).json({ error: "Email is required" });
   }
   // since our users can disable js on the client
   // and email address serves as a unique username
   // this validation will be enough
   const isEmailValid = /^(?:[a-z0-9!#$%&amp;'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&amp;'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])$/;
   if (!isEmailValid.test(email)) {
-    return res.status(STATUS_USER_ERROR)
-              .json({ error: "The Email Address is in an invalid format." });
+    return res
+      .status(STATUS_USER_ERROR)
+      .json({ error: "The Email Address is in an invalid format." });
   }
   const hashPassword = req.password;
   const newUser = new Users({ email, hashPassword });
   newUser.save((err, savedUser) => {
     if (err) {
-      if (err.code === 11000) { 
-        return res.status(409).json({ error: "This email is already taken" }) 
+      if (err.code === 11000) {
+        return res.status(409).json({ error: "This email is already taken" });
       }
-      return res.status(STATUS_SERVER_ERROR)
-                .json({ error: "User wasn't saved to the database" });
+      return res
+        .status(STATUS_SERVER_ERROR)
+        .json({ error: "User wasn't saved to the database" });
     }
     const token = jwt.sign({ id: savedUser._id }, process.env.SECRET);
     res.status(200).send({ token });
@@ -521,20 +588,23 @@ server.post("/new-user", hashedPassword, (req, res) => {
 server.post("/login", (req, res) => {
   const { email, password } = req.body;
   if (!email) {
-    return res.status(STATUS_USER_ERROR)
-              .json({ error: "Email can't be blank" });
+    return res
+      .status(STATUS_USER_ERROR)
+      .json({ error: "Email can't be blank" });
   }
   if (!password) {
-    return res.status(STATUS_USER_ERROR)
-              .json({ error: "Password can't be blank" });
+    return res
+      .status(STATUS_USER_ERROR)
+      .json({ error: "Password can't be blank" });
   }
   Users.findOne({ email }, (err, user) => {
     if (err || user === null) {
-      return res.status(STATUS_SERVER_ERROR)
-                .json({ error: "Incorrect email/password combination" });
+      return res
+        .status(STATUS_SERVER_ERROR)
+        .json({ error: "Incorrect email/password combination" });
     }
     const hashedPw = user.hashPassword;
-    bcrypt 
+    bcrypt
       .compare(password, hashedPw)
       .then(response => {
         if (!response) throw new Error("Password hashes weren't compared");
@@ -544,8 +614,9 @@ server.post("/login", (req, res) => {
         res.status(200).send({ token });
       })
       .catch(error => {
-        res.status(STATUS_SERVER_ERROR)
-           .json({ error: "Incorrect creditentials" });
+        res
+          .status(STATUS_SERVER_ERROR)
+          .json({ error: "Incorrect creditentials" });
       });
   });
 });
@@ -555,10 +626,14 @@ server.post("/login", (req, res) => {
  */
 
 server.get("/jwt", (req, res) => {
-  const tkn = req.get('Authorization');
-  if (!tkn) return res.status(STATUS_UNAUTHORIZED_ERROR).json({ authenticated: false });
+  const tkn = req.get("Authorization");
+  if (!tkn)
+    return res.status(STATUS_UNAUTHORIZED_ERROR).json({ authenticated: false });
   jwt.verify(tkn, process.env.SECRET, (err, decoded) => {
-    if (err) return res.status(STATUS_UNAUTHORIZED_ERROR).json({ authenticated: false });
+    if (err)
+      return res
+        .status(STATUS_UNAUTHORIZED_ERROR)
+        .json({ authenticated: false });
     res.status(200).json({ authenticated: true });
   });
 });

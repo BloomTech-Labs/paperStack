@@ -3,7 +3,6 @@
     "version": "0.1.0",
     "private": true,
     "dependencies": {
-        "accounting-js": "^1.1.1",
         "axios": "^0.18.0",
         "bootstrap": "^4.0.0",
         "currency.js": "^1.1.1",
