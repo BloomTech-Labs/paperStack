@@ -13,8 +13,6 @@ import {
 export default class InvoiceFooter2 extends Component {
 
   componentDidMount() {
-    this.handleAmountDueChange();
-    this.handleGrandTotalChange();
     // axios calls here to retreive data
   }
 
@@ -30,47 +28,34 @@ export default class InvoiceFooter2 extends Component {
   }
 
   handleDiscountChange(e) {
-    const discount = e.target.value;
-    const grandTotal = this.props.grandTotal;
-    const amountDue = this.props.amountDue;
-    this.props.calculateAmountDue(amountDue);
-    this.props.changeDiscount(discount);
-    this.props.calculateGrandTotal(grandTotal);
+    this.props.changeDiscount(e.target.value);
+    this.props.calculateGrandTotal(this.props.grandTotal);
+    this.props.calculateAmountDue(this.props.amountDue);
   }
 
   handleDepositChange(e) {
-    const deposit = e.target.value;
-    const amountDue = this.props.amountDue;
-    this.props.changeDeposit(deposit);
-    this.props.calculateAmountDue(amountDue);
+    this.props.changeDeposit(e.target.value);
+    this.props.calculateAmountDue(this.props.amountDue);
   }
 
   handleGrandTotalChange(e) {
-    const grandTotal = this.props.grandTotal;
-    this.props.calculateGrandTotal(grandTotal);
+    this.props.calculateGrandTotal(this.props.grandTotal);
   }
 
   handleShippingChange(e) {
-    const shipping = e.target.value;
-    const grandTotal = this.props.grandTotal;
-    const amountDue = this.props.amountDue;
-    this.props.calculateAmountDue(amountDue);
-    this.props.changeShipping(shipping);
-    this.props.calculateGrandTotal(grandTotal);
+    this.props.changeShipping(e.target.value);
+    this.props.calculateGrandTotal(this.props.grandTotal);
+    this.props.calculateAmountDue(this.props.amountDue);
   }
 
   handleSubtotalChange(e) {
-    const subtotal = e.target.value;
-    const grandTotal = this.props.grandTotal;
-    const amountDue = this.props.amountDue;
-    this.props.calculateAmountDue(amountDue);
-    this.props.changeSubtotal(subtotal);
-    this.props.calculateGrandTotal(grandTotal);
+    this.props.changeSubtotal(e.target.value);
+    this.props.calculateGrandTotal(this.props.grandTotal);
+    this.props.calculateAmountDue(this.props.amountDue);
   }
 
   handleAmountDueChange(e) {
-    const amountDue = this.props.amountDue;
-    this.props.calculateAmountDue(amountDue);
+    this.props.calculateAmountDue(this.props.amountDue);
   }
 
   render() {
@@ -85,6 +70,7 @@ export default class InvoiceFooter2 extends Component {
               <Col sm={3}>
                 <InputGroup>
                   <Input
+                    name="discount"
                     type="number"
                     step='0.01'
                     placeholder="reduces the subtotal by a percentage"
@@ -102,6 +88,7 @@ export default class InvoiceFooter2 extends Component {
               <Col sm={3}>
                 <InputGroup>
                   <Input
+                    name="tax"
                     type="number"
                     step='.01'
                     placeholder="increases by your tax rate"
@@ -119,6 +106,7 @@ export default class InvoiceFooter2 extends Component {
                 <InputGroup>
                   <InputGroupAddon addonType="prepend">$</InputGroupAddon>
                   <Input
+                    name='shipping'
                     type="number"
                     step='.01'
                     placeholder="your full shipping charges"
@@ -139,6 +127,7 @@ export default class InvoiceFooter2 extends Component {
                   <InputGroup>
                   <InputGroupAddon addonType="prepend">$</InputGroupAddon>
                     <Input
+                      name='grandTotal'
                       type="text"
                       disabled
                       value={this.props.grandTotal}
@@ -156,6 +145,7 @@ export default class InvoiceFooter2 extends Component {
                   <InputGroup>
                   <InputGroupAddon addonType="prepend">$</InputGroupAddon>
                     <Input
+                      name='deposit'
                       type="number"
                       step='.01'
                       placeholder='amount pre-paid by the customer, if any'
@@ -174,6 +164,7 @@ export default class InvoiceFooter2 extends Component {
                   <InputGroup>
                   <InputGroupAddon addonType="prepend">$</InputGroupAddon>
                     <Input
+                      name='amountDue'
                       type="text"
                       disabled
                       value={this.props.amountDue}
@@ -191,7 +182,10 @@ export default class InvoiceFooter2 extends Component {
                     Notes
                   </Label>
                   <Col sm={11}>
-                    <Input type="text" placeholder='any notes for the customer' />
+                    <Input 
+                      name='notes'
+                      type="text" 
+                      placeholder='any notes for the customer' />
                   </Col>
                   </FormGroup>
 
@@ -201,7 +195,10 @@ export default class InvoiceFooter2 extends Component {
                     Terms
                   </Label>
                   <Col sm={11}>
-                    <Input type="text" placeholder='payment terms' />
+                    <Input 
+                      name='terms'
+                      type="text" 
+                      placeholder='payment terms' />
                   </Col>
                 </FormGroup>
               </Col>

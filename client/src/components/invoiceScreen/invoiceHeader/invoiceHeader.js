@@ -32,6 +32,10 @@ export default class InvoiceHeader extends Component {
     };
   }
 
+  handleInvoiceNumberChange = event => {
+    this.props.changeInvoiceNumber(event.target.value)
+  }
+
   handleAmountDueChange(event) {
     const amountDue = event.target.value;
     this.props.calculateAmountDue(amountDue);
@@ -126,7 +130,7 @@ export default class InvoiceHeader extends Component {
                         name="invoiceNumber"
                         id="invoiceNumber"
                         placeholder="Invoice #"
-                        onChange={this.handleAmountDueChange.bind(this)}
+                        onBlur={this.handleInvoiceNumberChange}
                       />
                     </Col>
                   </FormGroup>
