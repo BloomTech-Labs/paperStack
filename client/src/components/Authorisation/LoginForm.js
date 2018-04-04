@@ -38,7 +38,7 @@ class LoginForm extends Component {
       .post(`http://localhost:3001/login`, { email, password })
       .then((res) => {
         localStorage.setItem('tkn', res.data.token);
-        this.props.history.push('/preview');
+        this.props.history.push('/invoices');
       })
       .catch((err) => {
         const message = err.response.data.error;

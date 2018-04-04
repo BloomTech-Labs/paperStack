@@ -6,6 +6,9 @@ import LandingPage from './components/LandingPage';
 import Authorisation from './components/Authorisation';
 import RequireAuth from './components/RequireAuthHOC';
 import InvoiceList from './components/InvoiceList';
+import InvoicePage from './components/InvoicePage';
+import Billing from './components/Billing';
+import Settings from './components/Settings';
 import NotFound from './components/NotFound';
 
 class App extends Component {
@@ -15,7 +18,10 @@ class App extends Component {
         <Switch>
           <Route exact path="/" component={LandingPage} />
           <Route path="/authorisation" component={Authorisation} />
-          <Route path="/preview" component={RequireAuth(InvoiceList)} />
+          <Route path="/invoices" component={RequireAuth(InvoiceList)} />
+          <Route path="/new" component={RequireAuth(InvoicePage)} />
+          <Route path="/billing" component={RequireAuth(Billing)} />
+          <Route path="/settings" component={RequireAuth(Settings)} />
           <Route component={NotFound} />
         </Switch>
       </Router>
