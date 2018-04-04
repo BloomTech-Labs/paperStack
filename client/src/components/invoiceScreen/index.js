@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Button, ButtonGroup } from "reactstrap";
 import currency from "currency.js";
-import axios from 'axios';
+import axios from "axios";
 
 import InvoiceHeader from "./invoiceHeader/invoiceHeader";
 import InvoiceItemsTable from "./invoiceItems/InvoiceTable";
@@ -15,60 +15,89 @@ export default class InvoiceScreen extends Component {
     super(props);
 
     this.state = {
-      companyAddress:"",
-      customerAddress:'',
+      companyLogo: "",
+      companyAddress: "",
+      customerAddress: "",
       invoiceNumber: "",
-      invoiceDate:'',
-      dueDate:'',
-      billableItems:[],
+      invoiceDate: "",
+      dueDate: "",
+      billableItems: [],
       subtotal: sessionStorage.getItem("tableSubtotal"),
       tax: 0,
       discount: 0,
       deposit: 0,
       grandTotal: 0,
-      amountDue: 0,
       shipping: 0,
-      notes: '',
-      terms: ''
+      amountDue: 0,
+      notes: "",
+      terms: ""
     };
   }
 
   // this function just toggles the button selection for the double button at the bottom of the page -> may become a triple button
+  // may also not be necessary
   onRadioBtnClick(rSelected) {
     this.setState({ rSelected });
   }
 
-
-
+/**
+ * these functions are for the buttons at the bottom of the page
+ */
   saveOnly = () => {
     // alert(`invoiceNumber state: ${this.state.invoiceNumber}`);
     axios({
-      method: 'post',
+      method: "post",
       url: `http://localhost:3001/invoices`,
       params: { invNumber: this.state.invoiceNumber },
-      headers: { Authorization: localStorage.getItem('tkn') }
-    }).then((res) => {
-      console.log(res.data);
-    }).catch((err) => {
-      const message = err.response.data.error;
-      console.log(message);
-    });
-  }
-
-  changeFieldWithCalculations = (e) => {
-    this.setState({[e.target.name]:e.target.value}, () => {this.recalculate();}, () => {this.calculateGrandTotal();})
-  }
-
-  changeInvoiceNumber = (invoiceNumber) => {
-    this.setState({invoiceNumber});
+      headers: { Authorization: localStorage.getItem("tkn") }
+    })
+      .then(res => {
+        console.log(res.data);
+      })
+      .catch(err => {
+        const message = err.response.data.error;
+        console.log(message);
+      });
   }
 
   saveAndClose() {}
 
   generatePDF() {}
 
+
+/**
+ * these functions pass the form values into state
+ */
+  changeLogo = companyLogo => {
+    this.setState({companyLogo});
+  }
+
+  changeCompanyAddress = companyAddress => {
+    this.setState({companyAddress});
+  }
+
+  changeCustomerAddress = customerAddress => {
+    this.setState({customerAddress});
+  }
+
+  changeInvoiceNumber = invoiceNumber => {
+    this.setState({ invoiceNumber });
+  };
+
+  changeInvoiceDate = invoiceDate => {
+    this.setState({ invoiceDate });
+  }
+
+  changeDueDate = dueDate => {
+    this.setState({dueDate});
+  }
+
+  changeBillableItems = billableItems => {
+    this.setState({billableItems});
+  }
+
   // pass function as callback to mimic synchronous setState: https://vasanthk.gitbooks.io/react-bits/patterns/19.async-nature-of-setState.html
-  changeSubtotal(subtotal) {
+  changeSubtotal = (subtotal) => {
     this.setState(
       { subtotal },
       () => {
@@ -80,7 +109,7 @@ export default class InvoiceScreen extends Component {
     );
   }
 
-  changeDiscount(discount) {
+  changeDiscount = (discount) => {
     this.setState(
       { discount },
       () => {
@@ -92,7 +121,7 @@ export default class InvoiceScreen extends Component {
     );
   }
 
-  changeTax(tax) {
+  changeTax = (tax) => {
     this.setState(
       { tax },
       () => {
@@ -104,7 +133,7 @@ export default class InvoiceScreen extends Component {
     );
   }
 
-  changeShipping(shipping) {
+  changeShipping = (shipping) => {
     this.setState(
       { shipping },
       () => {
@@ -116,16 +145,16 @@ export default class InvoiceScreen extends Component {
     );
   }
 
-  calculateGrandTotal(discountApplied, taxApplied, includesShipping) {
-    discountApplied = currency(this.state.subtotal).multiply(
+  calculateGrandTotal = grandTotal => {
+    let discountApplied = currency(this.state.subtotal).multiply(
       1 - Number(this.state.discount / 100)
     );
 
-    taxApplied = currency(discountApplied).multiply(
+    let taxApplied = currency(discountApplied).multiply(
       1 + Number(this.state.tax / 100)
     );
 
-    includesShipping = currency(taxApplied).add(this.state.shipping);
+    let includesShipping = currency(taxApplied).add(this.state.shipping);
 
     this.setState(
       {
@@ -137,14 +166,14 @@ export default class InvoiceScreen extends Component {
     );
   }
 
-  changeDeposit(deposit) {
+  changeDeposit = deposit => {
     this.setState({ deposit }, () => {
       this.calculateAmountDue();
     });
   }
 
-  calculateAmountDue(depositApplied) {
-    depositApplied = currency(this.state.grandTotal).subtract(
+  calculateAmountDue = amountDue => {
+    let depositApplied = currency(this.state.grandTotal).subtract(
       this.state.deposit
     );
     this.setState(state => ({
@@ -155,8 +184,14 @@ export default class InvoiceScreen extends Component {
   recalculate() {
     this.calculateGrandTotal();
     this.calculateAmountDue();
-    this.calculateGrandTotal();
-    this.calculateAmountDue();
+  }
+
+  changeNotes = notes => {
+    this.setState({notes});
+  }
+
+  changeTerms = terms => {
+    this.setState({terms});
   }
 
   render() {
@@ -164,10 +199,10 @@ export default class InvoiceScreen extends Component {
       <div className="invoiceForm">
         <Navigation />
         <InvoiceHeader
-        invoiceNumber={this.state.invoiceNumber}
-        changeInvoiceNumber={this.changeInvoiceNumber}
+          invoiceNumber={this.state.invoiceNumber}
+          changeInvoiceNumber={this.changeInvoiceNumber}
           amountDue={this.state.amountDue}
-          calculateAmountDue={this.calculateAmountDue.bind(this)}
+          calculateAmountDue={this.calculateAmountDue}
         />
         <hr />
         <InvoiceItemsTable
@@ -182,19 +217,19 @@ export default class InvoiceScreen extends Component {
         <InvoiceFooter2
           changeField={this.changeFieldWithCalculations}
           tax={this.state.tax}
-          changeTax={this.changeTax.bind(this)}
+          changeTax={this.changeTax}
           discount={this.state.discount}
-          changeDiscount={this.changeDiscount.bind(this)}
+          changeDiscount={this.changeDiscount}
           deposit={this.state.deposit}
-          changeDeposit={this.changeDeposit.bind(this)}
+          changeDeposit={this.changeDeposit}
           grandTotal={this.state.grandTotal}
-          calculateGrandTotal={this.calculateGrandTotal.bind(this)}
+          calculateGrandTotal={this.calculateGrandTotal}
           shipping={this.state.shipping}
-          changeShipping={this.changeShipping.bind(this)}
+          changeShipping={this.changeShipping}
           subtotal={this.state.subtotal}
-          changeSubtotal={this.changeSubtotal.bind(this)}
+          changeSubtotal={this.changeSubtotal}
           amountDue={this.state.amountDue}
-          calculateAmountDue={this.calculateAmountDue.bind(this)}
+          calculateAmountDue={this.calculateAmountDue}
         />
         <div style={{ width: "90%", margin: "auto" }}>
           <ButtonGroup size="lg">
@@ -202,19 +237,17 @@ export default class InvoiceScreen extends Component {
               Recalculate
             </Button>
             <Button
-            color="secondary"
-            onClick={this.saveOnly}
-            // active={this.state.rSelected === "Save changes"}
-            // onClick={this.saveAndClose.bind(this)}
-            // can pass react-router Link here
-          >
-            Save Changes
-          </Button>
+              color="secondary"
+              onClick={this.saveOnly}
+              // active={this.state.rSelected === "Save changes"}
+              // onClick={this.saveAndClose.bind(this)}
+              // can pass react-router Link here
+            >
+              Save Changes
+            </Button>
             <Button
               color="secondary"
               onClick={() => this.onRadioBtnClick("Save and close")}
-              active={this.state.rSelected === "Save and close"}
-              // onClick={this.saveAndClose.bind(this)}
               // can pass react-router Link here
             >
               Save and Close
@@ -222,13 +255,11 @@ export default class InvoiceScreen extends Component {
             <Button
               color="secondary"
               onClick={() => this.onRadioBtnClick("generate pdf")}
-              active={this.state.rSelected === "Generate PDF"}
               // onClick={this.generatePDF.bind(this)}
             >
               Generate PDF
             </Button>
           </ButtonGroup>
-          <p>Selected: {this.state.rSelected}</p>
         </div>
       </div>
     );
