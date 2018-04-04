@@ -36,19 +36,19 @@ export default class InvoiceScreen extends Component {
   return {count: prevState.count + 1};
 })*/
   changeSubtotal(subtotal) {
-    this.setState(prevState => {return { subtotal: subtotal }});
+    this.setState({ subtotal }, () => { this.recalculate() }, () => { this.calculateGrandTotal() });
   }
 
   changeDiscount(discount) {
-    this.setState(prevState => {return { discount }});
+    this.setState({ discount }, () => { this.recalculate() }, () => { this.calculateGrandTotal() });
   }
 
   changeTax(tax) {
-    this.setState(state => ({ tax }));
+    this.setState({ tax }, () => {this.recalculate()}, () => { this.calculateGrandTotal() });
   }
 
   changeShipping(shipping) {
-    this.setState(state => ({ shipping }));
+    this.setState({ shipping }, () => { this.recalculate() }, () => { this.calculateGrandTotal() });
   }
 
   calculateGrandTotal(discountApplied, taxApplied, includesShipping) {
@@ -59,17 +59,15 @@ export default class InvoiceScreen extends Component {
       currency(discountApplied).multiply(1+Number(this.state.tax/100));
 
     includesShipping =
-      // +formatNumber(taxApplied) + +formatNumber(this.state.shipping);
       currency(taxApplied).add(this.state.shipping);
 
     this.setState({
-      grandTotal: includesShipping.format()
-    });
-    this.calculateAmountDue();
+      grandTotal: includesShipping
+    }, () => { this.calculateAmountDue() });
   }
 
   changeDeposit(deposit) {
-    this.setState({ deposit });
+    this.setState({ deposit }, () => { this.calculateAmountDue() });
   }
 
   calculateAmountDue(depositApplied) {
@@ -80,22 +78,16 @@ export default class InvoiceScreen extends Component {
     }));
   }
 
+  recalculate() {
+    this.calculateGrandTotal();
+    this.calculateAmountDue();
+    this.calculateGrandTotal();
+    this.calculateAmountDue();
+  }
+
   render() {
     return (
       <div className="invoiceForm">
-        {/*these are temporary until state is complete*/}
-        {`tax: ${this.state.tax}% type: ${typeof this.state.tax};`}{" "}
-        {`discount: ${this.state.discount} type: ${typeof this.state
-          .discount};`}{" "}
-        {`deposit: ${this.state.deposit} type: ${typeof this.state.deposit};`}{" "}
-        {`shipping: ${this.state.shipping} type: ${typeof this.state
-          .shipping};`}{" "}
-        {`subtotal: ${localStorage.getItem("tableSubtotal")} type: ${typeof this
-          .state.subtotal};`}{" "}
-        {`grandtotal: ${this.state.grandTotal} type: ${typeof this.state
-          .grandTotal};`}{" "}
-        {`amount Due: ${this.state.amountDue} type: ${typeof this.state
-          .amountDue}`}
         <InvoiceHeader
           amountDue={this.state.amountDue}
           calculateAmountDue={this.calculateAmountDue.bind(this)}
@@ -128,6 +120,12 @@ export default class InvoiceScreen extends Component {
         />
         <div style={{ width: "90%", margin: "auto" }}>
           <ButtonGroup size="lg">
+            <Button
+              color="secondary"
+              onClick={() => this.recalculate()}
+            >
+            Recalculate
+            </Button>
             <Button
               color="secondary"
               onClick={() => this.onRadioBtnClick("Save and close")}
