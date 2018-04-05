@@ -47,13 +47,13 @@ export default class InvoiceHeader extends Component {
     this.props.changeInvoiceNumber(e.target.value);
   };
 
-  handleInvoiceDateChange = e => {
-    this.props.changeInvoiceDate(e.target.value);
-  };
+  // handleInvoiceDateChange = e => {
+  //   this.props.changeInvoiceDate(e.target.value);
+  // };
 
-  handleDueDateChange = e => {
-    this.props.changeDueDate(e.target.value);
-  };
+  // handleDueDateChange = e => {
+  //   this.props.changeDueDate(e.refs.target.value);
+  // };
 
   handleAmountDueChange = e => {
     this.props.calculateAmountDue(e.target.value);
@@ -168,7 +168,7 @@ export default class InvoiceHeader extends Component {
                     </Label>
                     <Col sm={8}>
                       <CurrentDatePicker 
-                        onChange={this.handleInvoiceDateChange}
+                        changeInvoiceDate={this.props.changeInvoiceDate}
                       />
                     </Col>
                   </FormGroup>
@@ -180,7 +180,7 @@ export default class InvoiceHeader extends Component {
                     </Label>
                     <Col sm={8}>
                       <DueDatePicker 
-                        onChange={this.handleDueDateChange}
+                      changeDueDate={this.props.changeDueDate}
                       />
                     </Col>
                   </FormGroup>

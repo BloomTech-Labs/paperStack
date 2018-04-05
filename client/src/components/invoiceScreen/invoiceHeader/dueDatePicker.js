@@ -23,11 +23,16 @@ export default class DueDatePicker extends Component {
     });
   }
 
+  handleDueDateChange = e => {
+    this.props.changeDueDate(e.target.value);
+  };
+
   render() {
     return (
       <DatePicker
         selected={this.state.startDate}
         onChange={this.handleChange}
+        onBlur={this.handleDueDateChange}
         minDate={moment().add(1, "days")}
         highlightDates={[
           moment().add(7, "days"),

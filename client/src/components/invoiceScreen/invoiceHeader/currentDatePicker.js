@@ -11,8 +11,7 @@ export default class CurrentDatePicker extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      startDate: moment(),
-      invoiceDate: this.props.invoiceDate
+      startDate: moment()
     };
 
     this.handleChange = this.handleChange.bind(this);
@@ -20,16 +19,21 @@ export default class CurrentDatePicker extends Component {
 
   handleChange(date) {
     this.setState({
-      startDate: date,
-      invoiceDate: this.state.startDate
-    }, () => {this.props.handleInvoiceDateChange()});
+      startDate: date
+    });
   }
+
+  handleInvoiceDateChange = e => {
+    this.props.changeInvoiceDate(e.target.value);
+    // console.log(this.props)
+  };
 
   render() {
     return (
       <DatePicker
         selected={this.state.startDate}
         onChange={this.handleChange}
+        onBlur={this.handleInvoiceDateChange}
         minDate={moment()}
       />
     );
