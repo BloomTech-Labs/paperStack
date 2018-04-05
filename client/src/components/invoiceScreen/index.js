@@ -177,7 +177,7 @@ export default class InvoiceScreen extends Component {
 
     this.setState(
       {
-        grandTotal: includesShipping
+        grandTotal: includesShipping.format()
       },
       () => {
         this.calculateAmountDue();
@@ -237,12 +237,13 @@ export default class InvoiceScreen extends Component {
         />
         <hr />
         <InvoiceItemsTable
+          billableItems={this.state.billableItems}
           subtotal={this.state.subtotal}
-          changeSubtotal={this.changeSubtotal.bind(this)}
+          changeSubtotal={this.changeSubtotal}
           amountDue={this.state.amountDue}
-          calculateAmountDue={this.calculateAmountDue.bind(this)}
+          calculateAmountDue={this.calculateAmountDue}
           grandTotal={this.state.grandTotal}
-          calculateGrandTotal={this.calculateGrandTotal.bind(this)}
+          calculateGrandTotal={this.calculateGrandTotal}
         />
         <hr />
         <InvoiceFooter2

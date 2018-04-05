@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { BootstrapTable, TableHeaderColumn } from "react-bootstrap-table";
 import currency from "currency.js";
 
-import billableItems from "../billableItems.json";
+// import billableItems from "../billableItems.json";
 
 // select a row, for use in delete row
 const selectRowProp = {
@@ -21,11 +21,15 @@ const options = {
   noDataText: "No billable items"
 };
 
+
 export default class InvoiceItemsTable extends Component {
   constructor(props) {
     super(props);
+    
+    // const billableItems = this.props.billableItems;
+
     this.state = {
-      data: billableItems
+      data: this.props.billableItems
       // ^^ data must be presented as an array per docs
     };
   }
@@ -35,14 +39,6 @@ export default class InvoiceItemsTable extends Component {
   shouldComponentUpdate(nextProps, nextState) {
     return false;
   }
-
-  // componentDidMount() {
-  //   this.handleSubtotalChange();
-  // }
-  
-  // componentDidUpdate() {
-  //   this.handleSubtotalChange();
-  // }
 
   /* 
    * These functions edit the modal for adding new rows of data -> validators for the fields in the modal
@@ -139,7 +135,7 @@ export default class InvoiceItemsTable extends Component {
 
   render() {
   {/*
-  This creates the data for the table to render in the footer
+  This creates the data for the table to render in the footer only
   */}
     const footerData = [
       [{label: "Subtotal",
@@ -157,7 +153,7 @@ export default class InvoiceItemsTable extends Component {
               <div>
                 <b
                   id="subtotal"
-                  onChange={this.handleSubtotalChange(currency(total, {formatWithSymbol: true}).format())}
+                  onChange={this.handleSubtotalChange(currency(total))}
                 >
                   {total}
                 </b>
@@ -177,7 +173,7 @@ export default class InvoiceItemsTable extends Component {
         />
         <BootstrapTable
           id="table"
-          data={billableItems}
+          data={this.data}
           striped
           hover
           condensed
@@ -189,7 +185,7 @@ export default class InvoiceItemsTable extends Component {
           insertRow={true}
           selectRow={selectRowProp}
           cellEdit={cellEditProp}
-          onChange={this.handleSubtotalChange.bind(this)}
+          onChange={this.handleSubtotalChange}
         >
           {/*This is column 0 - line item number, the checkmark column doesn't count and can't be modified here*/}
           <TableHeaderColumn
