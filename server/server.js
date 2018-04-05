@@ -4,9 +4,18 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const stripe = require("stripe")("sk_test_K04zveK9MnFXMgiIxhHv6mIa");
 const STATUS_USER_ERROR = 422;
 const STATUS_SERVER_ERROR = 500;
 const STATUS_UNAUTHORIZED_ERROR = 401;
+
+const corsOptions = {
+  origin: true,
+  methods: "GET, HEAD, PUT, PATCH, POST, DELETE",
+  preflightContinue: true,
+  optionsSuccessStatus: 204,
+  credentials: true // enable set cookie
+};
 
 const Users = require("./invoice/userModel.js");
 const Customers = require("./invoice/custModel.js");
@@ -15,6 +24,7 @@ const FinTran = require("./invoice/finTranModel.js");
 const InvLine = require("./invoice/invLineItemsModel.js");
 
 const server = express();
+server.use(bodyParser.urlencoded({ extended: false })); // added
 server.use(bodyParser.json());
 server.use(cors());
 
@@ -23,6 +33,7 @@ require("dotenv").config();
 mongoose.Promise = global.Promise;
 mongoose
   .connect(process.env.MONGO_URI)
+  //.connect('mongodb://localhost:27017/users')
   .then(function(db) {
     console.log("All your dbs belong to us!");
     server.listen(3001, function() {
@@ -636,4 +647,24 @@ server.get("/jwt", (req, res) => {
         .json({ authenticated: false });
     res.status(200).json({ authenticated: true });
   });
+});
+
+server.post("/api/checkout", (req, res) => {
+  console.log("checkout starting...");
+  const { token, sub, one } = req.body;
+
+  const amount = sub ? "999" : "99";
+  if (!token) return res.json({ err: "Payment Failed" });
+  stripe.charges.create(
+    {
+      amount: amount,
+      currency: "usd",
+      description: "Example charge",
+      source: token
+    },
+    (err, charge) => {
+      if (err) return res.json({ err: "Payment Failed", error: err });
+      res.send(charge);
+    }
+  );
 });
