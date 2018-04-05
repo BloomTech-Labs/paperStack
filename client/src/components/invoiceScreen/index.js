@@ -34,21 +34,41 @@ export default class InvoiceScreen extends Component {
     };
   }
 
-  // this function just toggles the button selection for the double button at the bottom of the page -> may become a triple button
+  componentDidMount() {
+    // axios calls here to retreive data
+  }
+
+  componentWillUnmount() {
+  //   // use this later to save the current state of the invoice when we go change the logo
+  }
+
+  // this function just toggles the button selection for the quad button at the bottom of the page
   // may also not be necessary
   onRadioBtnClick(rSelected) {
     this.setState({ rSelected });
   }
 
-/**
- * these functions are for the buttons at the bottom of the page
- */
+  /**
+   * these functions are for the buttons at the bottom of the page
+   */
   saveOnly = () => {
     // alert(`invoiceNumber state: ${this.state.invoiceNumber}`);
     axios({
       method: "post",
       url: `http://localhost:3001/invoices`,
-      params: { invNumber: this.state.invoiceNumber },
+      params: { 
+        customerAddress: this.state.customerAddress,
+        invNumber: this.state.invoiceNumber,
+        invDate: this.state.invoiceDate,
+        invDueDate: this.state.dueDate,
+        billableItems: this.state.billableItems,
+        invDiscount: this.state.discount,
+        invTax: this.state.tax,
+        invDeposit: this.state.deposit,
+        invShipping: this.state.shipping,
+        invComment: this.state.notes,
+        invTerms: this.state.terms
+      },
       headers: { Authorization: localStorage.getItem("tkn") }
     })
       .then(res => {
@@ -58,27 +78,26 @@ export default class InvoiceScreen extends Component {
         const message = err.response.data.error;
         console.log(message);
       });
-  }
+  };
 
-  saveAndClose() {}
+  saveAndClose = () => {};
 
-  generatePDF() {}
+  generatePDF = () => {};
 
-
-/**
- * these functions pass the form values into state
- */
-  changeLogo = companyLogo => {
-    this.setState({companyLogo});
-  }
+  /**
+   * these functions pass the form values into state
+   */
+  changeCompanyLogo = companyLogo => {
+    this.setState({ companyLogo });
+  };
 
   changeCompanyAddress = companyAddress => {
-    this.setState({companyAddress});
-  }
+    this.setState({ companyAddress });
+  };
 
   changeCustomerAddress = customerAddress => {
-    this.setState({customerAddress});
-  }
+    this.setState({ customerAddress });
+  };
 
   changeInvoiceNumber = invoiceNumber => {
     this.setState({ invoiceNumber });
@@ -86,18 +105,18 @@ export default class InvoiceScreen extends Component {
 
   changeInvoiceDate = invoiceDate => {
     this.setState({ invoiceDate });
-  }
+  };
 
   changeDueDate = dueDate => {
-    this.setState({dueDate});
-  }
+    this.setState({ dueDate });
+  };
 
   changeBillableItems = billableItems => {
-    this.setState({billableItems});
-  }
+    this.setState({ billableItems });
+  };
 
   // pass function as callback to mimic synchronous setState: https://vasanthk.gitbooks.io/react-bits/patterns/19.async-nature-of-setState.html
-  changeSubtotal = (subtotal) => {
+  changeSubtotal = subtotal => {
     this.setState(
       { subtotal },
       () => {
@@ -107,9 +126,9 @@ export default class InvoiceScreen extends Component {
         this.calculateGrandTotal();
       }
     );
-  }
+  };
 
-  changeDiscount = (discount) => {
+  changeDiscount = discount => {
     this.setState(
       { discount },
       () => {
@@ -119,9 +138,9 @@ export default class InvoiceScreen extends Component {
         this.calculateGrandTotal();
       }
     );
-  }
+  };
 
-  changeTax = (tax) => {
+  changeTax = tax => {
     this.setState(
       { tax },
       () => {
@@ -131,9 +150,9 @@ export default class InvoiceScreen extends Component {
         this.calculateGrandTotal();
       }
     );
-  }
+  };
 
-  changeShipping = (shipping) => {
+  changeShipping = shipping => {
     this.setState(
       { shipping },
       () => {
@@ -143,7 +162,7 @@ export default class InvoiceScreen extends Component {
         this.calculateGrandTotal();
       }
     );
-  }
+  };
 
   calculateGrandTotal = grandTotal => {
     let discountApplied = currency(this.state.subtotal).multiply(
@@ -164,13 +183,13 @@ export default class InvoiceScreen extends Component {
         this.calculateAmountDue();
       }
     );
-  }
+  };
 
   changeDeposit = deposit => {
     this.setState({ deposit }, () => {
       this.calculateAmountDue();
     });
-  }
+  };
 
   calculateAmountDue = amountDue => {
     let depositApplied = currency(this.state.grandTotal).subtract(
@@ -179,7 +198,7 @@ export default class InvoiceScreen extends Component {
     this.setState(state => ({
       amountDue: depositApplied.format()
     }));
-  }
+  };
 
   recalculate() {
     this.calculateGrandTotal();
@@ -187,20 +206,32 @@ export default class InvoiceScreen extends Component {
   }
 
   changeNotes = notes => {
-    this.setState({notes});
-  }
+    this.setState({ notes });
+  };
 
   changeTerms = terms => {
-    this.setState({terms});
-  }
+    this.setState({ terms });
+  };
 
   render() {
     return (
       <div className="invoiceForm">
         <Navigation />
+        <br />
+        <hr />
         <InvoiceHeader
+          companyLogo={this.state.companyLogo}
+          changeCompanyLogo={this.changeCompanyLogo}
+          companyAddress={this.state.companyAddress}
+          changeCompanyAddress={this.changeCompanyAddress}
+          customerAddress={this.state.customerAddress}
+          changeCustomerAddress={this.changeCustomerAddress}
           invoiceNumber={this.state.invoiceNumber}
           changeInvoiceNumber={this.changeInvoiceNumber}
+          invoiceDate={this.state.invoiceDate}
+          changeInvoiceDate={this.changeInvoiceDate}
+          dueDate={this.state.dueDate}
+          changeDueDate={this.changeDueDate}
           amountDue={this.state.amountDue}
           calculateAmountDue={this.calculateAmountDue}
         />
@@ -215,21 +246,24 @@ export default class InvoiceScreen extends Component {
         />
         <hr />
         <InvoiceFooter2
-          changeField={this.changeFieldWithCalculations}
-          tax={this.state.tax}
-          changeTax={this.changeTax}
           discount={this.state.discount}
           changeDiscount={this.changeDiscount}
-          deposit={this.state.deposit}
-          changeDeposit={this.changeDeposit}
-          grandTotal={this.state.grandTotal}
-          calculateGrandTotal={this.calculateGrandTotal}
+          tax={this.state.tax}
+          changeTax={this.changeTax}
           shipping={this.state.shipping}
           changeShipping={this.changeShipping}
+          grandTotal={this.state.grandTotal}
+          calculateGrandTotal={this.calculateGrandTotal}
+          deposit={this.state.deposit}
+          changeDeposit={this.changeDeposit}
           subtotal={this.state.subtotal}
           changeSubtotal={this.changeSubtotal}
           amountDue={this.state.amountDue}
           calculateAmountDue={this.calculateAmountDue}
+          notes={this.state.notes}
+          changeNotes={this.changeNotes}
+          terms={this.state.terms}
+          changeTerms={this.changeTerms}
         />
         <div style={{ width: "90%", margin: "auto" }}>
           <ButtonGroup size="lg">
@@ -239,9 +273,7 @@ export default class InvoiceScreen extends Component {
             <Button
               color="secondary"
               onClick={this.saveOnly}
-              // active={this.state.rSelected === "Save changes"}
               // onClick={this.saveAndClose.bind(this)}
-              // can pass react-router Link here
             >
               Save Changes
             </Button>

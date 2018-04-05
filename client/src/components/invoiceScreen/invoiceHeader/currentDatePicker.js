@@ -29,7 +29,6 @@ export default class CurrentDatePicker extends Component {
         selected={this.state.startDate}
         onChange={this.handleChange}
         minDate={moment()}
-        placeholderText="Today's date"
       />
     );
   }

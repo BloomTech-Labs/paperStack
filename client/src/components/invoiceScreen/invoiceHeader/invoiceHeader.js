@@ -32,14 +32,32 @@ export default class InvoiceHeader extends Component {
     };
   }
 
-  handleInvoiceNumberChange = event => {
-    this.props.changeInvoiceNumber(event.target.value)
-  }
+  /**
+   * these functions handle the change events for the invoice fields
+   */
+  handleCompanyAddressChange = e => {
+    this.props.changeCompanyAddress(e.target.value);
+  };
 
-  handleAmountDueChange(event) {
-    const amountDue = event.target.value;
-    this.props.calculateAmountDue(amountDue);
-  }
+  handleCustomerAddressChange = e => {
+    this.props.changeCustomerAddress(e.target.value);
+  };
+
+  handleInvoiceNumberChange = e => {
+    this.props.changeInvoiceNumber(e.target.value);
+  };
+
+  handleInvoiceDateChange = e => {
+    this.props.changeInvoiceDate(e.target.value);
+  };
+
+  handleDueDateChange = e => {
+    this.props.changeDueDate(e.target.value);
+  };
+
+  handleAmountDueChange = e => {
+    this.props.calculateAmountDue(e.target.value);
+  };
 
   toggleDropDown() {
     this.setState({
@@ -65,7 +83,10 @@ export default class InvoiceHeader extends Component {
                       Your Logo
                     </Label>
                     <Col sm={2}>
-                      <img src={tempLogo} alt="company logo" />
+                      <img 
+                        src={tempLogo} 
+                        alt="company logo" 
+                      />
                     </Col>
                     <Col sm={4}>
                       <p>This logo will appear on your invoice</p>
@@ -107,7 +128,12 @@ export default class InvoiceHeader extends Component {
                       Customer Address
                     </Label>
                     <Col sm={9}>
-                      <Input type="textarea" name="text" id="customerAddress" />
+                      <Input
+                        type="textarea"
+                        name="text"
+                        id="customerAddress"
+                        onBlur={this.handleCustomerAddressChange}
+                      />
                     </Col>
                   </FormGroup>
                 </Col>
@@ -141,7 +167,9 @@ export default class InvoiceHeader extends Component {
                       Current Date
                     </Label>
                     <Col sm={8}>
-                      <CurrentDatePicker />
+                      <CurrentDatePicker 
+                        onChange={this.handleInvoiceDateChange}
+                      />
                     </Col>
                   </FormGroup>
 
@@ -151,7 +179,9 @@ export default class InvoiceHeader extends Component {
                       Due Date
                     </Label>
                     <Col sm={8}>
-                      <DueDatePicker />
+                      <DueDatePicker 
+                        onChange={this.handleDueDateChange}
+                      />
                     </Col>
                   </FormGroup>
 

@@ -35,7 +35,6 @@ export default class DueDatePicker extends Component {
           moment().add(30, "days"),
           moment().add(60, "days")
         ]}
-        placeholderText="Due Date"
       />
     );
   }
