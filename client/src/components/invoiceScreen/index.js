@@ -238,6 +238,7 @@ export default class InvoiceScreen extends Component {
         <hr />
         <InvoiceItemsTable
           billableItems={this.state.billableItems}
+          changeBillableItems={this.changeBillableItems}
           subtotal={this.state.subtotal}
           changeSubtotal={this.changeSubtotal}
           amountDue={this.state.amountDue}

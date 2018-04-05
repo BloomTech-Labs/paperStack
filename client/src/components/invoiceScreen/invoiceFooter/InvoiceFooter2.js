@@ -11,10 +11,6 @@ import {
 } from "reactstrap";
 
 export default class InvoiceFooter2 extends Component {
-  componentDidMount() {
-    // axios calls here to retreive data
-  }
-
   /**
    * these functions handle passing the changes in the fields back up to index
    */

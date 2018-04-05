@@ -4,6 +4,10 @@ import currency from "currency.js";
 
 // import billableItems from "../billableItems.json";
 
+
+/**
+ * modifiers for the table
+ */
 // select a row, for use in delete row
 const selectRowProp = {
   mode: "checkbox"
@@ -14,18 +18,19 @@ const cellEditProp = {
   mode: "click"
 };
 
-// table options -> custom text for buttons and when there is no data (ie. new invoice)
-const options = {
-  insertText: "Add Line Item",
-  deleteText: "Delete Line Item",
-  noDataText: "No billable items"
-};
-
+// // table options -> custom text for buttons and when there is no data (ie. new invoice)
+// const options = {
+//   insertText: "Add Line Item",
+//   deleteText: "Delete Line Item",
+//   noDataText: "No billable items",
+//   afterInsertRow: onAfterInsertRow
+//   // onModalClose: () => this.handleModalClose(closeModal)
+// };
 
 export default class InvoiceItemsTable extends Component {
   constructor(props) {
     super(props);
-    
+
     // const billableItems = this.props.billableItems;
 
     this.state = {
@@ -114,10 +119,17 @@ export default class InvoiceItemsTable extends Component {
     const subtotal = sessionStorage.getItem("tableSubtotal");
     this.props.changeSubtotal(subtotal);
   }
-  
+
   /*
    * these edit the table itself, formatting fields
    */
+  // table options -> custom text for buttons and when there is no data (ie. new invoice)
+  options = {
+    insertText: "Add Line Item",
+    deleteText: "Delete Line Item",
+    noDataText: "No billable items",
+    afterInsertRow: this.onAfterInsertRow
+  };
   // format the rate field to be in USD, 2 decimal positions
   rateFormatter(cell, row) {
     return currency(cell);
@@ -133,13 +145,29 @@ export default class InvoiceItemsTable extends Component {
     return index + 1;
   }
 
+  onAfterInsertRow(row) {
+    const tempArray = [];
+    for (const prop in row) {
+      const tempObj = {}
+      tempObj[prop]=row[prop]
+      tempArray.push(tempObj);
+    }
+    let newObj = Object.assign({}, ...tempArray)
+    console.log(newObj)
+  }
+
   render() {
-  {/*
+    {
+      /*
   This creates the data for the table to render in the footer only
-  */}
+  */
+    }
     const footerData = [
-      [{label: "Subtotal",
-    columnIndex:1},
+      [
+        {
+          label: "Subtotal",
+          columnIndex: 1
+        },
         {
           label: "Subtotal",
           columnIndex: 4,
@@ -179,7 +207,7 @@ export default class InvoiceItemsTable extends Component {
           condensed
           footerData={footerData}
           footer // <- cannot be disbled or updated subtotal will not be pushed to sessionStorage
-          options={options}
+          options={this.options}
           version="4"
           deleteRow={true}
           insertRow={true}

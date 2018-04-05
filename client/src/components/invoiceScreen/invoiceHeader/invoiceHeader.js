@@ -47,14 +47,6 @@ export default class InvoiceHeader extends Component {
     this.props.changeInvoiceNumber(e.target.value);
   };
 
-  // handleInvoiceDateChange = e => {
-  //   this.props.changeInvoiceDate(e.target.value);
-  // };
-
-  // handleDueDateChange = e => {
-  //   this.props.changeDueDate(e.refs.target.value);
-  // };
-
   handleAmountDueChange = e => {
     this.props.calculateAmountDue(e.target.value);
   };
