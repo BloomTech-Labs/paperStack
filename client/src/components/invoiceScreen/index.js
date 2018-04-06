@@ -10,8 +10,6 @@ import Navigation from "../Navigation";
 
 import "react-datepicker/dist/react-datepicker.css";
 
-const localHolderArr = []
-
 export default class InvoiceScreen extends Component {
   constructor(props) {
     super(props);
@@ -35,6 +33,9 @@ export default class InvoiceScreen extends Component {
       terms: ""
     };
   }
+  componentWillMount() {
+    sessionStorage.removeItem('lineItem');
+  }
 
   componentDidMount() {
     // axios calls here to retreive data
@@ -54,7 +55,6 @@ export default class InvoiceScreen extends Component {
    * these functions are for the buttons at the bottom of the page
    */
   saveOnly = () => {
-    // alert(`invoiceNumber state: ${this.state.invoiceNumber}`);
     axios({
       method: "post",
       url: `http://localhost:3001/invoices`,
@@ -114,16 +114,8 @@ export default class InvoiceScreen extends Component {
   };
 
   changeBillableItems = lineItem => {
-    // addNote(newNote) {
-    // this.setState({ toDoNotes: [...this.state.toDoNotes, newNote]})
-    // }
-    // this.setState({ billableItems: [...this.billableItems, sessionStorage.getItem(billableItems) ]}); // <- cannot convert undefined or null to object
-    // this.setState(prevState => ({
-    //   data: [...prevState, newObj]
-    // }))
-    localHolderArr.push(sessionStorage.getItem(lineItem))
     this.setState(prevState => ({
-      billableItems: [...prevState, localHolderArr]
+      billableItems: [...prevState.billableItems, lineItem]
     }));
   };
 

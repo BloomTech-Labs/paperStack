@@ -15,15 +15,8 @@ const cellEditProp = {
   mode: "click"
 };
 
+// variable for use in onAfterRowInsert
 let newObj = {};
-// // table options -> custom text for buttons and when there is no data (ie. new invoice)
-// const options = {
-//   insertText: "Add Line Item",
-//   deleteText: "Delete Line Item",
-//   noDataText: "No billable items",
-//   afterInsertRow: onAfterInsertRow
-//   // onModalClose: () => this.handleModalClose(closeModal)
-// };
 
 export default class InvoiceItemsTable extends Component {
   constructor(props) {
@@ -33,7 +26,6 @@ export default class InvoiceItemsTable extends Component {
 
     this.state = {
       data: this.props.billableItems
-      // data: [{},]
       // ^^ data must be presented as an array per docs
     };
   }
@@ -117,7 +109,6 @@ export default class InvoiceItemsTable extends Component {
   handleSubtotalChange(total) {
     const subtotal = sessionStorage.getItem("tableSubtotal");
     this.props.changeSubtotal(subtotal);
-    // console.log('newObj: ', newObj)
   }
 
   handleBillableItemsChange = () => {
@@ -154,6 +145,7 @@ export default class InvoiceItemsTable extends Component {
     return index + 1;
   }
 
+  // works with the modal to push items to billableItems in the parent for saving
   onAfterInsertRow(row) {
     const tempArray = [];
     for (const prop in row) {
@@ -162,12 +154,8 @@ export default class InvoiceItemsTable extends Component {
       tempArray.push(tempObj);
     }
     newObj = JSON.stringify(Object.assign({}, ...tempArray));
-    // this.setState({data: [...this.data, newObj ]});
-    sessionStorage.setItem("lineItem", newObj);
-    // this.setState(prevState => ({
-    //   data: [...prevState, newObj]
-    // }))
-    // this.handleBillableItemsChange;
+    // newObj === null ? sessionStorage.removeItem('lineItem') : sessionStorage.setItem("lineItem", newObj);
+    sessionStorage.setItem('lineItem', newObj);
   }
 
   render() {
