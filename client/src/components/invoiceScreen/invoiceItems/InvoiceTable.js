@@ -2,9 +2,6 @@ import React, { Component } from "react";
 import { BootstrapTable, TableHeaderColumn } from "react-bootstrap-table";
 import currency from "currency.js";
 
-// import billableItems from "../billableItems.json";
-
-
 /**
  * modifiers for the table
  */
@@ -18,6 +15,7 @@ const cellEditProp = {
   mode: "click"
 };
 
+let newObj = {};
 // // table options -> custom text for buttons and when there is no data (ie. new invoice)
 // const options = {
 //   insertText: "Add Line Item",
@@ -31,10 +29,11 @@ export default class InvoiceItemsTable extends Component {
   constructor(props) {
     super(props);
 
-    // const billableItems = this.props.billableItems;
+    this.onAfterInsertRow = this.onAfterInsertRow.bind(this);
 
     this.state = {
       data: this.props.billableItems
+      // data: [{},]
       // ^^ data must be presented as an array per docs
     };
   }
@@ -118,6 +117,16 @@ export default class InvoiceItemsTable extends Component {
   handleSubtotalChange(total) {
     const subtotal = sessionStorage.getItem("tableSubtotal");
     this.props.changeSubtotal(subtotal);
+    // console.log('newObj: ', newObj)
+  }
+
+  handleBillableItemsChange = () => {
+    this.props.changeBillableItems(sessionStorage.getItem('lineItem'))
+  }
+
+  changeGroup() {
+    this.handleBillableItemsChange();
+    this.handleSubtotalChange();
   }
 
   /*
@@ -152,8 +161,13 @@ export default class InvoiceItemsTable extends Component {
       tempObj[prop]=row[prop]
       tempArray.push(tempObj);
     }
-    let newObj = Object.assign({}, ...tempArray)
-    console.log(newObj)
+    newObj = JSON.stringify(Object.assign({}, ...tempArray));
+    // this.setState({data: [...this.data, newObj ]});
+    sessionStorage.setItem("lineItem", newObj);
+    // this.setState(prevState => ({
+    //   data: [...prevState, newObj]
+    // }))
+    // this.handleBillableItemsChange;
   }
 
   render() {
@@ -181,7 +195,7 @@ export default class InvoiceItemsTable extends Component {
               <div>
                 <b
                   id="subtotal"
-                  onChange={this.handleSubtotalChange(currency(total))}
+                  onChange={this.changeGroup()}
                 >
                   {total}
                 </b>
@@ -213,7 +227,7 @@ export default class InvoiceItemsTable extends Component {
           insertRow={true}
           selectRow={selectRowProp}
           cellEdit={cellEditProp}
-          onChange={this.handleSubtotalChange}
+          onChange={this.changeGroup}
         >
           {/*This is column 0 - line item number, the checkmark column doesn't count and can't be modified here*/}
           <TableHeaderColumn

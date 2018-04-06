@@ -26,6 +26,7 @@ const InvoicesSchema = new Schema({
         required: false
     },
     
+    
     //Ronald and Jason decided that comment text box is necessary related to invoice
     
     invComments: {  

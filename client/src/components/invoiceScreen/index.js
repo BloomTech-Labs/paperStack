@@ -10,6 +10,8 @@ import Navigation from "../Navigation";
 
 import "react-datepicker/dist/react-datepicker.css";
 
+const localHolderArr = []
+
 export default class InvoiceScreen extends Component {
   constructor(props) {
     super(props);
@@ -39,7 +41,7 @@ export default class InvoiceScreen extends Component {
   }
 
   componentWillUnmount() {
-  //   // use this later to save the current state of the invoice when we go change the logo
+    //   // use this later to save the current state of the invoice when we go change the logo
   }
 
   // this function just toggles the button selection for the quad button at the bottom of the page
@@ -56,7 +58,7 @@ export default class InvoiceScreen extends Component {
     axios({
       method: "post",
       url: `http://localhost:3001/invoices`,
-      params: { 
+      params: {
         customerAddress: this.state.customerAddress,
         invNumber: this.state.invoiceNumber,
         invDate: this.state.invoiceDate,
@@ -111,8 +113,18 @@ export default class InvoiceScreen extends Component {
     this.setState({ dueDate });
   };
 
-  changeBillableItems = billableItems => {
-    this.setState({ billableItems });
+  changeBillableItems = lineItem => {
+    // addNote(newNote) {
+    // this.setState({ toDoNotes: [...this.state.toDoNotes, newNote]})
+    // }
+    // this.setState({ billableItems: [...this.billableItems, sessionStorage.getItem(billableItems) ]}); // <- cannot convert undefined or null to object
+    // this.setState(prevState => ({
+    //   data: [...prevState, newObj]
+    // }))
+    localHolderArr.push(sessionStorage.getItem(lineItem))
+    this.setState(prevState => ({
+      billableItems: [...prevState, localHolderArr]
+    }));
   };
 
   // pass function as callback to mimic synchronous setState: https://vasanthk.gitbooks.io/react-bits/patterns/19.async-nature-of-setState.html

@@ -1236,6 +1236,7 @@ server.get("/invoices", (req, res) => {
  */
 server.post("/invoices", (req, res) => {
   const invNumber = req.query;
+  const tkn = req.get("Authorization");
   res.status(200).json(invNumber);
   // const { customerId, userId, invNumber, invDate, invDueDate } = req.body;
   // if (!customerId || !userId) {
