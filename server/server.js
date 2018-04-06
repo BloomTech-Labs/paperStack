@@ -33,7 +33,7 @@ require("dotenv").config();
 mongoose.Promise = global.Promise;
 mongoose
   .connect(process.env.MONGO_URI)
-  //.connect('mongodb://localhost:27017/users')
+  // .connect('mongodb://localhost:27017/users')
   .then(function(db) {
     console.log("All your dbs belong to us!");
     server.listen(3001, function() {
@@ -559,6 +559,24 @@ const hashedPassword = (req, res, next) => {
 };
 
 /**
+ * Middleware for token verification
+ */
+
+const verifyToken = (req, res, next) => {
+  const tkn = req.get("Authorization");
+  if (!tkn) {
+    return res.status(STATUS_UNAUTHORIZED_ERROR)
+              .json({ err: "You are not authorized to do this request" });
+  }
+  jwt.verify(tkn, process.env.SECRET, (err, decoded) => {
+    if (err)
+      return res.status(STATUS_UNAUTHORIZED_ERROR)
+                .json({ err: "You are not authorized to do this request" });
+    return next();
+  });
+};
+
+/**
  * Create a new user
  */
 
@@ -633,7 +651,7 @@ server.post("/login", (req, res) => {
 });
 
 /**
- * Token validation
+ * Token validation for the front-end
  */
 
 server.get("/jwt", (req, res) => {
@@ -648,6 +666,10 @@ server.get("/jwt", (req, res) => {
     res.status(200).json({ authenticated: true });
   });
 });
+
+/**
+ * Stripe
+ */
 
 server.post("/api/checkout", (req, res) => {
   console.log("checkout starting...");
