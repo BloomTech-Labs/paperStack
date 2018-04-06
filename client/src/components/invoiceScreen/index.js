@@ -34,7 +34,7 @@ export default class InvoiceScreen extends Component {
     };
   }
   componentWillMount() {
-    sessionStorage.removeItem('lineItem');
+    sessionStorage.removeItem("lineItem");
   }
 
   componentDidMount() {
@@ -273,9 +273,9 @@ export default class InvoiceScreen extends Component {
         />
         <div style={{ width: "90%", margin: "auto" }}>
           <ButtonGroup size="lg">
-            <Button color="secondary" onClick={() => this.recalculate()}>
+            {/*<Button color="secondary" onClick={() => this.recalculate()}>
               Recalculate
-            </Button>
+    </Button>*/}
             <Button
               color="secondary"
               onClick={this.saveOnly}
@@ -299,6 +299,7 @@ export default class InvoiceScreen extends Component {
             </Button>
           </ButtonGroup>
         </div>
+        <br />
       </div>
     );
   }

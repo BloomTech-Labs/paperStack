@@ -9,10 +9,6 @@ import {
   Input,
   InputGroup,
   InputGroupAddon,
-  InputGroupButtonDropdown,
-  DropdownToggle,
-  DropdownMenu,
-  DropdownItem
 } from "reactstrap";
 
 import tempLogo from "../invoiceHeader/tempLogo.svg";
@@ -72,16 +68,13 @@ export default class InvoiceHeader extends Component {
                   {/* display the company logo -> currently hard wired */}
                   <FormGroup row>
                     <Label for="businessLogo" sm={3}>
-                      Your Logo
+                      Company Logo
                     </Label>
                     <Col sm={2}>
                       <img 
                         src={tempLogo} 
                         alt="company logo" 
                       />
-                    </Col>
-                    <Col sm={4}>
-                      <p>This logo will appear on your invoice</p>
                     </Col>
                     <Col sm={3}>
                       <Button name="updateLogo">Change Logo</Button>
@@ -91,25 +84,14 @@ export default class InvoiceHeader extends Component {
                   {/* business address -> dropdown to select existing address */}
                   <FormGroup row>
                     <Label for="businessAddress" sm={3}>
-                      Your Address
+                      Company Address
                     </Label>
                     <Col sm={9}>
                       <InputGroup>
-                        <Input />
-                        <InputGroupButtonDropdown
-                          addonType="append"
-                          isOpen={this.state.dropdownOpen}
-                          toggle={this.toggleDropDown}
-                        >
-                          <DropdownToggle caret>Select Address</DropdownToggle>
-                          <DropdownMenu>
-                            <DropdownItem>Primary Address</DropdownItem>
-                            <DropdownItem divider />
-                            <DropdownItem disabled>
-                              Secondary Address
-                            </DropdownItem>
-                          </DropdownMenu>
-                        </InputGroupButtonDropdown>
+                        <Input 
+                          id='companyAddress' 
+                          placeholder="name, address, city, state, zip"
+                          disabled />
                       </InputGroup>
                     </Col>
                   </FormGroup>
@@ -124,6 +106,7 @@ export default class InvoiceHeader extends Component {
                         type="textarea"
                         name="text"
                         id="customerAddress"
+                        placeholder="name, address, city, state, zip"
                         onBlur={this.handleCustomerAddressChange}
                       />
                     </Col>
