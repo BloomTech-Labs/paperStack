@@ -4,7 +4,7 @@ import currency from "currency.js";
 import axios from "axios";
 
 import InvoiceHeader from "./invoiceHeader/invoiceHeader";
-import InvoiceItemsTable from "./invoiceItems/InvoiceTable";
+import InvoiceItemsTable2 from "./invoiceItems/InvoiceTable2";
 import InvoiceFooter2 from "./invoiceFooter/InvoiceFooter2";
 import Navigation from "../Navigation";
 
@@ -33,23 +33,23 @@ export default class InvoiceScreen extends Component {
       terms: ""
     };
   }
+
   componentWillMount() {
     sessionStorage.removeItem("lineItem");
   }
 
   componentDidMount() {
-    // axios calls here to retreive data
+    // axios calls here to retreive data for pre-existing invoices
   }
 
   componentWillUnmount() {
     //   // use this later to save the current state of the invoice when we go change the logo
   }
 
-  // this function just toggles the button selection for the quad button at the bottom of the page
-  // may also not be necessary
-  onRadioBtnClick(rSelected) {
-    this.setState({ rSelected });
-  }
+  // // this function just toggles the button selection for the triple button at the bottom of the page -> NECESSARY to handle which function should be called -> NEEDS TO BE WRITTEN AS OF 4.9.18
+  // onRadioBtnClick(rSelected) {
+  //   this.setState({ rSelected });
+  // }
 
   /**
    * these functions are for the buttons at the bottom of the page
@@ -82,9 +82,13 @@ export default class InvoiceScreen extends Component {
       });
   };
 
-  saveAndClose = () => {};
+  saveAndClose = () => {
+    alert('Save and Close was pressed')
+  };
 
-  generatePDF = () => {};
+  generatePDF = () => {
+    alert('Generate PDF was pressed')
+  };
 
   /**
    * these functions pass the form values into state
@@ -113,11 +117,22 @@ export default class InvoiceScreen extends Component {
     this.setState({ dueDate });
   };
 
-  changeBillableItems = lineItem => {
+  addBillableItems = lineItem => {
     this.setState(prevState => ({
-      billableItems: [...prevState.billableItems, lineItem]
+      billableItems: [...prevState.billableItems, JSON.parse(lineItem)]
     }));
+    sessionStorage.removeItem("lineItem");
   };
+
+  deleteBillableItems = () => {
+    let itemToDelete = sessionStorage.getItem('deleteMe')
+    // alert(itemToDelete);
+    let filteredState = this.state.billableItems.filter(item => item !== itemToDelete);
+    // sessionStorage.removeItem("lineItem");
+    this.setState({billableItems: filteredState});
+    sessionStorage.removeItem('deleteMe');
+    alert(filteredState)
+  }
 
   // pass function as callback to mimic synchronous setState: https://vasanthk.gitbooks.io/react-bits/patterns/19.async-nature-of-setState.html
   changeSubtotal = subtotal => {
@@ -240,9 +255,10 @@ export default class InvoiceScreen extends Component {
           calculateAmountDue={this.calculateAmountDue}
         />
         <hr />
-        <InvoiceItemsTable
+        <InvoiceItemsTable2
           billableItems={this.state.billableItems}
-          changeBillableItems={this.changeBillableItems}
+          addBillableItems={this.addBillableItems}
+          deleteBillableItems={this.deleteBillableItems}
           subtotal={this.state.subtotal}
           changeSubtotal={this.changeSubtotal}
           amountDue={this.state.amountDue}
@@ -279,21 +295,19 @@ export default class InvoiceScreen extends Component {
             <Button
               color="secondary"
               onClick={this.saveOnly}
-              // onClick={this.saveAndClose.bind(this)}
             >
               Save Changes
             </Button>
             <Button
               color="secondary"
-              onClick={() => this.onRadioBtnClick("Save and close")}
+              onClick={() => this.saveAndClose()}
               // can pass react-router Link here
             >
               Save and Close
             </Button>
             <Button
               color="secondary"
-              onClick={() => this.onRadioBtnClick("generate pdf")}
-              // onClick={this.generatePDF.bind(this)}
+              onClick={() => this.generatePDF()}
             >
               Generate PDF
             </Button>

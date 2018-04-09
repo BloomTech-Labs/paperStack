@@ -5,6 +5,7 @@ import {
   Button,
   Form,
   FormGroup,
+  FormText,
   Label,
   Input,
   InputGroup,
@@ -93,6 +94,7 @@ export default class InvoiceHeader extends Component {
                           placeholder="name, address, city, state, zip"
                           disabled />
                       </InputGroup>
+                      <FormText color='muted'>The logo and address above will appear on your invoice.</FormText>
                     </Col>
                   </FormGroup>
 
@@ -176,7 +178,7 @@ export default class InvoiceHeader extends Component {
                               ? "Amount Due"
                               : this.props.amountDue
                           }
-                          type="number"
+                          type="text"
                           value={this.props.amountDue}
                           disabled
                         />
