@@ -38,7 +38,7 @@ export default class InvoiceScreen extends Component {
   }
 
   componentWillMount() {
-    sessionStorage.removeItem("lineItem");
+    sessionStorage.removeItem("lineItem", "modifyMe");
   }
 
   componentDidMount() {
@@ -142,6 +142,23 @@ export default class InvoiceScreen extends Component {
         console.log(this.state.billableItems)
       });
       sessionStorage.removeItem("deleteMe");
+    }
+  };
+
+  updateBillableItems = (modifyMe) => {
+    if (!modifyMe) {
+      return;
+    } else {
+      let temp = JSON.parse(modifyMe);
+      let filteredState2 = this.state.billableItems.filter(
+        item => item.id !== temp.id
+      );
+      filteredState2.push(temp);
+      this.setState({ billableItems: filteredState2 }, () => {
+        console.log(this.state.billableItems)
+      });
+
+      sessionStorage.removeItem("modifyMe");
     }
   };
 
@@ -264,6 +281,7 @@ export default class InvoiceScreen extends Component {
           {...this.state}
           addBillableItems={this.addBillableItems}
           deleteBillableItems={this.deleteBillableItems}
+          updateBillableItems={this.updateBillableItems}
           changeSubtotal={this.changeSubtotal}
           calculateAmountDue={this.calculateAmountDue}
           calculateGrandTotal={this.calculateGrandTotal}

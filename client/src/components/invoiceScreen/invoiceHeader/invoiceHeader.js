@@ -11,7 +11,6 @@ import {
   InputGroup,
   InputGroupAddon
 } from "reactstrap";
-import moment from 'moment';
 
 import tempLogo from "../invoiceHeader/tempLogo.svg";
 
@@ -80,7 +79,7 @@ export default class InvoiceHeader extends Component {
                     </Col>
                   </FormGroup>
 
-                  {/* business address -> dropdown to select existing address */}
+                  {/* business address -> pull from DB */}
                   <FormGroup row>
                     <Label for="businessAddress" sm={3}>
                       Company Address

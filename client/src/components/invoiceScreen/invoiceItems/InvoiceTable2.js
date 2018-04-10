@@ -10,11 +10,6 @@ const selectRowProp = {
   mode: "checkbox"
 };
 
-// click to edit a cell
-const cellEditProp = {
-  mode: "click"
-};
-
 // variable for use in onAfterRowInsert
 let newObj = {};
 
@@ -25,8 +20,7 @@ export default class InvoiceItemsTable2 extends Component {
     // this.onAfterInsertRow = this.onAfterInsertRow.bind(this);
 
     this.state = {
-      data: this.props.billableItems,
-      button: ''
+      data: this.props.billableItems
       // ^^ data must be presented as an array per docs
     };
   }
@@ -97,7 +91,8 @@ export default class InvoiceItemsTable2 extends Component {
     } else if (nan) {
       response.isValid = false;
       response.notification.type = "error";
-      response.notification.msg = "Please use numbers only. If using a decimal value, please use a leading 0";
+      response.notification.msg =
+        "Please use numbers only. If using a decimal value, please use a leading 0";
       response.notification.title = "Invalid Rate Type";
     }
     return response;
@@ -113,16 +108,21 @@ export default class InvoiceItemsTable2 extends Component {
   }
 
   handleAddBillableItems = () => {
-    this.props.addBillableItems(sessionStorage.getItem('lineItem'))
-  }
+    this.props.addBillableItems(sessionStorage.getItem("lineItem"));
+  };
 
   handleDeleteBillableItems = () => {
-    this.props.deleteBillableItems(sessionStorage.getItem('deleteMe'))
+    this.props.deleteBillableItems(sessionStorage.getItem("deleteMe"));
+  };
+
+  handleUpdateBillableItems = () => {
+    this.props.updateBillableItems(sessionStorage.getItem('modifyMe'));
   }
 
   changeGroup() {
     this.handleAddBillableItems();
     this.handleDeleteBillableItems();
+    this.handleUpdateBillableItems();
     this.handleSubtotalChange();
   }
 
@@ -135,7 +135,13 @@ export default class InvoiceItemsTable2 extends Component {
     deleteText: "Delete Line Item",
     noDataText: "No billable items",
     afterInsertRow: this.onAfterInsertRow,
-    afterDeleteRow: this.onAfterDeleteRow,
+    afterDeleteRow: this.onAfterDeleteRow
+  };
+  // click to edit a cell
+  cellEditProp = {
+    mode: "click",
+    afterSaveCell: this.onAfterSaveCell
+    // blurToSave: true
   };
   // format the rate field to be in USD, 2 decimal positions
   rateFormatter(cell, row) {
@@ -144,7 +150,9 @@ export default class InvoiceItemsTable2 extends Component {
 
   // format the amount field to be in USD, 2 decimal positions
   amountFormatter2(cell, row) {
-    return currency(row.rate).multiply(row.qty).format();
+    return currency(row.rate)
+      .multiply(row.qty)
+      .format();
   }
 
   // format the index to be a line number -> used to override the autoNumber creation, which is alphaNumeric and very long
@@ -156,17 +164,27 @@ export default class InvoiceItemsTable2 extends Component {
   onAfterInsertRow(row) {
     const tempArray = [];
     for (const prop in row) {
-      const tempObj = {}
-      tempObj[prop]=row[prop]
+      const tempObj = {};
+      tempObj[prop] = row[prop];
       tempArray.push(tempObj);
     }
     newObj = JSON.stringify(Object.assign({}, ...tempArray));
-    // newObj === null ? sessionStorage.removeItem('lineItem') : sessionStorage.setItem("lineItem", newObj);
-    sessionStorage.setItem('lineItem', newObj)
+    sessionStorage.setItem("lineItem", newObj);
+  }
+
+  onAfterSaveCell(row, cellName, cellValue) {
+    const tempArray2 = [];
+    for (const prop in row) {
+      const tempObj = {};
+      tempObj[prop] = row[prop];
+      tempArray2.push(tempObj);
+    }
+    newObj = JSON.stringify(Object.assign({}, ...tempArray2));
+    sessionStorage.setItem("modifyMe", newObj);
   }
 
   onAfterDeleteRow(rowKeys, rows) {
-    sessionStorage.setItem('deleteMe', rowKeys)
+    sessionStorage.setItem("deleteMe", rowKeys);
   }
 
   render() {
@@ -192,11 +210,8 @@ export default class InvoiceItemsTable2 extends Component {
             sessionStorage.setItem("tableSubtotal", currency(total).format());
             return (
               <div>
-                <b
-                  id="subtotal"
-                  onChange={this.changeGroup()}
-                >
-                  {currency(total, {formatWithSymbol: true}).format()}
+                <b id="subtotal" onChange={this.changeGroup()}>
+                  {currency(total, { formatWithSymbol: true }).format()}
                 </b>
               </div>
             );
@@ -226,7 +241,7 @@ export default class InvoiceItemsTable2 extends Component {
           deleteRow={true}
           insertRow={true}
           selectRow={selectRowProp}
-          cellEdit={cellEditProp}
+          cellEdit={this.cellEditProp}
           onChange={this.changeGroup}
         >
           {/*This is column 0 - line item number, the checkmark column doesn't count and can't be modified here*/}
