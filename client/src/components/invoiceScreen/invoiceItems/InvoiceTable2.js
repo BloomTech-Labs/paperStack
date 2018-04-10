@@ -26,6 +26,7 @@ export default class InvoiceItemsTable2 extends Component {
 
     this.state = {
       data: this.props.billableItems,
+      button: ''
       // ^^ data must be presented as an array per docs
     };
   }
@@ -120,14 +121,10 @@ export default class InvoiceItemsTable2 extends Component {
   }
 
   changeGroup() {
-    // this.handleAddBillableItems();
+    console.log('this: ', this)
+    this.handleAddBillableItems();
     // this.handleDeleteBillableItems();
     this.handleSubtotalChange();
-  }
-
-  handleInsertButtonClick = (onClick) => {
-    this.handleAddBillableItems;
-    // onClick();
   }
 
   /*
@@ -143,12 +140,12 @@ export default class InvoiceItemsTable2 extends Component {
   };
   // format the rate field to be in USD, 2 decimal positions
   rateFormatter(cell, row) {
-    return currency(cell);
+    return currency(cell).format();
   }
 
   // format the amount field to be in USD, 2 decimal positions
   amountFormatter2(cell, row) {
-    return currency(row.rate).multiply(row.qty);
+    return currency(row.rate).multiply(row.qty).format();
   }
 
   // format the index to be a line number -> used to override the autoNumber creation, which is alphaNumeric and very long
@@ -167,13 +164,9 @@ export default class InvoiceItemsTable2 extends Component {
     newObj = JSON.stringify(Object.assign({}, ...tempArray));
     // newObj === null ? sessionStorage.removeItem('lineItem') : sessionStorage.setItem("lineItem", newObj);
     sessionStorage.setItem('lineItem', newObj)
-    console.log(this)
   }
 
   onAfterDeleteRow(rowKeys, rows) {
-    // alert('The rowkey you drop: ' + rowKeys);
-    // let filteredState = this.state.data.filter(item => item !== rowKeys);
-    // alert(filteredState)
     sessionStorage.setItem('deleteMe', rowKeys)
   }
 
@@ -204,7 +197,7 @@ export default class InvoiceItemsTable2 extends Component {
                   id="subtotal"
                   onChange={this.changeGroup()}
                 >
-                  {total}
+                  {currency(total, {formatWithSymbol: true}).format()}
                 </b>
               </div>
             );

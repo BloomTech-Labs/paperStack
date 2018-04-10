@@ -14,6 +14,8 @@ export default class InvoiceScreen extends Component {
   constructor(props) {
     super(props);
 
+    // let holdLineItems = [];
+
     this.state = {
       companyLogo: "",
       companyAddress: "",
@@ -83,11 +85,11 @@ export default class InvoiceScreen extends Component {
   };
 
   saveAndClose = () => {
-    alert('Save and Close was pressed')
+    alert("Save and Close was pressed");
   };
 
   generatePDF = () => {
-    alert('Generate PDF was pressed')
+    alert("Generate PDF was pressed");
   };
 
   /**
@@ -118,21 +120,30 @@ export default class InvoiceScreen extends Component {
   };
 
   addBillableItems = lineItem => {
-    this.setState(prevState => ({
-      billableItems: [...prevState.billableItems, JSON.parse(lineItem)]
-    }));
-    sessionStorage.removeItem("lineItem");
+    if (!lineItem) {
+      return;
+    } else {
+      this.setState(prevState => ({
+        billableItems: [...prevState.billableItems, JSON.parse(lineItem)]
+      }),
+      () => {
+        console.log(this.state.billableItems);
+      });
+      sessionStorage.removeItem("lineItem");
+    }
   };
 
   deleteBillableItems = () => {
-    let itemToDelete = sessionStorage.getItem('deleteMe')
+    let itemToDelete = sessionStorage.getItem("deleteMe");
     // alert(itemToDelete);
-    let filteredState = this.state.billableItems.filter(item => item !== itemToDelete);
+    let filteredState = this.state.billableItems.filter(
+      item => item !== itemToDelete
+    );
     // sessionStorage.removeItem("lineItem");
-    this.setState({billableItems: filteredState});
-    sessionStorage.removeItem('deleteMe');
-    alert(filteredState)
-  }
+    this.setState({ billableItems: filteredState });
+    sessionStorage.removeItem("deleteMe");
+    alert(filteredState);
+  };
 
   // pass function as callback to mimic synchronous setState: https://vasanthk.gitbooks.io/react-bits/patterns/19.async-nature-of-setState.html
   changeSubtotal = subtotal => {
@@ -256,14 +267,15 @@ export default class InvoiceScreen extends Component {
         />
         <hr />
         <InvoiceItemsTable2
-          billableItems={this.state.billableItems}
+          {...this.state}
+          // billableItems={this.state.billableItems}
           addBillableItems={this.addBillableItems}
           deleteBillableItems={this.deleteBillableItems}
-          subtotal={this.state.subtotal}
+          // subtotal={this.state.subtotal}
           changeSubtotal={this.changeSubtotal}
-          amountDue={this.state.amountDue}
+          // amountDue={this.state.amountDue}
           calculateAmountDue={this.calculateAmountDue}
-          grandTotal={this.state.grandTotal}
+          // grandTotal={this.state.grandTotal}
           calculateGrandTotal={this.calculateGrandTotal}
         />
         <hr />
@@ -292,10 +304,7 @@ export default class InvoiceScreen extends Component {
             {/*<Button color="secondary" onClick={() => this.recalculate()}>
               Recalculate
     </Button>*/}
-            <Button
-              color="secondary"
-              onClick={this.saveOnly}
-            >
+            <Button color="secondary" onClick={this.saveOnly}>
               Save Changes
             </Button>
             <Button
@@ -305,10 +314,7 @@ export default class InvoiceScreen extends Component {
             >
               Save and Close
             </Button>
-            <Button
-              color="secondary"
-              onClick={() => this.generatePDF()}
-            >
+            <Button color="secondary" onClick={() => this.generatePDF()}>
               Generate PDF
             </Button>
           </ButtonGroup>
