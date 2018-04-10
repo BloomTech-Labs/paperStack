@@ -9,6 +9,7 @@ import {
   InputGroup,
   InputGroupAddon
 } from "reactstrap";
+import moment from 'moment';
 
 export default class InvoiceFooter2 extends Component {
   /**
@@ -203,6 +204,11 @@ export default class InvoiceFooter2 extends Component {
                     type="text"
                     placeholder="payment terms"
                     onBlur={this.handleTermsChange}
+                    value={moment(this.props.dueDate).diff(this.props.invoiceDate, 'days') === 0 
+                    ? `Please remit payment immediately` 
+                    : moment(this.props.dueDate).diff(this.props.invoiceDate, 'days') === 1 
+                    ? `Payment is due within ${moment(this.props.dueDate).diff(this.props.invoiceDate, 'days') } day from the date on this invoice.`
+                    : `Payment is due within ${moment(this.props.dueDate).diff(this.props.invoiceDate, 'days') } days from the date on this invoice.`}
                   />
                 </Col>
               </FormGroup>

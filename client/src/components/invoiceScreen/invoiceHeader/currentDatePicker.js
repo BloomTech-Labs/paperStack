@@ -4,35 +4,30 @@ import moment from "moment";
 
 import "react-datepicker/dist/react-datepicker.css";
 
-// CSS Modules, react-datepicker-cssmodules.css
-// import 'react-datepicker/dist/react-datepicker-cssmodules.css';
-
 export default class CurrentDatePicker extends Component {
   constructor(props) {
     super(props);
     this.state = {
       startDate: moment()
     };
-
-    this.handleChange = this.handleChange.bind(this);
   }
 
 
-  handleChange(date) {
+  handleChange = (date) => {
     this.setState({
       startDate: date
-    });
+    })
   }
 
   handleInvoiceDateChange = e => {
     this.props.changeInvoiceDate(e.target.value);
-    // console.log(this.props)
-  };
+  }
 
   render() {
     return (
       <DatePicker
-        selected={this.state.startDate}
+        className="form-control"
+        selected={this.state.startDate ? this.state.startDate : moment()}
         onChange={this.handleChange}
         onBlur={this.handleInvoiceDateChange}
         minDate={moment()}

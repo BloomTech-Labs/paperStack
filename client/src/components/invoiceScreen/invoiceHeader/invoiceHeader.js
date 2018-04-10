@@ -9,8 +9,9 @@ import {
   Label,
   Input,
   InputGroup,
-  InputGroupAddon,
+  InputGroupAddon
 } from "reactstrap";
+import moment from 'moment';
 
 import tempLogo from "../invoiceHeader/tempLogo.svg";
 
@@ -72,10 +73,7 @@ export default class InvoiceHeader extends Component {
                       Company Logo
                     </Label>
                     <Col sm={2}>
-                      <img 
-                        src={tempLogo} 
-                        alt="company logo" 
-                      />
+                      <img src={tempLogo} alt="company logo" />
                     </Col>
                     <Col sm={3}>
                       <Button name="updateLogo">Change Logo</Button>
@@ -89,12 +87,15 @@ export default class InvoiceHeader extends Component {
                     </Label>
                     <Col sm={9}>
                       <InputGroup>
-                        <Input 
-                          id='companyAddress' 
+                        <Input
+                          id="companyAddress"
                           placeholder="name, address, city, state, zip"
-                          disabled />
+                          disabled
+                        />
                       </InputGroup>
-                      <FormText color='muted'>The logo and address above will appear on your invoice.</FormText>
+                      <FormText color="muted">
+                        The logo and address above will appear on your invoice.
+                      </FormText>
                     </Col>
                   </FormGroup>
 
@@ -144,7 +145,7 @@ export default class InvoiceHeader extends Component {
                       Current Date
                     </Label>
                     <Col sm={8}>
-                      <CurrentDatePicker 
+                      <CurrentDatePicker
                         changeInvoiceDate={this.props.changeInvoiceDate}
                       />
                     </Col>
@@ -156,9 +157,7 @@ export default class InvoiceHeader extends Component {
                       Due Date
                     </Label>
                     <Col sm={8}>
-                      <DueDatePicker 
-                      changeDueDate={this.props.changeDueDate}
-                      />
+                      <DueDatePicker changeDueDate={this.props.changeDueDate} />
                     </Col>
                   </FormGroup>
 

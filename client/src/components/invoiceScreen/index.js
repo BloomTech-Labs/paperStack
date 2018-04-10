@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Button, ButtonGroup } from "reactstrap";
 import currency from "currency.js";
 import axios from "axios";
+import moment from 'moment';
 
 import InvoiceHeader from "./invoiceHeader/invoiceHeader";
 import InvoiceItemsTable2 from "./invoiceItems/InvoiceTable2";
@@ -21,8 +22,8 @@ export default class InvoiceScreen extends Component {
       companyAddress: "",
       customerAddress: "",
       invoiceNumber: "",
-      invoiceDate: "",
-      dueDate: "",
+      invoiceDate: moment().format('MM/DD/YYYY'),
+      dueDate: moment().add(1, 'days').format('MM/DD/YYYY'),
       billableItems: [],
       subtotal: sessionStorage.getItem("tableSubtotal"),
       tax: 0,
@@ -47,11 +48,6 @@ export default class InvoiceScreen extends Component {
   componentWillUnmount() {
     //   // use this later to save the current state of the invoice when we go change the logo
   }
-
-  // // this function just toggles the button selection for the triple button at the bottom of the page -> NECESSARY to handle which function should be called -> NEEDS TO BE WRITTEN AS OF 4.9.18
-  // onRadioBtnClick(rSelected) {
-  //   this.setState({ rSelected });
-  // }
 
   /**
    * these functions are for the buttons at the bottom of the page
@@ -254,53 +250,35 @@ export default class InvoiceScreen extends Component {
         <br />
         <hr />
         <InvoiceHeader
-          companyLogo={this.state.companyLogo}
+          {...this.state}
           changeCompanyLogo={this.changeCompanyLogo}
-          companyAddress={this.state.companyAddress}
           changeCompanyAddress={this.changeCompanyAddress}
-          customerAddress={this.state.customerAddress}
           changeCustomerAddress={this.changeCustomerAddress}
-          invoiceNumber={this.state.invoiceNumber}
           changeInvoiceNumber={this.changeInvoiceNumber}
-          invoiceDate={this.state.invoiceDate}
           changeInvoiceDate={this.changeInvoiceDate}
-          dueDate={this.state.dueDate}
           changeDueDate={this.changeDueDate}
-          amountDue={this.state.amountDue}
           calculateAmountDue={this.calculateAmountDue}
         />
         <hr />
         <InvoiceItemsTable2
           {...this.state}
-          // billableItems={this.state.billableItems}
           addBillableItems={this.addBillableItems}
           deleteBillableItems={this.deleteBillableItems}
-          // subtotal={this.state.subtotal}
           changeSubtotal={this.changeSubtotal}
-          // amountDue={this.state.amountDue}
           calculateAmountDue={this.calculateAmountDue}
-          // grandTotal={this.state.grandTotal}
           calculateGrandTotal={this.calculateGrandTotal}
         />
         <hr />
         <InvoiceFooter2
-          discount={this.state.discount}
+          {...this.state}
           changeDiscount={this.changeDiscount}
-          tax={this.state.tax}
           changeTax={this.changeTax}
-          shipping={this.state.shipping}
           changeShipping={this.changeShipping}
-          grandTotal={this.state.grandTotal}
           calculateGrandTotal={this.calculateGrandTotal}
-          deposit={this.state.deposit}
           changeDeposit={this.changeDeposit}
-          subtotal={this.state.subtotal}
           changeSubtotal={this.changeSubtotal}
-          amountDue={this.state.amountDue}
           calculateAmountDue={this.calculateAmountDue}
-          notes={this.state.notes}
           changeNotes={this.changeNotes}
-          terms={this.state.terms}
           changeTerms={this.changeTerms}
         />
         <div style={{ width: "90%", margin: "auto" }}>

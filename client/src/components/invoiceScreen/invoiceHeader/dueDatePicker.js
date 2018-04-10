@@ -30,10 +30,11 @@ export default class DueDatePicker extends Component {
   render() {
     return (
       <DatePicker
+        className="form-control"
         selected={this.state.startDate}
         onChange={this.handleChange}
         onBlur={this.handleDueDateChange}
-        minDate={moment().add(1, "days")}
+        minDate={moment()}
         highlightDates={[
           moment().add(7, "days"),
           moment().add(14, "days"),
