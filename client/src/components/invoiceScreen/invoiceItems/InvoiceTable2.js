@@ -97,7 +97,7 @@ export default class InvoiceItemsTable2 extends Component {
     } else if (nan) {
       response.isValid = false;
       response.notification.type = "error";
-      response.notification.msg = "Please use numbers only";
+      response.notification.msg = "Please use numbers only. If using a decimal value, please use a leading 0";
       response.notification.title = "Invalid Rate Type";
     }
     return response;
@@ -121,9 +121,8 @@ export default class InvoiceItemsTable2 extends Component {
   }
 
   changeGroup() {
-    console.log('this: ', this)
     this.handleAddBillableItems();
-    // this.handleDeleteBillableItems();
+    this.handleDeleteBillableItems();
     this.handleSubtotalChange();
   }
 
@@ -219,6 +218,7 @@ export default class InvoiceItemsTable2 extends Component {
           striped
           hover
           condensed
+          // remote={true}
           footerData={footerData}
           footer // <- cannot be disbled or updated subtotal will not be pushed to sessionStorage
           options={this.options}

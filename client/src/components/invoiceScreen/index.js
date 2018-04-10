@@ -123,26 +123,30 @@ export default class InvoiceScreen extends Component {
     if (!lineItem) {
       return;
     } else {
-      this.setState(prevState => ({
-        billableItems: [...prevState.billableItems, JSON.parse(lineItem)]
-      }),
-      () => {
-        console.log(this.state.billableItems);
-      });
+      this.setState(
+        prevState => ({
+          billableItems: [...prevState.billableItems, JSON.parse(lineItem)]
+        }),
+        () => {
+          console.log(this.state.billableItems);
+        }
+      );
       sessionStorage.removeItem("lineItem");
     }
   };
 
-  deleteBillableItems = () => {
-    let itemToDelete = sessionStorage.getItem("deleteMe");
-    // alert(itemToDelete);
-    let filteredState = this.state.billableItems.filter(
-      item => item !== itemToDelete
-    );
-    // sessionStorage.removeItem("lineItem");
-    this.setState({ billableItems: filteredState });
-    sessionStorage.removeItem("deleteMe");
-    alert(filteredState);
+  deleteBillableItems = deleteMe => {
+    if (!deleteMe) {
+      return;
+    } else {
+      let filteredState = this.state.billableItems.filter(
+        item => item.id !== deleteMe
+      );
+      this.setState({ billableItems: filteredState }, () => {
+        console.log(this.state.billableItems)
+      });
+      sessionStorage.removeItem("deleteMe");
+    }
   };
 
   // pass function as callback to mimic synchronous setState: https://vasanthk.gitbooks.io/react-bits/patterns/19.async-nature-of-setState.html
