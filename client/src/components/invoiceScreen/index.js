@@ -55,13 +55,13 @@ export default class InvoiceScreen extends Component {
   saveOnly = () => {
     axios({
       method: "post",
-      url: `http://localhost:3001/invoices`,
+      url: `http://localhost:3001/new`,
       params: {
-        customerAddress: this.state.customerAddress,
+        invCustomerAddress: this.state.customerAddress,
         invNumber: this.state.invoiceNumber,
         invDate: this.state.invoiceDate,
         invDueDate: this.state.dueDate,
-        billableItems: this.state.billableItems,
+        invBillableItems: JSON.stringify(this.state.billableItems),
         invDiscount: this.state.discount,
         invTax: this.state.tax,
         invDeposit: this.state.deposit,

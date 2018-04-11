@@ -22,7 +22,9 @@ const Customers = require("./invoice/custModel.js");
 const Invoices = require("./invoice/invModel.js");
 const FinTran = require("./invoice/finTranModel.js");
 const InvLine = require("./invoice/invLineItemsModel.js");
+
 const server = express();
+
 server.use(bodyParser.urlencoded({ extended: false })); // added
 server.use(bodyParser.json());
 server.use(cors());
@@ -217,7 +219,70 @@ server.delete("/customers/:id", function(req, res) {
 /**
  * CRUD for Invoices
  */
-let customerId, usersId, invNumbers, invDate, invDueDate;
+let usersId,
+  invCustomerAddress,
+  invNumber,
+  invDate,
+  invDueDate,
+  invBillableItems,
+  invDiscount,
+  invTax,
+  invDeposit,
+  invShipping,
+  invComment,
+  invTerms;
+// /**
+//  * Post Invoices
+//  */
+
+server.post("/new", function(req, res) {
+  const newInv = new Invoices(req.body);
+  // do checks here to make sure the invoice has all the data
+  if (newInv.usersId === "" || newInv.invNumber === "") {
+    res
+      .status(STATUS_USER_ERROR)
+      .json({ error: "User not logged in, or Invoice Number blank" });
+    return;
+  } else {
+    newInv.save(function(err, invoice) {
+      if (err) {
+        res
+          .status(STATUS_SERVER_ERROR)
+          .json({ error: "Could not create the invoice." });
+      } else {
+        res.status(201).json(invoice);
+      }
+    });
+  }
+});
+
+// server.post("/new", (req, res) => {
+//   const invNumber = req.query;
+//   const tkn = req.get("Authorization");
+//   res.status(200).json(invNumber);
+//   // const { customerId, userId, invNumber, invDate, invDueDate } = req.body;
+//   // if (!customerId || !userId) {
+//   //   return res
+//   //     .status(STATUS_USER_ERROR)
+//   //     .json({ error: "Could not create invoice due to missing fields" });
+//   // }
+//   // const newInv = new Invoices({
+//   //   customerId,
+//   //   userId,
+//   //   invNumber,
+//   //   invDate,
+//   //   invDueDate
+//   // });
+//   // newInv.save((err, invoice) => {
+//   //   if (err) {
+//   //     console.log(err);
+//   //     return res
+//   //       .status(STATUS_SERVER_ERROR)
+//   //       .json({ error: "Could not create the invoice." });
+//   //   }
+//   //   res.status(201).json(invoice);
+//   // });
+// });
 /**
  * Update an Invoice
  */
@@ -501,13 +566,15 @@ const hashedPassword = (req, res, next) => {
 const verifyToken = (req, res, next) => {
   const tkn = req.get("Authorization");
   if (!tkn) {
-    return res.status(STATUS_UNAUTHORIZED_ERROR)
-              .json({ err: "You are not authorized to do this request" });
+    return res
+      .status(STATUS_UNAUTHORIZED_ERROR)
+      .json({ err: "You are not authorized to do this request" });
   }
   jwt.verify(tkn, process.env.SECRET, (err, decoded) => {
     if (err)
-      return res.status(STATUS_UNAUTHORIZED_ERROR)
-                .json({ err: "You are not authorized to do this request" });
+      return res
+        .status(STATUS_UNAUTHORIZED_ERROR)
+        .json({ err: "You are not authorized to do this request" });
     return next();
   });
 };
