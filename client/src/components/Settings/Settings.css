@@ -1,0 +1,33 @@
+.UserSetting {
+  text-align: center;
+}
+
+.UserSetting main {
+  margin-top: 30px;
+}
+
+.UserSetting-logo-section {
+  display: inline-block; 
+  width: 300px;
+}
+
+.UserSetting-logo-preview {
+  width: 100px;
+}
+
+.UserSetting-logo-input {
+  width: 97px;
+}
+
+.UserSetting-password-section {
+  text-align: right;
+  display: inline-block; 
+  width: 300px;
+  vertical-align: top;
+}
+
+@media (max-width: 600px) {
+  .UserSetting-password-section {
+    margin-top: 30px;
+  }
+}
