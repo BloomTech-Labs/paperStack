@@ -189,6 +189,7 @@ export default class InvoiceFooter2 extends Component {
                     type="text"
                     placeholder="any notes for the customer"
                     onBlur={this.handleNotesChange}
+                    maxLength='200'
                   />
                 </Col>
               </FormGroup>
