@@ -209,6 +209,8 @@ export default class InvoiceFooter2 extends Component {
                     : moment(this.props.dueDate).diff(this.props.invoiceDate, 'days') === 1 
                     ? `Payment is due within ${moment(this.props.dueDate).diff(this.props.invoiceDate, 'days') } day from the date on this invoice.`
                     : `Payment is due within ${moment(this.props.dueDate).diff(this.props.invoiceDate, 'days') } days from the date on this invoice.`}
+                    readOnly
+                    disabled
                   />
                 </Col>
               </FormGroup>

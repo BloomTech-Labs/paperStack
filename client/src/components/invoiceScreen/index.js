@@ -61,6 +61,8 @@ export default class InvoiceScreen extends Component {
   /**
    * these functions are for the buttons at the bottom of the page
    */
+  // http://www.hostingadvice.com/how-to/javascript-object-to-string-tutorial/
+  // on how to format the JSON object for billableItems -> need a replacer defined with the keys, or you just get [object Object]
   saveOnly = () => {
     axios({
       method: "post",
@@ -70,7 +72,7 @@ export default class InvoiceScreen extends Component {
         invNumber: this.state.invoiceNumber,
         invDate: this.state.invoiceDate,
         invDueDate: this.state.dueDate,
-        invBillableItems: this.state.billableItems,
+        invBillableItems: JSON.stringify(this.state.billableItems, ['id', 'item', 'qty', 'rate', 'amount' ]),
         invDiscount: this.state.discount,
         invTax: this.state.tax,
         invDeposit: this.state.deposit,
