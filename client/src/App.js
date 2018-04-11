@@ -21,7 +21,7 @@ class App extends Component {
           <Route path="/authorisation" component={Authorisation} />
           <Route path="/invoices" component={RequireAuth(InvoiceList)} />
           <Route path="/new" component={(InvoiceScreen)} />
-          <Route path="/billing" component={RequireAuth(Billing)} />
+          <Route path="/billing" component={Billing} />
           <Route path="/settings" component={RequireAuth(Settings)} />
           <Route component={NotFound} />
         </Switch>

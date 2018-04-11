@@ -1,4 +1,7 @@
+# ignore node modules
 **/node_modules
+
+# ignore .env files
 .env
 
 # Ignore test-related files
