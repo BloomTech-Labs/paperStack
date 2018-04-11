@@ -15,7 +15,7 @@ export default class InvoiceScreen extends Component {
   constructor(props) {
     super(props);
 
-    // let holdLineItems = [];
+
 
     this.state = {
       companyLogo: "",
@@ -41,9 +41,18 @@ export default class InvoiceScreen extends Component {
     sessionStorage.removeItem("lineItem", "modifyMe");
   }
 
-  componentDidMount() {
-    // axios calls here to retreive data for pre-existing invoices
-  }
+  // componentDidMount() {
+  //   // axios calls here to retreive data for pre-existing invoices
+  //   axios
+  //     .get(`fetch users invoice# and address here`)
+  //     .then(res => {
+  //       console.log(res)
+  //       this.setState({
+  //         companyAddress: res.data.companyAddress,
+  //         invoiceNumber : res.data.invoice + 1
+  //       })
+  //     })
+  // }
 
   componentWillUnmount() {
     //   // use this later to save the current state of the invoice when we go change the logo
@@ -56,12 +65,12 @@ export default class InvoiceScreen extends Component {
     axios({
       method: "post",
       url: `http://localhost:3001/new`,
-      params: {
+      data: {
         invCustomerAddress: this.state.customerAddress,
         invNumber: this.state.invoiceNumber,
         invDate: this.state.invoiceDate,
         invDueDate: this.state.dueDate,
-        invBillableItems: JSON.stringify(this.state.billableItems),
+        invBillableItems: this.state.billableItems,
         invDiscount: this.state.discount,
         invTax: this.state.tax,
         invDeposit: this.state.deposit,
