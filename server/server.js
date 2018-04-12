@@ -4,6 +4,7 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const fileUpload = require("express-fileupload");
 const stripe = require("stripe")("sk_test_K04zveK9MnFXMgiIxhHv6mIa");
 const STATUS_USER_ERROR = 422;
 const STATUS_SERVER_ERROR = 500;
@@ -27,12 +28,13 @@ const server = express();
 
 server.use(bodyParser.urlencoded({ extended: false })); // added
 server.use(bodyParser.json());
+server.use(fileUpload({ limits: { fileSize: 400 * 1024 } }));
 server.use(cors());
 require("dotenv").config();
 mongoose.Promise = global.Promise;
 mongoose
-  .connect(process.env.MONGO_URI)
-  // .connect('mongodb://localhost:27017/users')
+  // .connect(process.env.MONGO_URI)
+  .connect('mongodb://localhost:27017/users')
   .then(function(db) {
     console.log("All your dbs belong to us!");
     server.listen(3001, function() {
@@ -683,3 +685,108 @@ server.post("/api/checkout", (req, res) => {
     }
   );
 });
+
+/**
+ * Logo uploading
+ */
+server.put('/upload', verifyToken, (req, res) => {
+  const imageFile = req.files.logo;
+  
+  if (imageFile.truncated) { 
+    return res.status(413)
+              .json({ err: "Your image size exceeds max limit of 0.4mb" });
+  }
+
+  const supportedMimeTypes = ["image/jpeg", "image/png"];
+  const contentType = imageFile.mimetype;
+  if (supportedMimeTypes.indexOf(contentType) === -1) {
+    return res.status(STATUS_USER_ERROR)
+              .json({ err: "You are permitted to upload the following image types jpeg and png" });
+  }
+
+  const userId = req.query.userId;
+  Users.findById(userId, (err, user) => {
+    if (err) { 
+      return res.status(STATUS_SERVER_ERROR)
+                .json({ err: 'Couldn\'t find user' }); 
+    }
+    const binaryData = imageFile.data.toString('base64');
+    const logo = { binaryData, contentType };
+    user.logo = logo;
+    user.save((err, updatedUser) => {
+      if (err) { 
+        return res.status(STATUS_SERVER_ERROR)
+                  .json({ err: 'Couldn\'t save changes' });
+      }
+      res.status(200).json(updatedUser.logo);
+    });
+  });
+})
+
+/**
+ * Get logo and company name
+ */
+
+server.get('/logo', verifyToken, (req, res) => {
+  const userId = req.query.userId;
+  Users.findById(userId, (err, user) => {
+    if (err) { 
+      return res.status(STATUS_SERVER_ERROR)
+                .json({ err: 'Couldn\'t find user' }); 
+    }
+    const userLogo = user.logo;
+    if (!userLogo.contentType) {
+      return res.status(200)
+                .json({ message: 'Logo is not selected' });
+    }
+    const companyName = user.companyName;
+    const companyAddress = user.companyAddress;
+    res.status(200).json({ userLogo, companyName, companyAddress });
+  });
+});
+
+/**
+ * Company name update
+ */
+
+server.put('/company-name', verifyToken, (req, res) => {
+  const userId = req.query.userId;
+  const companyName = req.body.companyName;
+  Users.findById(userId, (err, user) => {
+    if (err) { 
+      return res.status(STATUS_SERVER_ERROR)
+                .json({ err: 'Couldn\'t find user' }); 
+    }
+    user.companyName = companyName;
+    user.save((err, updatedUser) => {
+      if (err) { 
+        return res.status(STATUS_SERVER_ERROR)
+                  .json({ err: 'Couldn\'t save changes' });
+      }
+      res.status(200).json(updatedUser.companyName);
+    });
+  });
+});
+
+/**
+ * Company address update
+ */
+
+server.put('/company-address', verifyToken, (req, res) => {
+  const userId = req.query.userId;
+  const companyAddress = req.body.companyAddress;
+  Users.findById(userId, (err, user) => {
+    if (err) { 
+      return res.status(STATUS_SERVER_ERROR)
+                .json({ err: 'Couldn\'t find user' }); 
+    }
+    user.companyAddress = companyAddress;
+    user.save((err, updatedUser) => {
+      if (err) { 
+        return res.status(STATUS_SERVER_ERROR)
+                  .json({ err: 'Couldn\'t save changes' });
+      }
+      res.status(200).json(updatedUser.companyAddress);
+    });
+  });
+})

@@ -20,6 +20,27 @@ const UsersSchema = new Schema({
         type: String,
         required: true
     },
+    logo: { 
+        binaryData: {
+            data: Buffer,
+            type: String,            
+            required: false 
+        },
+        contentType: {
+            type: String,
+            required: false
+        }
+    },
+    companyName: {
+        type: String,
+        required: false,
+        default: null
+    },
+    companyAddress: {
+        type: String,
+        required: false,
+        default: null
+    },
     createdAt: {
         type: Date,
         default: Date.now
