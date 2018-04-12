@@ -91,6 +91,7 @@ class SignUpForm extends Component {
       .post(`http://localhost:3001/new-user`, { email, password })
       .then(res => {
         localStorage.setItem("tkn", res.data.token);
+        localStorage.setItem("userId", res.data.userId);
         this.props.history.push("/invoices");
       })
       .catch(err => {

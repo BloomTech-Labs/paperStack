@@ -25,6 +25,7 @@ class Navigation extends Component {
 
   handleSignOut = () => {
     localStorage.removeItem('tkn');
+    localStorage.removeItem('userId');
     this.props.history.push("/");
   }
 
