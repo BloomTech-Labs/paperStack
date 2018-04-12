@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import {Route, Redirect} from 'react-router-dom';
 import { Button, ButtonGroup } from "reactstrap";
 import currency from "currency.js";
 import axios from "axios";
@@ -14,8 +15,6 @@ import "react-datepicker/dist/react-datepicker.css";
 export default class InvoiceScreen extends Component {
   constructor(props) {
     super(props);
-
-
 
     this.state = {
       companyLogo: "",
@@ -33,7 +32,8 @@ export default class InvoiceScreen extends Component {
       shipping: 0,
       amountDue: 0,
       notes: "",
-      terms: ""
+      terms: "",
+      userID: ""
     };
   }
 
@@ -61,6 +61,19 @@ export default class InvoiceScreen extends Component {
   /**
    * these functions are for the buttons at the bottom of the page
    */
+
+  // retrieve companyLogo, companyAddress
+  // getUserInfo = () => {
+  //   return axios
+  //     .get(`http://localhost:3001/users/${userID}`)
+  //     .then(res => this.setState({
+  //       userID: res.data.userID,
+  //       companyLogo: res.data.companyLogo,
+  //       companyAddress: res.data.companyAddress
+  //     }))
+  // }
+
+
   // http://www.hostingadvice.com/how-to/javascript-object-to-string-tutorial/
   // on how to format the JSON object for billableItems -> need a replacer defined with the keys, or you just get [object Object]
   saveOnly = () => {
@@ -84,6 +97,11 @@ export default class InvoiceScreen extends Component {
     })
       .then(res => {
         console.log(res.data);
+        if (res.data) {
+          this.context.history.push('/invoices');
+        } else {
+          return;
+        }
       })
       .catch(err => {
         const message = err.response.data.error;
