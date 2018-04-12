@@ -61,6 +61,8 @@
 .Landing-info {
   height: auto;
   background-color: #fff;
+  padding-top: 20px;
+  padding-bottom: 20px;
 }
 
 .Landing-info h2 {
@@ -119,6 +121,7 @@
   line-height: 56px;
   font-weight: 400;
   word-wrap: break-word;
+  margin-bottom: 0;
 }
 
 @media (max-width: 600px) {
