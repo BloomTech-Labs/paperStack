@@ -10,6 +10,7 @@ import InvoiceHeader from "./invoiceHeader/invoiceHeader";
 import InvoiceItemsTable2 from "./invoiceItems/InvoiceTable2";
 import InvoiceFooter2 from "./invoiceFooter/InvoiceFooter2";
 import Navigation from "../Navigation";
+import logoNotFound from './logoNotFound.svg'
 
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -73,6 +74,27 @@ class InvoiceScreen extends Component {
         }
       })
       .then(res => {
+        if (!res.data.companyAddress) {
+          this.setState({
+            companyAddress: "company address missing"
+          }, () => {
+            console.log('company address missing')
+          })
+        }
+        if (!res.data.companyName) {
+          this.setState({
+            companyName: "company name missing"
+          }, () => {
+            console.log('company name missing')
+          })
+        }
+        if (!res.data.userLogo) {
+          this.setState({
+            companyLogo: logoNotFound
+          }, () => {
+            console.log('company logo missing')
+          })
+        } else {
         this.setState(
           {
             companyAddress: res.data.companyAddress,
@@ -85,7 +107,10 @@ class InvoiceScreen extends Component {
             console.log("");
           }
         );
-      });
+      }})
+      .catch(error => {
+        console.log(error.res)
+      })
   };
 
   // http://www.hostingadvice.com/how-to/javascript-object-to-string-tutorial/
@@ -304,7 +329,7 @@ class InvoiceScreen extends Component {
               pdf
                 .setFontSize(15)
                 .setTextColor(120)
-                .text(528, 60, this.state.invoiceNumber);
+                .text(528, 60, this.state.invoiceNumber, null, null, "right");
               pdf
                 .setFontSize(10)
                 .setFontStyle("bold")
