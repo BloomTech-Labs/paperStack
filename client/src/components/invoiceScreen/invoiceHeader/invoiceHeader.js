@@ -11,8 +11,7 @@ import {
   InputGroup,
   InputGroupAddon
 } from "reactstrap";
-
-import tempLogo from "../invoiceHeader/tempLogo.svg";
+import { Link } from 'react-router-dom';
 
 import DueDatePicker from "./dueDatePicker";
 import CurrentDatePicker from "./currentDatePicker";
@@ -27,6 +26,10 @@ export default class InvoiceHeader extends Component {
     this.state = {
       dropdownOpen: false
     };
+  }
+
+  saveAndChange = () => {
+    this.props.saveOnly();
   }
 
   /**
@@ -71,11 +74,14 @@ export default class InvoiceHeader extends Component {
                     <Label for="businessLogo" sm={3}>
                       Company Logo
                     </Label>
-                    <Col sm={2}>
-                      <img src={tempLogo} alt="company logo" />
+                    <Col sm={5}>
+                      <img src={this.props.companyLogo} alt="company logo" style={{"maxHeight":"200px", "maxWidth":"200px"}}/>
                     </Col>
                     <Col sm={3}>
-                      <Button name="updateLogo">Change Logo</Button>
+                      <Button name="updateLogo" 
+                      tag={Link}
+                      to="/settings"
+                      >Change Logo</Button>
                     </Col>
                   </FormGroup>
 
@@ -90,6 +96,7 @@ export default class InvoiceHeader extends Component {
                           id="companyAddress"
                           placeholder="name, address, city, state, zip"
                           disabled
+                          value={`${this.props.companyName}, ${this.props.companyAddress}`}
                         />
                       </InputGroup>
                       <FormText color="muted">

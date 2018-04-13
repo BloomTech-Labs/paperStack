@@ -7,11 +7,11 @@ const InvoicesSchema = new Schema({
     //     ref: 'Customers',
     //     required: true
     // },
-    // usersId: {
-    //     type: mongoose.Schema.Types.ObjectId,
-    //     ref: 'Users',
-    //     required: true
-    // },
+    usersId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Users',
+        required: true
+    },
     invCustomerAddress: {
         type: String,
         required: false

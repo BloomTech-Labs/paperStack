@@ -1,9 +1,9 @@
 import React, { Component } from "react";
-import {Route, Redirect} from 'react-router-dom';
 import { Button, ButtonGroup } from "reactstrap";
 import currency from "currency.js";
 import axios from "axios";
-import moment from 'moment';
+import moment from "moment";
+import { withRouter } from "react-router-dom";
 
 import InvoiceHeader from "./invoiceHeader/invoiceHeader";
 import InvoiceItemsTable2 from "./invoiceItems/InvoiceTable2";
@@ -12,17 +12,24 @@ import Navigation from "../Navigation";
 
 import "react-datepicker/dist/react-datepicker.css";
 
-export default class InvoiceScreen extends Component {
+const serverURL = "http://localhost:3001/";
+
+const enableUpdateButton = localStorage.getItem("invoiceId");
+
+class InvoiceScreen extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
       companyLogo: "",
-      companyAddress: "",
+      companyName: "start name",
+      companyAddress: "start addy",
       customerAddress: "",
       invoiceNumber: "",
-      invoiceDate: moment().format('MM/DD/YYYY'),
-      dueDate: moment().add(1, 'days').format('MM/DD/YYYY'),
+      invoiceDate: moment().format("MM/DD/YYYY"),
+      dueDate: moment()
+        .add(1, "days")
+        .format("MM/DD/YYYY"),
       billableItems: [],
       subtotal: sessionStorage.getItem("tableSubtotal"),
       tax: 0,
@@ -32,27 +39,20 @@ export default class InvoiceScreen extends Component {
       shipping: 0,
       amountDue: 0,
       notes: "",
-      terms: "",
-      userID: ""
+      terms: ""
     };
   }
 
   componentWillMount() {
     sessionStorage.removeItem("lineItem", "modifyMe");
+    if(localStorage.getItem("invoiceId")) {
+      this.getExistingInvoice();
+    }
   }
 
-  // componentDidMount() {
-  //   // axios calls here to retreive data for pre-existing invoices
-  //   axios
-  //     .get(`fetch users invoice# and address here`)
-  //     .then(res => {
-  //       console.log(res)
-  //       this.setState({
-  //         companyAddress: res.data.companyAddress,
-  //         invoiceNumber : res.data.invoice + 1
-  //       })
-  //     })
-  // }
+  componentDidMount() {
+    this.getUserInfo();
+  }
 
   componentWillUnmount() {
     //   // use this later to save the current state of the invoice when we go change the logo
@@ -63,29 +63,49 @@ export default class InvoiceScreen extends Component {
    */
 
   // retrieve companyLogo, companyAddress
-  // getUserInfo = () => {
-  //   return axios
-  //     .get(`http://localhost:3001/users/${userID}`)
-  //     .then(res => this.setState({
-  //       userID: res.data.userID,
-  //       companyLogo: res.data.companyLogo,
-  //       companyAddress: res.data.companyAddress
-  //     }))
-  // }
-
+  getUserInfo = () => {
+    axios
+      .get(`${serverURL}logo`, {
+        params: { userId: localStorage.getItem("userId") },
+        headers: {
+          Authorization: localStorage.getItem("tkn")
+        }
+      })
+      .then(res => {
+        this.setState(
+          {
+            companyAddress: res.data.companyAddress,
+            companyName: res.data.companyName,
+            companyLogo: `data:${res.data.userLogo.contentType};base64,${
+              res.data.userLogo.binaryData
+            }`
+          },
+          () => {
+            console.log("");
+          }
+        );
+      });
+  };
 
   // http://www.hostingadvice.com/how-to/javascript-object-to-string-tutorial/
   // on how to format the JSON object for billableItems -> need a replacer defined with the keys, or you just get [object Object]
   saveOnly = () => {
     axios({
       method: "post",
-      url: `http://localhost:3001/new`,
+      url: `${serverURL}new`,
+      params: { userId: localStorage.getItem("userId") },
       data: {
         invCustomerAddress: this.state.customerAddress,
         invNumber: this.state.invoiceNumber,
         invDate: this.state.invoiceDate,
         invDueDate: this.state.dueDate,
-        invBillableItems: JSON.stringify(this.state.billableItems, ['id', 'item', 'qty', 'rate', 'amount' ]),
+        invBillableItems: JSON.stringify(this.state.billableItems, [
+          "id",
+          "item",
+          "qty",
+          "rate",
+          "amount"
+        ]),
         invDiscount: this.state.discount,
         invTax: this.state.tax,
         invDeposit: this.state.deposit,
@@ -97,11 +117,6 @@ export default class InvoiceScreen extends Component {
     })
       .then(res => {
         console.log(res.data);
-        if (res.data) {
-          this.context.history.push('/invoices');
-        } else {
-          return;
-        }
       })
       .catch(err => {
         const message = err.response.data.error;
@@ -109,10 +124,102 @@ export default class InvoiceScreen extends Component {
       });
   };
 
-  saveAndClose = () => {
-    alert("Save and Close was pressed");
+  saveChangesToExistingInvoice = () => {
+    if (!localStorage.getItem("invoiceNumber")) {
+      return;
+    } else {
+      axios({
+        method: "put",
+        url: `${serverURL}invoices/`,
+        params: {
+          invoiceId: localStorage.getItem("invoiceId")
+        },
+        data: {
+          invCustomerAddress: this.state.customerAddress,
+          invNumber: this.state.invoiceNumber,
+          invDate: this.state.invoiceDate,
+          invDueDate: this.state.dueDate,
+          invBillableItems: JSON.stringify(this.state.billableItems, [
+            "id",
+            "item",
+            "qty",
+            "rate",
+            "amount"
+          ]),
+          invDiscount: this.state.discount,
+          invTax: this.state.tax,
+          invDeposit: this.state.deposit,
+          invShipping: this.state.shipping,
+          invComment: this.state.notes,
+          invTerms: this.state.terms
+        },
+        headers: { Authorization: localStorage.getItem("tkn") }
+      })
+        .then(res => {
+          console.log(res.data);
+        })
+        .catch(err => {
+          const message = err.response.data.error;
+          console.log(message);
+        });
+    }
   };
 
+  getExistingInvoice = () => {
+    if (!localStorage.getItem("invoiceNumber")) {
+      return;
+    } else {
+      axios({
+        method: "get",
+        url: `${serverURL}invoices/`,
+        params: {
+          id: localStorage.getItem("invoiceId")
+        },
+        headers: { Authorization: localStorage.getItem("tkn") }
+      })
+        .then(res => {
+          this.setState(
+            {
+              invCustomerAddress: res.data.customerAddress,
+              invNumber: res.data.invoiceNumber,
+              invDate: res.data.invoiceDate,
+              invDueDate: res.data.dueDate,
+              invBillableItems: JSON.parse(res.data.billableItems, [
+                "id",
+                "item",
+                "qty",
+                "rate",
+                "amount"
+              ]),
+              invDiscount: res.data.discount,
+              invTax: res.data.tax,
+              invDeposit: res.data.deposit,
+              invShipping: res.data.shipping,
+              invComment: res.data.notes,
+              invTerms: res.data.terms
+            },
+            () => {
+              console.log("");
+            }
+          );
+        })
+        .catch(err => {
+          const message = err.response.data.error;
+          console.log(message);
+        });
+    }
+  };
+
+  saveAndClose = () => {
+    if (!this.state.invoiceNumber) {
+      alert("Invoices must have at least an Invoice Number to save.");
+    } else {
+      this.saveOnly();
+      this.props.history.push("/invoices");
+    }
+  };
+
+  // Dan's button code goes here
   generatePDF = () => {
     alert("Generate PDF was pressed");
   };
@@ -168,13 +275,13 @@ export default class InvoiceScreen extends Component {
         item => item.id !== deleteMe
       );
       this.setState({ billableItems: filteredState }, () => {
-        console.log(this.state.billableItems)
+        console.log(this.state.billableItems);
       });
       sessionStorage.removeItem("deleteMe");
     }
   };
 
-  updateBillableItems = (modifyMe) => {
+  updateBillableItems = modifyMe => {
     if (!modifyMe) {
       return;
     } else {
@@ -184,7 +291,7 @@ export default class InvoiceScreen extends Component {
       );
       filteredState2.push(temp);
       this.setState({ billableItems: filteredState2 }, () => {
-        console.log(this.state.billableItems)
+        console.log(this.state.billableItems);
       });
 
       sessionStorage.removeItem("modifyMe");
@@ -297,6 +404,7 @@ export default class InvoiceScreen extends Component {
         <hr />
         <InvoiceHeader
           {...this.state}
+          saveOnly={this.saveOnly}
           changeCompanyLogo={this.changeCompanyLogo}
           changeCompanyAddress={this.changeCompanyAddress}
           changeCustomerAddress={this.changeCustomerAddress}
@@ -330,17 +438,14 @@ export default class InvoiceScreen extends Component {
         />
         <div style={{ width: "90%", margin: "auto" }}>
           <ButtonGroup size="lg">
-            {/*<Button color="secondary" onClick={() => this.recalculate()}>
-              Recalculate
-    </Button>*/}
-            <Button color="secondary" onClick={this.saveOnly}>
-              Save Changes
-            </Button>
             <Button
               color="secondary"
-              onClick={() => this.saveAndClose()}
-              // can pass react-router Link here
+              disabled={!enableUpdateButton}
+              // onClick={this.saveChangesToExistingInvoice()}
             >
+              Update Invoice
+            </Button>
+            <Button color="secondary" onClick={() => this.saveAndClose()}>
               Save and Close
             </Button>
             <Button color="secondary" onClick={() => this.generatePDF()}>
@@ -353,3 +458,4 @@ export default class InvoiceScreen extends Component {
     );
   }
 }
+export default withRouter(InvoiceScreen);
