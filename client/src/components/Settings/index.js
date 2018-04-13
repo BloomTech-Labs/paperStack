@@ -92,7 +92,8 @@ class Settings extends Component {
   handleChangeCompanyAddress = event => {
     this.setState({ companyAddress: event.target.value });
   }
-  changeCompanyName = () => {
+  changeCompanyName = event => {
+    event.preventDefault();
     const companyName = this.state.companyName;
     axios.put('http://localhost:3001/company-name', { companyName },
     {
@@ -126,7 +127,8 @@ class Settings extends Component {
     });
   }
 
-  changeCompanyAddress = () => {
+  changeCompanyAddress = event => {
+    event.preventDefault();
     const companyAddress = this.state.companyAddress;
     axios.put('http://localhost:3001/company-address', { companyAddress },
     {
@@ -253,26 +255,30 @@ class Settings extends Component {
               </button>
               <br />
               <br />
-              <label>Company Name: {this.state.newCompanyName}</label>
-              <input
-                  type="text"
-                  value={this.state.companyName}
-                  onChange={this.handleChangeCompanyName}
-                />
-              <Button color="secondary" onClick={this.changeCompanyName}>
-                Save Changes
-              </Button>
-              <br/>
-              <label>Company Address: {this.state.newCompanyAddress}</label>
-              <input
-                  type="text"
-                  value={this.state.companyAddress}
-                  onChange={this.handleChangeCompanyAddress}
-                />
-              <Button color="secondary" onClick={this.changeCompanyAddress}>
-                Save Changes
-              </Button>
             </div>      
+          </form>
+          <form onSubmit={(event) => {this.changeCompanyName(event)}}>
+            <label>Company Name: {this.state.newCompanyName}</label>
+            <input
+                type="text"
+                value={this.state.companyName}
+                onChange={this.handleChangeCompanyName}
+              />
+            <Button color="secondary">
+              Save Changes
+            </Button>
+          </form>
+          <br/>
+          <form onSubmit={(event) => {this.changeCompanyAddress(event)}}>
+            <label>Company Address: {this.state.newCompanyAddress}</label>
+            <input
+                type="text"
+                value={this.state.companyAddress}
+                onChange={this.handleChangeCompanyAddress}
+              />
+            <Button color="secondary" onClick={this.changeCompanyAddress}>
+              Save Changes
+            </Button>
           </form>
         </main>
         {/* Modal */}
