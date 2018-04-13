@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import invoiceImg from './invoice.png';
 import './CoverFlow.css';
 
 class CoverFlow extends Component {
@@ -7,11 +8,11 @@ class CoverFlow extends Component {
     this.state = { selectedIndex: 2 };
     // we will replace this.urls later with images of templates
     this.urls = [
-      'https://modernplanet.com/media/catalog/product/4/0/406_white_laminate_9.jpg', 
-      'https://modernplanet.com/media/catalog/product/4/0/406_white_laminate_9.jpg',
-      'https://modernplanet.com/media/catalog/product/4/0/406_white_laminate_9.jpg',
-      'https://modernplanet.com/media/catalog/product/4/0/406_white_laminate_9.jpg',
-      'https://modernplanet.com/media/catalog/product/4/0/406_white_laminate_9.jpg'
+      invoiceImg, 
+      invoiceImg,
+      invoiceImg,
+      invoiceImg,
+      invoiceImg
     ];
   }
 

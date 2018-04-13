@@ -34,8 +34,8 @@ require("dotenv").config();
 
 mongoose.Promise = global.Promise;
 mongoose
-  // .connect(process.env.MONGO_URI)
-  .connect('mongodb://localhost:27017/users')
+  .connect(process.env.MONGO_URI)
+  // .connect('mongodb://localhost:27017/users')
   .then(function(db) {
     console.log("All your dbs belong to us!");
     server.listen(3001, function() {
