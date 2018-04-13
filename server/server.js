@@ -25,13 +25,12 @@ const FinTran = require("./invoice/finTranModel.js");
 const InvLine = require("./invoice/invLineItemsModel.js");
 
 const server = express();
+
 server.use(bodyParser.urlencoded({ extended: false })); // added
 server.use(bodyParser.json());
 server.use(fileUpload({ limits: { fileSize: 400 * 1024 } }));
 server.use(cors());
-
 require("dotenv").config();
-
 mongoose.Promise = global.Promise;
 mongoose
   .connect(process.env.MONGO_URI)
@@ -45,13 +44,10 @@ mongoose
   .catch(function(err) {
     console.log("DB connection failed..", err.message);
   });
-
 /**
- * CRUD for Users
+ * CRUD for Users - Users are who we bill for using our app
  */
-
 let userName, email, hashPassword;
-
 /**
  * Update a User
  */
@@ -108,11 +104,9 @@ server.delete("/users/:id", function(req, res) {
     }
   });
 });
-
 /**
- * CRUD for Customers
+ * CRUD for Customers - customers belong to users, they are the recipients of the invoices that our app creates
  */
-
 let custName,
   custPhoneNbr,
   custEmail,
@@ -121,7 +115,6 @@ let custName,
   custState,
   custCountry,
   custZipCode;
-
 /**
  * Post Customers
  */
@@ -225,47 +218,88 @@ server.delete("/customers/:id", function(req, res) {
     }
   });
 });
-
 /**
  * CRUD for Invoices
  */
+let userId,
+  invCustomerAddress,
+  invNumber,
+  invDate,
+  invDueDate,
+  invBillableItems,
+  invDiscount,
+  invTax,
+  invDeposit,
+  invShipping,
+  invComment,
+  invTerms;
+// /**
+//  * Post Invoices
+//  */
 
-let customerId, usersId, invNumbers, invDate, invDueDate;
-
-/**
- * Post Invoices
- */
-server.post("/invoices", function(req, res) {
-  const newInv = new Invoices(req.body);
-  // do checks here to make sure the invoice has all the data
-  if (
-    newInv.customerId === "" ||
-    newInv.usersId === "" ||
-    newInv.invNumber === "" ||
-    newInv.invDate === "" ||
-    newInv.invDueDate === ""
-  ) {
-    res
+server.post("/new", (req, res) => {
+  const userId = req.query.userId;
+  console.log(userId);
+  const tkn = req.get("Authorization");
+  const {
+    invCustomerAddress,
+    invNumber,
+    invDate,
+    invDueDate,
+    invBillableItems,
+    invDiscount,
+    invTax,
+    invDeposit,
+    invShipping,
+    invComment,
+    invTerms
+  } = req.body;
+  if (!invNumber) {
+    return res
       .status(STATUS_USER_ERROR)
       .json({ error: "Could not create invoice due to missing fields" });
-    return;
-  } else {
-    newInv.save(function(err, invoice) {
-      if (err) {
-        res
-          .status(STATUS_SERVER_ERROR)
-          .json({ error: "Could not create the invoice." });
-      } else {
-        res.status(201).json(invoice);
-      }
-    });
   }
+  const newInv = new Invoices({
+    usersId : userId,
+    invCustomerAddress,
+    invNumber,
+    invDate,
+    invDueDate,
+    invBillableItems,
+    invDiscount,
+    invTax,
+    invDeposit,
+    invShipping,
+    invComment,
+    invTerms
+  });
+  newInv.save((err, invoice) => {
+    if (err) {
+      console.log(err);
+      return res
+        .status(STATUS_SERVER_ERROR)
+        .json({ error: "Could not create the invoice." });
+    }
+    // res.status(201).json(invoice);
+    res.status(200).send({ invoiceId: invoice._id });
+  });
 });
 /**
  * Update an Invoice
  */
 server.put("/invoices/:id", function(req, res) {
-  const { invNumber, invDate, invDueDate, invComments } = req.body;
+  const { invCustomerAddress,
+    invNumber,
+    invDate,
+    invDueDate,
+    invBillableItems,
+    invDiscount,
+    invTax,
+    invDeposit,
+    invShipping,
+    invComment,
+    invTerms
+  } = req.body;
   Invoices.findByIdAndUpdate(req.params.id, { $set: req.body }, function(
     err,
     invoices
@@ -278,24 +312,10 @@ server.put("/invoices/:id", function(req, res) {
   });
 });
 /**
- * Get all Invoices
- */
-server.get("/invoices", function(req, res) {
-  Invoices.find({}, function(err, invoices) {
-    if (err) {
-      res
-        .status(STATUS_SERVER_ERROR)
-        .json({ error: "Could not retrieve invoices" });
-    } else {
-      res.status(200).json(invoices);
-    }
-  });
-});
-/**
  * Get Invoices by _id
  */
 server.get("/invoices/:id", function(req, res) {
-  const { id } = req.params;
+  const id = req.query.id;
   Invoices.findById(id, function(err, invoices) {
     if (err) {
       res
@@ -319,11 +339,9 @@ server.delete("/invoices/:id", function(req, res) {
     }
   });
 });
-
 /**
  * CRUD for FinTran
  */
-
 let invId,
   transDate,
   transSubtotal,
@@ -332,7 +350,6 @@ let invId,
   transShipping,
   transAmountPaid,
   transComment;
-
 /**
  * Post FinTran
  */
@@ -435,109 +452,104 @@ server.delete("/fintran/:id", function(req, res) {
     }
   });
 });
-
-/**
- * CRUD for InvLine
- */
-
-let itemName, itemQuantity, itemRate, invNotes;
-
-/**
- * Post InvLine
- */
-server.post("/invline", function(req, res) {
-  const newInvLine = new InvLine(req.body);
-  // do checks here to make sure the finTran has all the data
-  if (
-    newInvLine.invId === "" ||
-    newInvLine.itemName === "" ||
-    newInvLine.itemQuantity === "" ||
-    newInvLine.itemRate === "" ||
-    newInvLine.invNotes === ""
-  ) {
-    res
-      .status(STATUS_USER_ERROR)
-      .json({ error: "Could not create line item due to missing fields" });
-    return;
-  } else {
-    newInvLine.save(function(err, invline) {
-      if (err) {
-        res
-          .status(STATUS_SERVER_ERROR)
-          .json({ error: "Could not post line item" });
-      } else {
-        res.status(201).json(invline);
-      }
-    });
-  }
-});
-/**
- * Update a InvLine
- */
-server.put("/invline/:id", function(req, res) {
-  const { itemName, itemQuantity, itemRate, invNotes } = req.body;
-  InvLine.findByIdAndUpdate(req.params.id, { $set: req.body }, function(
-    err,
-    invline
-  ) {
-    if (err) {
-      res
-        .status(STATUS_USER_ERROR)
-        .json({ error: "Could not update line item" });
-    } else {
-      res.status(200).json({ success: "Line item updated!" });
-    }
-  });
-});
-/**
- * Get all Line items
- */
-server.get("/invline", function(req, res) {
-  InvLine.find({}, function(err, invline) {
-    if (err) {
-      res
-        .status(STATUS_SERVER_ERROR)
-        .json({ error: "Could not retrieve line items" });
-    } else {
-      res.status(200).json(invline);
-    }
-  });
-});
-/**
- * Get line item by _id
- */
-server.get("/invline/:id", function(req, res) {
-  const { id } = req.params;
-  InvLine.findById(id, function(err, invline) {
-    if (err) {
-      res
-        .status(STATUS_USER_ERROR)
-        .json({ error: "Could not retrieve line item" });
-    } else {
-      res.status(200).json(invline);
-    }
-  });
-});
-/**
- * Delete line item by _id
- */
-server.delete("/invline/:id", function(req, res) {
-  const { id } = req.params;
-  InvLine.findByIdAndRemove(id, function(err, invline) {
-    if (err) {
-      res
-        .status(STATUS_USER_ERROR)
-        .json({ error: "Could not delete line item" });
-    } else {
-      res.status(200).json({ success: "Line item deleted!" });
-    }
-  });
-});
-
+// /**
+//  * CRUD for InvLine
+//  */
+// let itemName, itemQuantity, itemRate, invNotes;
+// /**
+//  * Post InvLine
+//  */
+// server.post("/invline", function(req, res) {
+//   const newInvLine = new InvLine(req.body);
+//   // do checks here to make sure the finTran has all the data
+//   if (
+//     newInvLine.invId === "" ||
+//     newInvLine.itemName === "" ||
+//     newInvLine.itemQuantity === "" ||
+//     newInvLine.itemRate === "" ||
+//     newInvLine.invNotes === ""
+//   ) {
+//     res
+//       .status(STATUS_USER_ERROR)
+//       .json({ error: "Could not create line item due to missing fields" });
+//     return;
+//   } else {
+//     newInvLine.save(function(err, invline) {
+//       if (err) {
+//         res
+//           .status(STATUS_SERVER_ERROR)
+//           .json({ error: "Could not post line item" });
+//       } else {
+//         res.status(201).json(invline);
+//       }
+//     });
+//   }
+// });
+// /**
+//  * Update a InvLine
+//  */
+// server.put("/invline/:id", function(req, res) {
+//   const { itemName, itemQuantity, itemRate, invNotes } = req.body;
+//   InvLine.findByIdAndUpdate(req.params.id, { $set: req.body }, function(
+//     err,
+//     invline
+//   ) {
+//     if (err) {
+//       res
+//         .status(STATUS_USER_ERROR)
+//         .json({ error: "Could not update line item" });
+//     } else {
+//       res.status(200).json({ success: "Line item updated!" });
+//     }
+//   });
+// });
+// /**
+//  * Get all Line items
+//  */
+// server.get("/invline", function(req, res) {
+//   InvLine.find({}, function(err, invline) {
+//     if (err) {
+//       res
+//         .status(STATUS_SERVER_ERROR)
+//         .json({ error: "Could not retrieve line items" });
+//     } else {
+//       res.status(200).json(invline);
+//     }
+//   });
+// });
+// /**
+//  * Get line item by _id
+//  */
+// server.get("/invline/:id", function(req, res) {
+//   const { id } = req.params;
+//   InvLine.findById(id, function(err, invline) {
+//     if (err) {
+//       res
+//         .status(STATUS_USER_ERROR)
+//         .json({ error: "Could not retrieve line item" });
+//     } else {
+//       res.status(200).json(invline);
+//     }
+//   });
+// });
+// /**
+//  * Delete line item by _id
+//  */
+// server.delete("/invline/:id", function(req, res) {
+//   const { id } = req.params;
+//   InvLine.findByIdAndRemove(id, function(err, invline) {
+//     if (err) {
+//       res
+//         .status(STATUS_USER_ERROR)
+//         .json({ error: "Could not delete line item" });
+//     } else {
+//       res.status(200).json({ success: "Line item deleted!" });
+//     }
+//   });
+// });
 /**
  * User authentication endpoints
  */
-
 /**
  * Middleware for password hashing
  */
@@ -559,7 +571,6 @@ const hashedPassword = (req, res, next) => {
       throw new Error("The password wasn't hashed");
     });
 };
-
 /**
  * Middleware for token verification
  */
@@ -567,13 +578,15 @@ const hashedPassword = (req, res, next) => {
 const verifyToken = (req, res, next) => {
   const tkn = req.get("Authorization");
   if (!tkn) {
-    return res.status(STATUS_UNAUTHORIZED_ERROR)
-              .json({ err: "You are not authorized to do this request" });
+    return res
+      .status(STATUS_UNAUTHORIZED_ERROR)
+      .json({ err: "You are not authorized to do this request" });
   }
   jwt.verify(tkn, process.env.SECRET, (err, decoded) => {
     if (err)
-      return res.status(STATUS_UNAUTHORIZED_ERROR)
-                .json({ err: "You are not authorized to do this request" });
+      return res
+        .status(STATUS_UNAUTHORIZED_ERROR)
+        .json({ err: "You are not authorized to do this request" });
     return next();
   });
 };
@@ -581,7 +594,6 @@ const verifyToken = (req, res, next) => {
 /**
  * Create a new user
  */
-
 server.post("/new-user", hashedPassword, (req, res) => {
   const { email } = req.body;
   if (!email) {
@@ -611,11 +623,9 @@ server.post("/new-user", hashedPassword, (req, res) => {
     res.status(200).send({ token, userId: savedUser._id });
   });
 });
-
 /**
  * User Login
  */
-
 server.post("/login", (req, res) => {
   const { email, password } = req.body;
   if (!email) {
@@ -651,11 +661,9 @@ server.post("/login", (req, res) => {
       });
   });
 });
-
 /**
  * Token validation for the front-end
  */
-
 server.get("/jwt", (req, res) => {
   const tkn = req.get("Authorization");
   if (!tkn)
