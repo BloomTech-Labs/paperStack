@@ -346,7 +346,7 @@ class InvoiceScreen extends Component {
       pdf
         .setFontSize(15)
         .setTextColor(120)
-        .text(528, 60, this.state.invoiceNumber, null, null, "right");
+        .text(560, 60, "Invoice # " + this.state.invoiceNumber, null, null, "right");
       pdf
         .setFontSize(10)
         .setFontStyle("bold")
@@ -402,7 +402,7 @@ class InvoiceScreen extends Component {
         .setFontStyle("bold")
         .setTextColor(60)
         .text(450, 167, "Balance Due:", null, null, "right");
-      pdf.text(555, 166, this.state.amountDue, null, null, "right");
+      pdf.text(555, 166, currency(this.state.amountDue, { formatWithSymbol: true }).format(), null, null, "right");
 
       // Billable Items Setup
       pdf
@@ -514,7 +514,7 @@ class InvoiceScreen extends Component {
           .text(450, marginTop + 50, "Subtotal:", null, null, "right");
         pdf
           .setTextColor(30)
-          .text(555, marginTop + 50, this.state.subtotal, null, null, "right");
+          .text(555, marginTop + 50, currency(this.state.subtotal, { formatWithSymbol: true }).format(), null, null, "right");
 
         // Discounts
         pdf
@@ -531,9 +531,8 @@ class InvoiceScreen extends Component {
           555,
           marginTop + 72,
           "-" +
-            currency(this.state.subtotal)
-              .multiply(this.state.discount)
-              .toString(),
+            "$" + currency(this.state.subtotal)
+              .multiply(this.state.discount).format(),
           null,
           null,
           "right"
@@ -553,10 +552,10 @@ class InvoiceScreen extends Component {
         pdf.setTextColor(30).text(
           555,
           marginTop + 94,
-          currency(this.state.subtotal)
+          "$" + currency(this.state.subtotal)
             .multiply(1 - this.state.discount)
             .multiply(this.state.tax)
-            .toString(),
+            .format(),
           null,
           null,
           "right"
@@ -571,7 +570,7 @@ class InvoiceScreen extends Component {
           .text(
             555,
             marginTop + 116,
-            this.state.amountDue,
+            currency(this.state.amountDue, { formatWithSymbol: true }).format(),
             null,
             null,
             "right"
@@ -601,7 +600,7 @@ class InvoiceScreen extends Component {
           .text(450, marginTop + 50, "Subtotal:", null, null, "right");
         pdf
           .setTextColor(30)
-          .text(555, marginTop + 50, this.state.subtotal, null, null, "right");
+          .text(555, marginTop + 50, currency(this.state.subtotal, { formatWithSymbol: true }).format(), null, null, "right");
 
         // Discounts
         pdf
@@ -617,9 +616,9 @@ class InvoiceScreen extends Component {
         pdf.setTextColor(30).text(
           555,
           marginTop + 72,
-          currency(this.state.subtotal)
+          "$" + currency(this.state.subtotal)
             .multiply(this.state.discount / 100)
-            .toString(),
+            .format(),
           null,
           null,
           "right"
@@ -639,10 +638,10 @@ class InvoiceScreen extends Component {
         pdf.setTextColor(30).text(
           555,
           marginTop + 94,
-          currency(this.state.subtotal)
+          "$" + currency(this.state.subtotal)
             .multiply(1 - this.state.discount / 100)
             .multiply(this.state.tax / 100)
-            .toString(),
+            .format(),
           null,
           null,
           "right"
@@ -657,7 +656,7 @@ class InvoiceScreen extends Component {
           .text(
             555,
             marginTop + 116,
-            this.state.amountDue,
+            currency(this.state.amountDue, { formatWithSymbol: true }).format(),
             null,
             null,
             "right"
