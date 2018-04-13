@@ -10,7 +10,7 @@ import InvoiceHeader from "./invoiceHeader/invoiceHeader";
 import InvoiceItemsTable2 from "./invoiceItems/InvoiceTable2";
 import InvoiceFooter2 from "./invoiceFooter/InvoiceFooter2";
 import Navigation from "../Navigation";
-import logoNotFound from './logoNotFound.svg'
+import logoNotFound from "./logoNotFound.svg";
 
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -75,42 +75,52 @@ class InvoiceScreen extends Component {
       })
       .then(res => {
         if (!res.data.companyAddress) {
-          this.setState({
-            companyAddress: "company address missing"
-          }, () => {
-            console.log('company address missing')
-          })
+          this.setState(
+            {
+              companyAddress: "company address missing"
+            },
+            () => {
+              console.log("company address missing");
+            }
+          );
         }
         if (!res.data.companyName) {
-          this.setState({
-            companyName: "company name missing"
-          }, () => {
-            console.log('company name missing')
-          })
+          this.setState(
+            {
+              companyName: "company name missing"
+            },
+            () => {
+              console.log("company name missing");
+            }
+          );
         }
         if (!res.data.userLogo) {
-          this.setState({
-            companyLogo: logoNotFound
-          }, () => {
-            console.log('company logo missing')
-          })
+          this.setState(
+            {
+              companyLogo: logoNotFound
+            },
+            () => {
+              console.log("company logo missing");
+            }
+          );
         } else {
-        this.setState(
-          {
-            companyAddress: res.data.companyAddress,
-            companyName: res.data.companyName,
-            companyLogo: `data:${res.data.userLogo.contentType};base64,${
-              res.data.userLogo.binaryData
-            }`
-          },
-          () => {
-            console.log("");
-          }
-        );
-      }})
-      .catch(error => {
-        console.log(error.res)
+          this.setState(
+            {
+              companyAddress: res.data.companyAddress,
+              companyName: res.data.companyName,
+              companyLogo: `data:${res.data.userLogo.contentType};base64,${
+                res.data.userLogo.binaryData
+              }`
+            },
+            () => {
+              console.log("");
+            }
+          );
+        }
       })
+      .catch(error => {
+        console.log(error.res);
+      });
   };
 
   // http://www.hostingadvice.com/how-to/javascript-object-to-string-tutorial/
@@ -245,9 +255,16 @@ class InvoiceScreen extends Component {
     }
   };
 
-  // Dan's button code goes here
   generatePDF = () => {
-    this.pdfToHTML();
+    if (
+      this.state.companyLogo === logoNotFound ||
+      this.state.companyName === "company name missing" ||
+      this.state.companyAddress === "company address missing"
+    ) {
+      alert("Please update your user settings");
+    } else {
+      this.pdfToHTML();
+    }
   };
 
   pdfToHTML = () => {
@@ -272,362 +289,400 @@ class InvoiceScreen extends Component {
     //         }`
     //       },
     //       () => {
-            const img = new Image();
-            img.onload = () => {
-              // image  has been loaded
-              let typeOfImage;
-              // switch (res.data.userLogo.contentType) {
-                switch (this.state.companyLogo.contentType) {
-                case "image/png":
-                  typeOfImage = "PNG";
-                  break;
-                case "image/jpeg":
-                  typeOfImage = "JPEG";
-                  break;
-                default:
-                  typeOfImage = "JPEG";
-              }
+    const img = new Image();
+    img.onload = () => {
+      // image  has been loaded
+      let typeOfImage;
+      // switch (res.data.userLogo.contentType) {
+      switch (this.state.companyLogo.contentType) {
+        case "image/png":
+          typeOfImage = "PNG";
+          break;
+        case "image/jpeg":
+          typeOfImage = "JPEG";
+          break;
+        default:
+          typeOfImage = "JPEG";
+      }
 
-              let width = img.width,
-                height = img.height,
-                imgMarginTop = 0;
-              const setWidthToThreeFifty = (w, h) => {
-                let ratio = w / 350;
-                width = 350;
-                height = Math.floor(h / ratio);
-              };
-              const setHeightToFifty = (w, h) => {
-                let ratio = h / 50;
-                height = 50;
-                width = Math.floor(w / ratio);
-              };
-              if (height >= 50) {
-                setHeightToFifty(width, height);
-                if (width > 350) {
-                  setWidthToThreeFifty(width, height);
-                }
-              } else {
-                setWidthToThreeFifty(width, height);
-                // vertically align center
-                imgMarginTop = Math.floor((50 - height) / 2);
-              }
+      let width = img.width,
+        height = img.height,
+        imgMarginTop = 0;
+      const setWidthToThreeFifty = (w, h) => {
+        let ratio = w / 350;
+        width = 350;
+        height = Math.floor(h / ratio);
+      };
+      const setHeightToFifty = (w, h) => {
+        let ratio = h / 50;
+        height = 50;
+        width = Math.floor(w / ratio);
+      };
+      if (height >= 50) {
+        setHeightToFifty(width, height);
+        if (width > 350) {
+          setWidthToThreeFifty(width, height);
+        }
+      } else {
+        setWidthToThreeFifty(width, height);
+        // vertically align center
+        imgMarginTop = Math.floor((50 - height) / 2);
+      }
 
-              pdf.addImage(
-                // this.state.logo,
-                this.state.companyLogo,
-                typeOfImage,
-                30,
-                10 + imgMarginTop,
-                width,
-                height
-              );
+      pdf.addImage(
+        // this.state.logo,
+        this.state.companyLogo,
+        typeOfImage,
+        30,
+        10 + imgMarginTop,
+        width,
+        height
+      );
 
-              pdf
-                .setFontSize(30)
-                .setTextColor(60)
-                .text(435, 40, "INVOICE");
-              pdf
-                .setFontSize(15)
-                .setTextColor(120)
-                .text(528, 60, this.state.invoiceNumber, null, null, "right");
-              pdf
-                .setFontSize(10)
-                .setFontStyle("bold")
-                .setTextColor(30)
-                .text(40, 80, this.state.companyName);
-              pdf
-                .setFontSize(10)
-                .setFontStyle("normal")
-                .setTextColor(60)
-                .text(40, 95, this.state.companyAddress.split(', ').join('\n'));
-              // pdf
-              //   .setFontSize(10)
-              //   .setTextColor(60)
-              //   .text(40, 110, "LambdaVille, CA 12345");
+      pdf
+        .setFontSize(30)
+        .setTextColor(60)
+        .text(435, 40, "INVOICE");
+      pdf
+        .setFontSize(15)
+        .setTextColor(120)
+        .text(528, 60, this.state.invoiceNumber, null, null, "right");
+      pdf
+        .setFontSize(10)
+        .setFontStyle("bold")
+        .setTextColor(30)
+        .text(40, 80, this.state.companyName);
+      pdf
+        .setFontSize(10)
+        .setFontStyle("normal")
+        .setTextColor(60)
+        .text(40, 95, this.state.companyAddress.split(", ").join("\n"));
+      // pdf
+      //   .setFontSize(10)
+      //   .setTextColor(60)
+      //   .text(40, 110, "LambdaVille, CA 12345");
 
-              // Bill To:
-              pdf
-                .setFontSize(10)
-                .setTextColor(140)
-                .text(40, 140, "Bill To:");
-              pdf
-                .setFontStyle("bold")
-                .setTextColor(30)
-                .text(40, 155, this.state.customerAddress);
-              // pdf
-              //   .setFontStyle("normal")
-              //   .setTextColor(60)
-              //   .text(40, 170, "551 Tesla Lane");
-              // pdf.text(40, 185, "San Francisco, CA 54321");
+      // Bill To:
+      pdf
+        .setFontSize(10)
+        .setTextColor(140)
+        .text(40, 140, "Bill To:");
+      pdf
+        .setFontStyle("bold")
+        .setTextColor(30)
+        .text(40, 155, this.state.customerAddress);
+      // pdf
+      //   .setFontStyle("normal")
+      //   .setTextColor(60)
+      //   .text(40, 170, "551 Tesla Lane");
+      // pdf.text(40, 185, "San Francisco, CA 54321");
 
-              // Date:
-              pdf
-                .setFontSize(10)
-                .setTextColor(100)
-                .text(450, 120, "Date:", null, null, "right");
-              pdf
-                .setTextColor(30)
-                .text(555, 120, this.state.invoiceDate, null, null, "right");
+      // Date:
+      pdf
+        .setFontSize(10)
+        .setTextColor(100)
+        .text(450, 120, "Date:", null, null, "right");
+      pdf
+        .setTextColor(30)
+        .text(555, 120, this.state.invoiceDate, null, null, "right");
 
-              // Due Date:
-              pdf
-                .setTextColor(100)
-                .text(450, 140, "Due Date:", null, null, "right");
-              pdf
-                .setTextColor(30)
-                .text(555, 140, this.state.dueDate, null, null, "right");
+      // Due Date:
+      pdf.setTextColor(100).text(450, 140, "Due Date:", null, null, "right");
+      pdf
+        .setTextColor(30)
+        .text(555, 140, this.state.dueDate, null, null, "right");
 
-              // Balance Due:
-              pdf
-                .setDrawColor(0)
-                .setFillColor(245)
-                .roundedRect(305, 150, 270, 27, 3, 3, "F");
-              pdf
-                .setFontSize(12)
-                .setFontStyle("bold")
-                .setTextColor(60)
-                .text(450, 167, "Balance Due:", null, null, "right");
-              pdf.text(555, 166, this.state.amountDue, null, null, "right");
+      // Balance Due:
+      pdf
+        .setDrawColor(0)
+        .setFillColor(245)
+        .roundedRect(305, 150, 270, 27, 3, 3, "F");
+      pdf
+        .setFontSize(12)
+        .setFontStyle("bold")
+        .setTextColor(60)
+        .text(450, 167, "Balance Due:", null, null, "right");
+      pdf.text(555, 166, this.state.amountDue, null, null, "right");
 
-              // Billable Items Setup
-              pdf
-                .setDrawColor(0)
-                .setFillColor(60)
-                .roundedRect(20, 220, 550, 21, 3, 3, "F");
-              pdf
-                .setFontSize(10)
-                .setFontStyle("normal")
-                .setTextColor(255)
-                .text(37, 234, "Item");
-              pdf
-                .setFontSize(10)
-                .setTextColor(255)
-                .text(360, 234, "Quantity");
-              pdf
-                .setFontSize(10)
-                .setTextColor(255)
-                .text(460, 234, "Rate");
-              pdf
-                .setFontSize(10)
-                .setTextColor(255)
-                .text(520, 234, "Amount");
+      // Billable Items Setup
+      pdf
+        .setDrawColor(0)
+        .setFillColor(60)
+        .roundedRect(20, 220, 550, 21, 3, 3, "F");
+      pdf
+        .setFontSize(10)
+        .setFontStyle("normal")
+        .setTextColor(255)
+        .text(37, 234, "Item");
+      pdf
+        .setFontSize(10)
+        .setTextColor(255)
+        .text(360, 234, "Quantity");
+      pdf
+        .setFontSize(10)
+        .setTextColor(255)
+        .text(460, 234, "Rate");
+      pdf
+        .setFontSize(10)
+        .setTextColor(255)
+        .text(520, 234, "Amount");
 
-              // const itemsArr = dummy;
-              const itemsArr = this.state.billableItems;
+      // const itemsArr = dummy;
+      const itemsArr = this.state.billableItems;
 
-              let marginTop = 260;
+      let marginTop = 260;
 
-              itemsArr.forEach(item => {
-                pdf
-                  .setTextColor(30)
-                  .setFontStyle("bold")
-                  .text(37, marginTop, item.item);
-                pdf.setFontStyle("normal").text(360, marginTop, item.qty);
-                pdf.text(480, marginTop, item.rate, null, null, "right");
-                pdf.text(555, marginTop, currency(item.qty).multiply(item.rate).toString(), null, null, "right");
-                marginTop += 17;
-                if (marginTop >= 820) {
-                  pdf.addPage("a4");
-                  // Billable Items Setup
-                  pdf
-                    .setDrawColor(0)
-                    .setFillColor(60)
-                    .roundedRect(20, 14, 550, 21, 3, 3, "F");
-                  pdf
-                    .setFontSize(10)
-                    .setFontStyle("normal")
-                    .setTextColor(255)
-                    .text(37, 28, "Item");
-                  pdf
-                    .setFontSize(10)
-                    .setTextColor(255)
-                    .text(360, 28, "Quantity");
-                  pdf
-                    .setFontSize(10)
-                    .setTextColor(255)
-                    .text(460, 28, "Rate");
-                  pdf
-                    .setFontSize(10)
-                    .setTextColor(255)
-                    .text(520, 28, "Amount");
-                  marginTop = 54;
-                }
-              });
+      itemsArr.forEach(item => {
+        pdf
+          .setTextColor(30)
+          .setFontStyle("bold")
+          .text(37, marginTop, item.item);
+        pdf.setFontStyle("normal").text(360, marginTop, item.qty);
+        pdf.text(480, marginTop, item.rate, null, null, "right");
+        pdf.text(
+          555,
+          marginTop,
+          currency(item.qty)
+            .multiply(item.rate)
+            .toString(),
+          null,
+          null,
+          "right"
+        );
+        marginTop += 17;
+        if (marginTop >= 820) {
+          pdf.addPage("a4");
+          // Billable Items Setup
+          pdf
+            .setDrawColor(0)
+            .setFillColor(60)
+            .roundedRect(20, 14, 550, 21, 3, 3, "F");
+          pdf
+            .setFontSize(10)
+            .setFontStyle("normal")
+            .setTextColor(255)
+            .text(37, 28, "Item");
+          pdf
+            .setFontSize(10)
+            .setTextColor(255)
+            .text(360, 28, "Quantity");
+          pdf
+            .setFontSize(10)
+            .setTextColor(255)
+            .text(460, 28, "Rate");
+          pdf
+            .setFontSize(10)
+            .setTextColor(255)
+            .text(520, 28, "Amount");
+          marginTop = 54;
+        }
+      });
 
-              // helper function to split long notes
-              const notesLineDivision = str => {
-                if (str.length < 100) return str;
-                let newLineIndex;
-                let indexNotFound = true;
-                for (let i = 100; i > 85; i--) {
-                  if (str[i] === " " || str[i] === ",") {
-                    newLineIndex = i + 1;
-                    indexNotFound = false;
-                    break;
-                  }
-                }
-                if (indexNotFound) {
-                  for (let i = 100; i <= 115; i++) {
-                    if (str[i] === " " || str[i] === ",") {
-                      newLineIndex = i + 1;
-                      indexNotFound = false;
-                      break;
-                    }
-                  }
-                }
-                if (indexNotFound) {
-                  return str.substr(0, 100) + "\n" + str.slice(100);
-                }
-                return (
-                  str.substr(0, newLineIndex) + "\n" + str.substr(newLineIndex)
-                );
-              };
+      // helper function to split long notes
+      const notesLineDivision = str => {
+        if (str.length < 100) return str;
+        let newLineIndex;
+        let indexNotFound = true;
+        for (let i = 100; i > 85; i--) {
+          if (str[i] === " " || str[i] === ",") {
+            newLineIndex = i + 1;
+            indexNotFound = false;
+            break;
+          }
+        }
+        if (indexNotFound) {
+          for (let i = 100; i <= 115; i++) {
+            if (str[i] === " " || str[i] === ",") {
+              newLineIndex = i + 1;
+              indexNotFound = false;
+              break;
+            }
+          }
+        }
+        if (indexNotFound) {
+          return str.substr(0, 100) + "\n" + str.slice(100);
+        }
+        return str.substr(0, newLineIndex) + "\n" + str.substr(newLineIndex);
+      };
 
-              if (marginTop > 583) {
-                pdf.addPage("a4");
-                marginTop = 0;
-                // Subtotal
-                pdf
-                  .setTextColor(140)
-                  .text(450, marginTop + 50, "Subtotal:", null, null, "right");
-                pdf
-                  .setTextColor(30)
-                  .text(555, marginTop + 50, this.state.subtotal, null, null, "right");
+      if (marginTop > 583) {
+        pdf.addPage("a4");
+        marginTop = 0;
+        // Subtotal
+        pdf
+          .setTextColor(140)
+          .text(450, marginTop + 50, "Subtotal:", null, null, "right");
+        pdf
+          .setTextColor(30)
+          .text(555, marginTop + 50, this.state.subtotal, null, null, "right");
 
-                // Discounts
-                pdf
-                  .setTextColor(140)
-                  .text(
-                    450,
-                    marginTop + 72,
-                    `Discount (${this.state.discount}%):`,
-                    null,
-                    null,
-                    "right"
-                  );
-                pdf
-                  .setTextColor(30)
-                  .text(555, marginTop + 72, "-" + currency(this.state.subtotal).multiply(this.state.discount).toString(), null, null, "right");
+        // Discounts
+        pdf
+          .setTextColor(140)
+          .text(
+            450,
+            marginTop + 72,
+            `Discount (${this.state.discount}%):`,
+            null,
+            null,
+            "right"
+          );
+        pdf.setTextColor(30).text(
+          555,
+          marginTop + 72,
+          "-" +
+            currency(this.state.subtotal)
+              .multiply(this.state.discount)
+              .toString(),
+          null,
+          null,
+          "right"
+        );
 
-                // Tax
-                pdf
-                  .setTextColor(140)
-                  .text(
-                    450,
-                    marginTop + 94,
-                    `Tax (${this.state.tax}%):`,
-                    null,
-                    null,
-                    "right"
-                  );
-                pdf
-                  .setTextColor(30)
-                  .text(555, marginTop + 94, currency(this.state.subtotal).multiply(1-this.state.discount).multiply(this.state.tax).toString(), null, null, "right");
+        // Tax
+        pdf
+          .setTextColor(140)
+          .text(
+            450,
+            marginTop + 94,
+            `Tax (${this.state.tax}%):`,
+            null,
+            null,
+            "right"
+          );
+        pdf.setTextColor(30).text(
+          555,
+          marginTop + 94,
+          currency(this.state.subtotal)
+            .multiply(1 - this.state.discount)
+            .multiply(this.state.tax)
+            .toString(),
+          null,
+          null,
+          "right"
+        );
 
-                // Total
-                pdf
-                  .setTextColor(140)
-                  .text(450, marginTop + 116, "Total:", null, null, "right");
-                pdf
-                  .setTextColor(30)
-                  .text(555, marginTop + 116, this.state.amountDue, null, null, "right");
+        // Total
+        pdf
+          .setTextColor(140)
+          .text(450, marginTop + 116, "Total:", null, null, "right");
+        pdf
+          .setTextColor(30)
+          .text(
+            555,
+            marginTop + 116,
+            this.state.amountDue,
+            null,
+            null,
+            "right"
+          );
 
-                // test remove
-                pdf
-                  .setDrawColor(0)
-                  .setFillColor(60)
-                  .roundedRect(20, 820, 550, 3, 1, 1, "F");
+        // test remove
+        pdf
+          .setDrawColor(0)
+          .setFillColor(60)
+          .roundedRect(20, 820, 550, 3, 1, 1, "F");
 
-                // Notes and terms
-                pdf.setTextColor(140).text(37, marginTop + 170, "Notes:");
+        // Notes and terms
+        pdf.setTextColor(140).text(37, marginTop + 170, "Notes:");
 
-                // const temp =
-                //   "Type, write, or even record audio notes from any meeting. Annotate photos and PDFs for quick communication with teams working remotely in field offices or building sites. Photos of anything that might";
-                pdf
-                  .setTextColor(60)
-                  .text(37, marginTop + 187, notesLineDivision(this.state.notes));
+        // const temp =
+        //   "Type, write, or even record audio notes from any meeting. Annotate photos and PDFs for quick communication with teams working remotely in field offices or building sites. Photos of anything that might";
+        pdf
+          .setTextColor(60)
+          .text(37, marginTop + 187, notesLineDivision(this.state.notes));
 
-                pdf.setTextColor(140).text(37, marginTop + 225, "Terms:");
-                pdf
-                  .setTextColor(60)
-                  .text(
-                    37,
-                    marginTop + 242,
-                    this.state.terms
-                  );
-              } else {
-                // Subtotal
-                pdf
-                  .setTextColor(140)
-                  .text(450, marginTop + 50, "Subtotal:", null, null, "right");
-                pdf
-                  .setTextColor(30)
-                  .text(555, marginTop + 50, this.state.subtotal, null, null, "right");
+        pdf.setTextColor(140).text(37, marginTop + 225, "Terms:");
+        pdf.setTextColor(60).text(37, marginTop + 242, this.state.terms);
+      } else {
+        // Subtotal
+        pdf
+          .setTextColor(140)
+          .text(450, marginTop + 50, "Subtotal:", null, null, "right");
+        pdf
+          .setTextColor(30)
+          .text(555, marginTop + 50, this.state.subtotal, null, null, "right");
 
-                // Discounts
-                pdf
-                  .setTextColor(140)
-                  .text(
-                    450,
-                    marginTop + 72,
-                    `Discount (${this.state.discount}%):`,
-                    null,
-                    null,
-                    "right"
-                  );
-                pdf
-                  .setTextColor(30)
-                  .text(555, marginTop + 72, currency(this.state.subtotal).multiply(this.state.discount/100).toString(), null, null, "right");
+        // Discounts
+        pdf
+          .setTextColor(140)
+          .text(
+            450,
+            marginTop + 72,
+            `Discount (${this.state.discount}%):`,
+            null,
+            null,
+            "right"
+          );
+        pdf.setTextColor(30).text(
+          555,
+          marginTop + 72,
+          currency(this.state.subtotal)
+            .multiply(this.state.discount / 100)
+            .toString(),
+          null,
+          null,
+          "right"
+        );
 
-                // Tax
-                pdf
-                  .setTextColor(140)
-                  .text(
-                    450,
-                    marginTop + 94,
-                    `Tax (${this.state.tax}%):`,
-                    null,
-                    null,
-                    "right"
-                  );
-                pdf
-                  .setTextColor(30)
-                  .text(555, marginTop + 94, currency(this.state.subtotal).multiply(1-this.state.discount/100).multiply(this.state.tax/100).toString(), null, null, "right");
+        // Tax
+        pdf
+          .setTextColor(140)
+          .text(
+            450,
+            marginTop + 94,
+            `Tax (${this.state.tax}%):`,
+            null,
+            null,
+            "right"
+          );
+        pdf.setTextColor(30).text(
+          555,
+          marginTop + 94,
+          currency(this.state.subtotal)
+            .multiply(1 - this.state.discount / 100)
+            .multiply(this.state.tax / 100)
+            .toString(),
+          null,
+          null,
+          "right"
+        );
 
-                // Total
-                pdf
-                  .setTextColor(140)
-                  .text(450, marginTop + 116, "Total:", null, null, "right");
-                pdf
-                  .setTextColor(30)
-                  .text(555, marginTop + 116, this.state.amountDue, null, null, "right");
+        // Total
+        pdf
+          .setTextColor(140)
+          .text(450, marginTop + 116, "Total:", null, null, "right");
+        pdf
+          .setTextColor(30)
+          .text(
+            555,
+            marginTop + 116,
+            this.state.amountDue,
+            null,
+            null,
+            "right"
+          );
 
-                // Notes and terms
-                pdf.setTextColor(140).text(37, marginTop + 170, "Notes:");
+        // Notes and terms
+        pdf.setTextColor(140).text(37, marginTop + 170, "Notes:");
 
-                // const temp =
-                //   "Type, write, or even record audio notes from any meeting. Annotate photos and PDFs for quick communication with teams working remotely in field offices or building sites. Photos of anything that might";
-                pdf
-                  .setTextColor(60)
-                  .text(37, marginTop + 187, notesLineDivision(this.state.notes));
+        // const temp =
+        //   "Type, write, or even record audio notes from any meeting. Annotate photos and PDFs for quick communication with teams working remotely in field offices or building sites. Photos of anything that might";
+        pdf
+          .setTextColor(60)
+          .text(37, marginTop + 187, notesLineDivision(this.state.notes));
 
-                pdf.setTextColor(140).text(37, marginTop + 225, "Terms:");
-                pdf
-                  .setTextColor(60)
-                  .text(
-                    37,
-                    marginTop + 242,
-                    this.state.terms
-                  );
-              }
+        pdf.setTextColor(140).text(37, marginTop + 225, "Terms:");
+        pdf.setTextColor(60).text(37, marginTop + 242, this.state.terms);
+      }
 
-              pdf.save("html2pdf.pdf");
-            };
-            // img.src = this.state.logo;
-            img.src = this.state.companyLogo;
-          // }
-        // );
-      // });
+      pdf.save("html2pdf.pdf");
+    };
+    // img.src = this.state.logo;
+    img.src = this.state.companyLogo;
+    // }
+    // );
+    // });
   };
 
   /**
