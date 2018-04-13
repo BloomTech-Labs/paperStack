@@ -9,7 +9,6 @@ import './Settings.css';
 class Settings extends Component {
   // email and password state
   state = {
-    email: '',
     oldpassword: '',
     newpassword: '',
     logo: '',
@@ -52,18 +51,25 @@ class Settings extends Component {
     //   this.state.oldpassword,
     //   this.state.newpassword
     // );
-    axios({
-      method: 'put',
-      url: `http://localhost:3001/new-password`,
-      params: {
-        email: this.state.email,
+    axios.put(`http://localhost:3001/new-password`,
+      {
         oldpassword: this.state.oldpassword,
         newpassword: this.state.newpassword
       },
-      headers: { Authorization: localStorage.getItem('tkn') }
-    })
+      {
+        params: { 
+          userId: localStorage.getItem('userId'),
+        },
+        headers: { 
+          'Authorization': localStorage.getItem('tkn')
+        }
+      })
       .then(res => {
-        alert('Your new password is updated!!!');
+        this.setState({ 
+          modalHeader: `Success!`,
+          modalBody: `Your password was changed!!!`,
+          modal: true
+        });
       })
       .catch(err => {
         alert(
@@ -76,9 +82,6 @@ class Settings extends Component {
         //     this.setState({ passwordErr: 'Old Password does not match!!!' });
         //   }
       });
-  };
-  handleEmailChange = event => {
-    this.setState({ email: event.target.value });
   };
   handleOldPasswordChange = event => {
     this.setState({ oldpassword: event.target.value });
@@ -219,16 +222,6 @@ class Settings extends Component {
                 onChange={(event)=> { this.handleUploadImage(event) }} />
             </div>       
             <div className="UserSetting-password-section">
-              <div>
-              <label>Email:</label>
-              <input
-                className="Email-form-field"
-                type="text"
-                onChange={this.handleEmailChange}
-                value={this.state.email}
-              />
-              <br />
-              </div>
               <div>
                 <label>Old Password:</label>
                 <input
