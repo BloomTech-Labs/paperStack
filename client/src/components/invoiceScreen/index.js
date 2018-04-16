@@ -5,8 +5,10 @@ import axios from "axios";
 import moment from "moment";
 import { withRouter } from "react-router-dom";
 import * as jsPDF from "jspdf";
+import MediaQuery from "react-responsive";
 
 import InvoiceHeader from "./invoiceHeader/invoiceHeader";
+import InvoiceHeaderMobile from "./invoiceHeader/invoiceHeaderMobile";
 import InvoiceItemsTable2 from "./invoiceItems/InvoiceTable2";
 import InvoiceFooter2 from "./invoiceFooter/InvoiceFooter2";
 import Navigation from "../Navigation";
@@ -346,7 +348,14 @@ class InvoiceScreen extends Component {
       pdf
         .setFontSize(15)
         .setTextColor(120)
-        .text(560, 60, "Invoice # " + this.state.invoiceNumber, null, null, "right");
+        .text(
+          560,
+          60,
+          "Invoice # " + this.state.invoiceNumber,
+          null,
+          null,
+          "right"
+        );
       pdf
         .setFontSize(10)
         .setFontStyle("bold")
@@ -402,7 +411,14 @@ class InvoiceScreen extends Component {
         .setFontStyle("bold")
         .setTextColor(60)
         .text(450, 167, "Balance Due:", null, null, "right");
-      pdf.text(555, 166, currency(this.state.amountDue, { formatWithSymbol: true }).format(), null, null, "right");
+      pdf.text(
+        555,
+        166,
+        currency(this.state.amountDue, { formatWithSymbol: true }).format(),
+        null,
+        null,
+        "right"
+      );
 
       // Billable Items Setup
       pdf
@@ -514,7 +530,14 @@ class InvoiceScreen extends Component {
           .text(450, marginTop + 50, "Subtotal:", null, null, "right");
         pdf
           .setTextColor(30)
-          .text(555, marginTop + 50, currency(this.state.subtotal, { formatWithSymbol: true }).format(), null, null, "right");
+          .text(
+            555,
+            marginTop + 50,
+            currency(this.state.subtotal, { formatWithSymbol: true }).format(),
+            null,
+            null,
+            "right"
+          );
 
         // Discounts
         pdf
@@ -531,8 +554,10 @@ class InvoiceScreen extends Component {
           555,
           marginTop + 72,
           "-" +
-            "$" + currency(this.state.subtotal)
-              .multiply(this.state.discount).format(),
+            "$" +
+            currency(this.state.subtotal)
+              .multiply(this.state.discount)
+              .format(),
           null,
           null,
           "right"
@@ -552,10 +577,11 @@ class InvoiceScreen extends Component {
         pdf.setTextColor(30).text(
           555,
           marginTop + 94,
-          "$" + currency(this.state.subtotal)
-            .multiply(1 - this.state.discount)
-            .multiply(this.state.tax)
-            .format(),
+          "$" +
+            currency(this.state.subtotal)
+              .multiply(1 - this.state.discount)
+              .multiply(this.state.tax)
+              .format(),
           null,
           null,
           "right"
@@ -600,7 +626,14 @@ class InvoiceScreen extends Component {
           .text(450, marginTop + 50, "Subtotal:", null, null, "right");
         pdf
           .setTextColor(30)
-          .text(555, marginTop + 50, currency(this.state.subtotal, { formatWithSymbol: true }).format(), null, null, "right");
+          .text(
+            555,
+            marginTop + 50,
+            currency(this.state.subtotal, { formatWithSymbol: true }).format(),
+            null,
+            null,
+            "right"
+          );
 
         // Discounts
         pdf
@@ -616,9 +649,10 @@ class InvoiceScreen extends Component {
         pdf.setTextColor(30).text(
           555,
           marginTop + 72,
-          "$" + currency(this.state.subtotal)
-            .multiply(this.state.discount / 100)
-            .format(),
+          "$" +
+            currency(this.state.subtotal)
+              .multiply(this.state.discount / 100)
+              .format(),
           null,
           null,
           "right"
@@ -638,10 +672,11 @@ class InvoiceScreen extends Component {
         pdf.setTextColor(30).text(
           555,
           marginTop + 94,
-          "$" + currency(this.state.subtotal)
-            .multiply(1 - this.state.discount / 100)
-            .multiply(this.state.tax / 100)
-            .format(),
+          "$" +
+            currency(this.state.subtotal)
+              .multiply(1 - this.state.discount / 100)
+              .multiply(this.state.tax / 100)
+              .format(),
           null,
           null,
           "right"
@@ -862,17 +897,32 @@ class InvoiceScreen extends Component {
         <Navigation />
         <br />
         <hr />
-        <InvoiceHeader
-          {...this.state}
-          saveOnly={this.saveOnly}
-          changeCompanyLogo={this.changeCompanyLogo}
-          changeCompanyAddress={this.changeCompanyAddress}
-          changeCustomerAddress={this.changeCustomerAddress}
-          changeInvoiceNumber={this.changeInvoiceNumber}
-          changeInvoiceDate={this.changeInvoiceDate}
-          changeDueDate={this.changeDueDate}
-          calculateAmountDue={this.calculateAmountDue}
-        />
+        <MediaQuery minDeviceWidth={1224}>
+          <InvoiceHeader
+            {...this.state}
+            saveOnly={this.saveOnly}
+            changeCompanyLogo={this.changeCompanyLogo}
+            changeCompanyAddress={this.changeCompanyAddress}
+            changeCustomerAddress={this.changeCustomerAddress}
+            changeInvoiceNumber={this.changeInvoiceNumber}
+            changeInvoiceDate={this.changeInvoiceDate}
+            changeDueDate={this.changeDueDate}
+            calculateAmountDue={this.calculateAmountDue}
+          />
+        </MediaQuery>
+        <MediaQuery maxWidth={1224}>
+          <InvoiceHeaderMobile
+            {...this.state}
+            saveOnly={this.saveOnly}
+            changeCompanyLogo={this.changeCompanyLogo}
+            changeCompanyAddress={this.changeCompanyAddress}
+            changeCustomerAddress={this.changeCustomerAddress}
+            changeInvoiceNumber={this.changeInvoiceNumber}
+            changeInvoiceDate={this.changeInvoiceDate}
+            changeDueDate={this.changeDueDate}
+            calculateAmountDue={this.calculateAmountDue}
+          />
+        </MediaQuery>
         <hr />
         <InvoiceItemsTable2
           {...this.state}
@@ -896,23 +946,47 @@ class InvoiceScreen extends Component {
           changeNotes={this.changeNotes}
           changeTerms={this.changeTerms}
         />
-        <div style={{ width: "90%", margin: "auto" }}>
-          <ButtonGroup size="lg">
+        <MediaQuery minDeviceWidth={1224}>
+          <div style={{ width: "90%", margin: "auto" }}>
+            <ButtonGroup size="lg">
+              <Button
+                color="secondary"
+                disabled={!enableUpdateButton}
+                // onClick={this.saveChangesToExistingInvoice()}
+              >
+                Update Invoice
+              </Button>
+              <Button color="secondary" onClick={() => this.saveAndClose()}>
+                Save and Close
+              </Button>
+              <Button color="secondary" onClick={() => this.generatePDF()}>
+                Generate PDF
+              </Button>
+            </ButtonGroup>
+          </div>
+        </MediaQuery>
+        <MediaQuery maxWidth={1224}>
+          <div style={{ width: "90%", margin: "auto" }}>
+            {/*<ButtonGroup size="lg">*/}
             <Button
               color="secondary"
               disabled={!enableUpdateButton}
+              block
               // onClick={this.saveChangesToExistingInvoice()}
             >
               Update Invoice
             </Button>
-            <Button color="secondary" onClick={() => this.saveAndClose()}>
+            <br />
+            <Button color="secondary" onClick={() => this.saveAndClose()} block>
               Save and Close
             </Button>
-            <Button color="secondary" onClick={() => this.generatePDF()}>
+            <br />
+            <Button color="secondary" onClick={() => this.generatePDF()} block>
               Generate PDF
             </Button>
-          </ButtonGroup>
-        </div>
+            {/*</ButtonGroup>*/}
+          </div>
+        </MediaQuery>
         <br />
       </div>
     );
