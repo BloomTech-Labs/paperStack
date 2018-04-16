@@ -17,6 +17,7 @@ import DueDatePicker from "./dueDatePicker";
 import CurrentDatePicker from "./currentDatePicker";
 
 import "react-datepicker/dist/react-datepicker.css";
+import "./datePicker.css";
 
 export default class InvoiceHeader extends Component {
   constructor(props) {
@@ -124,10 +125,10 @@ export default class InvoiceHeader extends Component {
 
               {/* invoice number, currently accepts alpha numberic typing -> should pre-populate */}
               <FormGroup row>
-                <Label for="invoiceNumber" sm={4}>
+                <Label for="invoiceNumber" sm={3}>
                   Invoice #
                 </Label>
-                <Col sm={8}>
+                <Col sm={9}>
                   <Input
                     type="text"
                     name="invoiceNumber"
@@ -140,10 +141,10 @@ export default class InvoiceHeader extends Component {
 
               {/* current date picker -> defaults to today */}
               <FormGroup row>
-                <Label for="currentDate" sm={4}>
+                <Label for="currentDate" sm={3}>
                   Current Date
                 </Label>
-                <Col sm={8}>
+                <Col sm={9}>
                   <CurrentDatePicker
                     changeInvoiceDate={this.props.changeInvoiceDate}
                   />
@@ -152,11 +153,11 @@ export default class InvoiceHeader extends Component {
 
               {/* due date picker -> highlights 7,14,30,60 days out */}
               <FormGroup row>
-                <Label for="dueDate" sm={4}>
+                <Label for="dueDate" sm={3}>
                   Due Date
                 </Label>
-                <Col sm={8}>
-                  <DueDatePicker changeDueDate={this.props.changeDueDate} />
+                <Col sm={9}>
+                    <DueDatePicker changeDueDate={this.props.changeDueDate} />
                 </Col>
               </FormGroup>
 
@@ -164,10 +165,10 @@ export default class InvoiceHeader extends Component {
                       (grand total - deposit)
                       */}
               <FormGroup row>
-                <Label for="amountDue" sm={4}>
+                <Label for="amountDue" sm={3}>
                   Amount Due
                 </Label>
-                <Col sm={8}>
+                <Col sm={9}>
                   <InputGroup>
                     <InputGroupAddon addonType="prepend">$</InputGroupAddon>
                     <Input

@@ -17,6 +17,7 @@ import DueDatePicker from "./dueDatePicker";
 import CurrentDatePicker from "./currentDatePicker";
 
 import "react-datepicker/dist/react-datepicker.css";
+import "./datePicker.css";
 
 export default class InvoiceHeader extends Component {
   constructor(props) {

@@ -31,6 +31,7 @@ export default class DueDatePicker extends Component {
     return (
       <DatePicker
         className="form-control"
+        style={{width:"100%"}}
         selected={this.state.startDate}
         onChange={this.handleChange}
         onBlur={this.handleDueDateChange}

@@ -910,7 +910,7 @@ class InvoiceScreen extends Component {
             calculateAmountDue={this.calculateAmountDue}
           />
         </MediaQuery>
-        <MediaQuery maxWidth={1224}>
+        <MediaQuery maxDeviceWidth={1223}>
           <InvoiceHeaderMobile
             {...this.state}
             saveOnly={this.saveOnly}
@@ -965,7 +965,7 @@ class InvoiceScreen extends Component {
             </ButtonGroup>
           </div>
         </MediaQuery>
-        <MediaQuery maxWidth={1224}>
+        <MediaQuery maxDeviceWidth={1223}>
           <div style={{ width: "90%", margin: "auto" }}>
             {/*<ButtonGroup size="lg">*/}
             <Button
