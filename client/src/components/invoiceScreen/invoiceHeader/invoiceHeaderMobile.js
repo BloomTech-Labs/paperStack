@@ -75,7 +75,7 @@ export default class InvoiceHeader extends Component {
                   <img
                     src={this.props.companyLogo}
                     alt="company logo"
-                    style={{ maxHeight: "200px", maxWidth: "200px" }}
+                    style={{ maxHeight: "150px", maxWidth: "150px" }}
                   />
                 </Col>
                 <Col sm={3}>

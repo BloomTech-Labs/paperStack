@@ -315,14 +315,36 @@ server.put("/invoices/:id", function(req, res) {
  * Get Invoices by _id
  */
 server.get("/invoices/:id", function(req, res) {
-  const id = req.query.id;
-  Invoices.findById(id, function(err, invoices) {
+  const {invoiceId} = req.params;
+  const tkn = req.get("Authorization");
+  Invoices.findById(invoiceId, (err, invoices) => {
     if (err) {
       res
         .status(STATUS_USER_ERROR)
-        .json({ error: "Could not retrieve invoice" });
-    } else {
-      res.status(200).json(invoices);
+        .json({ error: "Couldn\'t retrieve invoice" });
+    }   
+      const invCustomerAddress = invoices.invCustomerAddress;
+      const invNumber = invoices.invNumber;
+      const invDate = invoices.invDate;
+      const invDueDate = invoices.invDueDate;
+      const invBillableItems = invoices.invBillableItems;
+      const invDiscount = invoices.invDiscount;
+      const invTax = invoices.invTax;
+      const invDeposit = invoices.invDeposit;
+      const invShipping = invoices.invShipping;
+      const invTerms = invoices.invTerms;
+      res.status(200).json({ invCustomerAddress,
+        invNumber,
+        invDate,
+        invDueDate,
+        invBillableItems,
+        invDiscount,
+        invTax,
+        invDeposit,
+        invShipping,
+        invComment,
+        invTerms
+      });
     }
   });
 });
