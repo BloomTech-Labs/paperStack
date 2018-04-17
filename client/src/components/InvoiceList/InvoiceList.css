@@ -1,0 +1,143 @@
+.Invoice-List {
+  font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Fira Sans,Droid Sans,Helvetica Neue,sans-serif;
+  text-rendering: optimizeLegibility;
+}
+
+.Invoice-List-container {
+  margin-top: 10px;
+  margin-left: auto;
+  margin-right: auto;
+  width: 930px;
+}
+
+.Invoice-List .card {
+  position: relative;
+  width: 290px;
+  height: 290px;
+  display: inline-block;
+  vertical-align: top;
+  margin-left: 10px;
+  margin-right: 10px;
+  margin-bottom: 20px;
+}
+
+.Invoice-List-add-card {
+  background-color: #82807e;
+  cursor: pointer;
+  text-align: center;
+}
+
+.Invoice-List-add-card:hover {
+  background-color: #71706d;
+}
+
+.Invoice-List-add-btn {
+  margin-top: 60px;
+  margin-bottom: 20px;
+  position: relative;
+  width: 65px;
+  height: 65px;
+  -moz-border-radius: 50%;
+  -webkit-border-radius: 50%;
+  border-radius: 50%;
+  border-color: #e6e6e6;
+  background-color: #82807e;
+  background-color: transparent;
+}
+
+.Invoice-List-add-btn:hover {
+  background-color: #71706d;
+  border-color: #ccc;
+  color: #ccc;
+}
+
+.Invoice-List-add-btn:focus {
+  outline: 0 !important;
+}
+
+.Invoice-List-add-btn span {
+  font-size: 70px;
+  position: absolute;
+  top: -29px;
+  left: 8px;
+}
+
+.Invoice-List-add-text {
+  color: #e6e6e6;
+  font-weight: 600;
+}
+
+.Invoice-List .card .card-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #444;
+  margin-bottom: 0px;
+}
+
+.Invoice-List .card .card-text {
+  font-size: 14px;
+  color: #888;
+  margin-bottom: 10px;
+}
+
+.Invoice-List-date-wrapper {
+  position: absolute;
+  top: 184px;
+  right: 20px;
+  text-align: right;
+}
+
+.Invoice-List .card footer {
+  border-top: 1px solid #ddd;
+  background-color: #f7f7f7;
+  height: 50px;
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+}
+
+.Invoice-List-edit-btn {
+  background-color: #7fb959;
+  border: none;
+  outline: none;
+  position: absolute;
+  padding: 5px 14px;
+  top: 8px;
+  right: 78px;
+}
+
+.Invoice-List-edit-btn:hover {
+  background-color: #8fca6a;
+}
+
+.Invoice-List-delete-btn {
+  background-color: #444;
+  border: none;
+  outline: none;
+  position: absolute;
+  padding: 5px 8px;
+  top: 8px;
+  right: 8px;
+}
+
+.Invoice-List-delete-btn:hover {
+  background-color: #555;
+}
+
+@media (max-width: 960px) {
+  .Invoice-List-container {
+    width: 620px;
+  }
+}
+
+@media (max-width: 600px) {
+  .Invoice-List-container {
+    width: 286px;
+  }
+
+  .Invoice-List .card {
+    width: 280px;
+    margin-left: 3px;
+    margin-right: 3px;
+  }
+}
