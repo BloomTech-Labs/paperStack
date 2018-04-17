@@ -898,6 +898,7 @@ class InvoiceScreen extends Component {
         <Navigation />
         <br />
         <hr />
+        {/*Header*/}
         <MediaQuery minDeviceWidth={1224}>
           <InvoiceHeader
             {...this.state}
@@ -925,29 +926,31 @@ class InvoiceScreen extends Component {
           />
         </MediaQuery>
         <hr />
+        {/*Table*/}
         <MediaQuery minDeviceWidth={1224}>
-        <InvoiceItemsTable2
-          {...this.state}
-          addBillableItems={this.addBillableItems}
-          deleteBillableItems={this.deleteBillableItems}
-          updateBillableItems={this.updateBillableItems}
-          changeSubtotal={this.changeSubtotal}
-          calculateAmountDue={this.calculateAmountDue}
-          calculateGrandTotal={this.calculateGrandTotal}
-        />
+          <InvoiceItemsTable2
+            {...this.state}
+            addBillableItems={this.addBillableItems}
+            deleteBillableItems={this.deleteBillableItems}
+            updateBillableItems={this.updateBillableItems}
+            changeSubtotal={this.changeSubtotal}
+            calculateAmountDue={this.calculateAmountDue}
+            calculateGrandTotal={this.calculateGrandTotal}
+          />
         </MediaQuery>
         <MediaQuery maxDeviceWidth={1223}>
-        <InvoiceItemsTable2Mobile
-          {...this.state}
-          addBillableItems={this.addBillableItems}
-          deleteBillableItems={this.deleteBillableItems}
-          updateBillableItems={this.updateBillableItems}
-          changeSubtotal={this.changeSubtotal}
-          calculateAmountDue={this.calculateAmountDue}
-          calculateGrandTotal={this.calculateGrandTotal}
-        />
+          <InvoiceItemsTable2Mobile
+            {...this.state}
+            addBillableItems={this.addBillableItems}
+            deleteBillableItems={this.deleteBillableItems}
+            updateBillableItems={this.updateBillableItems}
+            changeSubtotal={this.changeSubtotal}
+            calculateAmountDue={this.calculateAmountDue}
+            calculateGrandTotal={this.calculateGrandTotal}
+          />
         </MediaQuery>
         <hr />
+        {/*Footer*/}
         <InvoiceFooter2
           {...this.state}
           changeDiscount={this.changeDiscount}
@@ -960,6 +963,7 @@ class InvoiceScreen extends Component {
           changeNotes={this.changeNotes}
           changeTerms={this.changeTerms}
         />
+        {/*Buttons*/}
         <MediaQuery minDeviceWidth={1224}>
           <div style={{ width: "90%", margin: "auto" }}>
             <ButtonGroup size="lg">
