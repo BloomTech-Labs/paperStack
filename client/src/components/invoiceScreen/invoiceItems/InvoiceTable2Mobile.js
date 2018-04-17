@@ -7,7 +7,8 @@ import currency from "currency.js";
  */
 // select a row, for use in delete row
 const selectRowProp = {
-  mode: "checkbox"
+  mode: "checkbox",
+  columnWidth: "7%"
 };
 
 // variable for use in onAfterRowInsert
@@ -189,11 +190,12 @@ export default class InvoiceItemsTable2 extends Component {
 
   // footerData handles the subtotal for the table
   render() {
+
     const footerData = [
       [
         {
           label: "Subtotal",
-          columnIndex: 1
+          columnIndex: 1,
         },
         {
           label: "Subtotal",
@@ -206,9 +208,9 @@ export default class InvoiceItemsTable2 extends Component {
             sessionStorage.setItem("tableSubtotal", currency(total).format());
             return (
               <div>
-                <b id="subtotal" onChange={this.changeGroup()}>
+                <span id="subtotal" style={{margin:-8}} onChange={this.changeGroup()}>
                   {currency(total, { formatWithSymbol: true }).format()}
-                </b>
+                </span>
               </div>
             );
           }
@@ -239,14 +241,16 @@ export default class InvoiceItemsTable2 extends Component {
           selectRow={selectRowProp}
           cellEdit={this.cellEditProp}
           onChange={this.changeGroup}
+          containerStyle={{width: '100%',overflowX: 'scroll',fontSize:'.75rem'}}
         >
           {/*This is column 0 - line item number, the checkmark column doesn't count and can't be modified here*/}
+          {/*Hidden in mobile view*/}
           <TableHeaderColumn
             dataField="id"
             autoValue={true}
             isKey
             dataFormat={this.idFormatter}
-            width="5%"
+            width="10%"
             hiddenOnInsert
           >
             #
@@ -255,26 +259,26 @@ export default class InvoiceItemsTable2 extends Component {
           {/*Column 1 - Item/Description field*/}
           <TableHeaderColumn
             dataField="item"
-            width="55%"
+            width="50%"
             editable={{ validator: this.itemNameValidator }}
           >
-            Item/Description
+            Item
           </TableHeaderColumn>
 
           {/*Column 2 - Qty field*/}
           <TableHeaderColumn
             dataField="qty"
-            width="10%"
+            width="15%"
             editable={{ validator: this.quantityValidator }}
           >
-            Quantity
+            Qty
           </TableHeaderColumn>
 
           {/*Column 3 - Rate Field*/}
           <TableHeaderColumn
             dataField="rate"
             dataFormat={this.rateFormatter}
-            width="10%"
+            width="15%"
             editable={{ validator: this.rateValidator }}
           >
             Rate
@@ -289,7 +293,7 @@ export default class InvoiceItemsTable2 extends Component {
             disabled
             hiddenOnInsert
           >
-            Amount
+            Amt
           </TableHeaderColumn>
         </BootstrapTable>
       </div>

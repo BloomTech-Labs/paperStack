@@ -10,6 +10,7 @@ import MediaQuery from "react-responsive";
 import InvoiceHeader from "./invoiceHeader/invoiceHeader";
 import InvoiceHeaderMobile from "./invoiceHeader/invoiceHeaderMobile";
 import InvoiceItemsTable2 from "./invoiceItems/InvoiceTable2";
+import InvoiceItemsTable2Mobile from "./invoiceItems/InvoiceTable2Mobile";
 import InvoiceFooter2 from "./invoiceFooter/InvoiceFooter2";
 import Navigation from "../Navigation";
 import logoNotFound from "./logoNotFound.svg";
@@ -924,6 +925,7 @@ class InvoiceScreen extends Component {
           />
         </MediaQuery>
         <hr />
+        <MediaQuery minDeviceWidth={1224}>
         <InvoiceItemsTable2
           {...this.state}
           addBillableItems={this.addBillableItems}
@@ -933,6 +935,18 @@ class InvoiceScreen extends Component {
           calculateAmountDue={this.calculateAmountDue}
           calculateGrandTotal={this.calculateGrandTotal}
         />
+        </MediaQuery>
+        <MediaQuery maxDeviceWidth={1223}>
+        <InvoiceItemsTable2Mobile
+          {...this.state}
+          addBillableItems={this.addBillableItems}
+          deleteBillableItems={this.deleteBillableItems}
+          updateBillableItems={this.updateBillableItems}
+          changeSubtotal={this.changeSubtotal}
+          calculateAmountDue={this.calculateAmountDue}
+          calculateGrandTotal={this.calculateGrandTotal}
+        />
+        </MediaQuery>
         <hr />
         <InvoiceFooter2
           {...this.state}
