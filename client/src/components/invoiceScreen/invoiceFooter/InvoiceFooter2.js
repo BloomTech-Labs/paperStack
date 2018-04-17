@@ -65,7 +65,7 @@ export default class InvoiceFooter2 extends Component {
       <div style={{ width: "90%", margin: "auto" }}>
         <Form>
           <FormGroup row>
-            {/* Discount given to customer -> for now, decreases the subtotal before it goes to tax */}
+            {/* Discount given to customer -> decreases the subtotal before it goes to tax */}
             <Label for="discount" sm={1}>
               Discount
             </Label>
@@ -83,7 +83,7 @@ export default class InvoiceFooter2 extends Component {
               </InputGroup>
             </Col>
 
-            {/* tax increases the subtotal by x% -> for now, will be applied AFTER the discount */}
+            {/* tax increases the subtotal by x% -> applied AFTER the discount */}
             <Label for="tax" sm={1}>
               Tax
             </Label>
@@ -100,7 +100,7 @@ export default class InvoiceFooter2 extends Component {
               </InputGroup>
             </Col>
 
-            {/* shipping field increases the total plus tax -> tax is paid by the invoicing company, should be passed on to the customer */}
+            {/* shipping field increases the total plus tax -> tax is paid by the invoicing company for shipping, should be passed on to the customer */}
             <Label for="shipping" sm={1}>
               Shipping
             </Label>
@@ -194,7 +194,7 @@ export default class InvoiceFooter2 extends Component {
                 </Col>
               </FormGroup>
 
-              {/* payment terms -> might pull from dueDatePicker later, presently filled in by hand */}
+              {/* payment terms -> automatically filled by the difference between the invoice date and the due date */}
               <FormGroup row>
                 <Label for="Terms" sm={1}>
                   Terms
