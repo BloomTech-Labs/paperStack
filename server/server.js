@@ -44,6 +44,28 @@ mongoose
   .catch(function(err) {
     console.log("DB connection failed..", err.message);
   });
+
+
+/**
+ * Middleware for token verification
+ */
+
+const verifyToken = (req, res, next) => {
+  const tkn = req.get("Authorization");
+  if (!tkn) {
+    return res
+      .status(STATUS_UNAUTHORIZED_ERROR)
+      .json({ err: "You are not authorized to do this request" });
+  }
+  jwt.verify(tkn, process.env.SECRET, (err, decoded) => {
+    if (err)
+      return res
+        .status(STATUS_UNAUTHORIZED_ERROR)
+        .json({ err: "You are not authorized to do this request" });
+    return next();
+  });
+};
+
 /**
  * CRUD for Users - Users are who we bill for using our app
  */
@@ -233,13 +255,28 @@ let userId,
   invShipping,
   invComment,
   invTerms;
+
+/**
+ * Get All Invoices
+ */
+
+server.get("/invoices", verifyToken, (req, res) => {
+  const userId = req.query.userId;
+  Invoices.find({ usersId: userId }, (err, invoices) => {
+    if (err) { 
+      return res.status(STATUS_SERVER_ERROR)
+                .json({ error: "Could not retrieve invoices" }); 
+              }
+    return res.status(200).json(invoices);
+  });
+});
+
 // /**
 //  * Post Invoices
 //  */
 
 server.post("/new", (req, res) => {
   const userId = req.query.userId;
-  console.log(userId);
   const tkn = req.get("Authorization");
   const {
     invCustomerAddress,
@@ -327,19 +364,21 @@ server.get("/invoices/:id", function(req, res) {
     }
   });
 });
+
 /**
  * Delete Invoices by _id
  */
-server.delete("/invoices/:id", function(req, res) {
-  const { id } = req.params;
-  Invoices.findByIdAndRemove(id, function(err, invoices) {
+server.delete("/invoices", verifyToken, (req, res) => {
+  const invoiceId = req.query.invoiceId;
+  Invoices.findByIdAndRemove(invoiceId, (err, invoices) => {
     if (err) {
-      res.status(STATUS_USER_ERROR).json({ error: "Could not delete invoice" });
-    } else {
-      res.status(200).json({ success: "Invoice deleted!" });
+      return res.status(STATUS_SERVER_ERROR)
+                .json({ error: "Could not delete invoice" });
     }
+    res.status(200).json({ message: "Invoice deleted!" });
   });
 });
+
 /**
  * CRUD for FinTran
  */
@@ -572,25 +611,6 @@ const hashedPassword = (req, res, next) => {
       throw new Error("The password wasn't hashed");
     });
 };
-/**
- * Middleware for token verification
- */
-
-const verifyToken = (req, res, next) => {
-  const tkn = req.get("Authorization");
-  if (!tkn) {
-    return res
-      .status(STATUS_UNAUTHORIZED_ERROR)
-      .json({ err: "You are not authorized to do this request" });
-  }
-  jwt.verify(tkn, process.env.SECRET, (err, decoded) => {
-    if (err)
-      return res
-        .status(STATUS_UNAUTHORIZED_ERROR)
-        .json({ err: "You are not authorized to do this request" });
-    return next();
-  });
-};
 
 /**
  * Create a new user
@@ -812,5 +832,49 @@ server.put("/company-address", verifyToken, (req, res) => {
       }
       res.status(200).json(updatedUser.companyAddress);
     });
+  });
+})
+
+
+/**
+ * Change User Password
+ */
+
+server.put('/new-password', verifyToken, (req, res) => {
+  const userId = req.query.userId;
+  const { oldpassword, newpassword } = req.body;
+  Users.findById(userId, (err, user) => {
+    if (err) { 
+      return res.status(STATUS_SERVER_ERROR)
+                .json({ err: 'Couldn\'t find user' }); 
+    }
+    const hashedPw = user.hashPassword;
+    bcrypt
+      .compare(oldpassword, hashedPw)
+      .then(response => {
+        if (!response) throw new Error("Password hashes weren't compared");
+      })
+      .then(() => {
+        bcrypt
+          .hash(newpassword, BCRYPT_COST)
+          .then(pw => {
+            user.hashPassword = pw;
+            user.save((err, updatedUser) => {
+              if (err) { 
+                return res.status(STATUS_SERVER_ERROR)
+                          .json({ err: 'Couldn\'t save changes' });
+              }
+              res.status(200).json({ message: "The password was changed" });
+            });
+          })
+          .catch(err => {
+            throw new Error("The password wasn't hashed");
+          });
+      })
+      .catch(error => {
+        res
+          .status(STATUS_SERVER_ERROR)
+          .json({ error: "Incorrect creditentials" });
+      });
   });
 });
