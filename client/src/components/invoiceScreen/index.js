@@ -50,17 +50,13 @@ class InvoiceScreen extends Component {
 
   componentWillMount() {
     sessionStorage.removeItem("lineItem", "modifyMe");
-    if (localStorage.getItem("invoiceId")) {
-      this.getExistingInvoice();
-    }
   }
-
+  
   componentDidMount() {
     this.getUserInfo();
-  }
-
-  componentWillUnmount() {
-    //   // use this later to save the current state of the invoice when we go change the logo
+    if (localStorage.getItem("invoiceId")) {
+      this.getExistingInvoice(localStorage.getItem("invoiceId"));
+    }
   }
 
   /**
@@ -204,49 +200,43 @@ class InvoiceScreen extends Component {
     }
   };
 
-  getExistingInvoice = () => {
-    if (!localStorage.getItem("invoiceNumber")) {
-      return;
-    } else {
-      axios({
-        method: "get",
-        url: `${serverURL}invoices/`,
-        params: {
-          id: localStorage.getItem("invoiceId")
-        },
+  getExistingInvoice = (invoiceId) => {
+    console.log(invoiceId);
+    axios
+        .get(`${serverURL}invoice`, {
+        params: { invoiceId: localStorage.getItem("invoiceId") },
         headers: { Authorization: localStorage.getItem("tkn") }
       })
         .then(res => {
+          console.log(res.data)
           this.setState(
             {
-              invCustomerAddress: res.data.customerAddress,
-              invNumber: res.data.invoiceNumber,
-              invDate: res.data.invoiceDate,
-              invDueDate: res.data.dueDate,
-              invBillableItems: JSON.parse(res.data.billableItems, [
+              customerAddress: res.data.invCustomerAddress,
+              invoiceNumber: res.data.invNumber,
+              invoiceDate: res.data.invDate + "test",
+              dueDate: res.data.invDueDate,
+              billableItems: JSON.parse(res.data.invBillableItems, [
                 "id",
                 "item",
                 "qty",
                 "rate",
                 "amount"
               ]),
-              invDiscount: res.data.discount,
-              invTax: res.data.tax,
-              invDeposit: res.data.deposit,
-              invShipping: res.data.shipping,
-              invComment: res.data.notes,
-              invTerms: res.data.terms
-            },
-            () => {
-              console.log("");
+              discount: res.data.invDiscount,
+              tax: res.data.invTax,
+              deposit: res.data.invDeposit,
+              shipping: res.data.invShipping,
+              notes: res.data.invComment,
+              terms: res.data.invTerms
+            }, () => {
+              console.log(this.state.billableItems)
             }
           );
         })
         .catch(err => {
-          const message = err.response.data.error;
-          console.log(message);
+          // const message = err.response.data.error;
+          console.log(err);
         });
-    }
   };
 
   saveAndClose = () => {
@@ -895,6 +885,7 @@ class InvoiceScreen extends Component {
   render() {
     return (
       <div className="invoiceForm">
+      <p>{this.state.invoiceDate}</p>
         <Navigation />
         <br />
         <hr />

@@ -77,7 +77,7 @@ export default class InvoiceFooter2 extends Component {
                   step="0.01"
                   placeholder="reduces the subtotal by a percentage"
                   onBlur={this.handleDiscountChange.bind(this)}
-                  onFocusOut={this.handleGrandTotalChange}
+                  defaultValue={this.props.discount}
                 />
                 <InputGroupAddon addonType="append">%</InputGroupAddon>
               </InputGroup>

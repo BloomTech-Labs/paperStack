@@ -260,7 +260,7 @@ server.post("/new", (req, res) => {
       .json({ error: "Could not create invoice due to missing fields" });
   }
   const newInv = new Invoices({
-    usersId : userId,
+    usersId: userId,
     invCustomerAddress,
     invNumber,
     invDate,
@@ -288,7 +288,8 @@ server.post("/new", (req, res) => {
  * Update an Invoice
  */
 server.put("/invoices/:id", function(req, res) {
-  const { invCustomerAddress,
+  const {
+    invCustomerAddress,
     invNumber,
     invDate,
     invDueDate,
@@ -314,39 +315,31 @@ server.put("/invoices/:id", function(req, res) {
 /**
  * Get Invoices by _id
  */
-server.get("/invoices/:id", function(req, res) {
-  const {invoiceId} = req.params;
-  const tkn = req.get("Authorization");
-  Invoices.findById(invoiceId, (err, invoices) => {
+server.get("/invoice", (req, res) => {
+  const invoiceId = req.query.invoiceId;
+  // const tkn = req.get("Authorization");
+  Invoices.findById(invoiceId, (err, invoice) => {
     if (err) {
-      res
-        .status(STATUS_USER_ERROR)
-        .json({ error: "Couldn\'t retrieve invoice" });
-    }   
-      const invCustomerAddress = invoices.invCustomerAddress;
-      const invNumber = invoices.invNumber;
-      const invDate = invoices.invDate;
-      const invDueDate = invoices.invDueDate;
-      const invBillableItems = invoices.invBillableItems;
-      const invDiscount = invoices.invDiscount;
-      const invTax = invoices.invTax;
-      const invDeposit = invoices.invDeposit;
-      const invShipping = invoices.invShipping;
-      const invTerms = invoices.invTerms;
-      res.status(200).json({ invCustomerAddress,
-        invNumber,
-        invDate,
-        invDueDate,
-        invBillableItems,
-        invDiscount,
-        invTax,
-        invDeposit,
-        invShipping,
-        invComment,
-        invTerms
-      });
-    }
-  });
+      return res.status(500).json({err});
+    } 
+    res.status(200).json(invoice)
+  })
+    // .then(
+    //   res.send({
+    //     invCustomerAddress,
+    //     invNumber,
+    //     invDate,
+    //     invDueDate,
+    //     invBillableItems,
+    //     invDiscount,
+    //     invTax,
+    //     invDeposit,
+    //     invShipping,
+    //     invComment,
+    //     invTerms
+    //   })
+    // )
+    // .catch(err => res.send(err));
 });
 /**
  * Delete Invoices by _id
@@ -726,55 +719,62 @@ server.post("/api/checkout", (req, res) => {
 /**
  * Logo uploading
  */
-server.put('/upload', verifyToken, (req, res) => {
+server.put("/upload", verifyToken, (req, res) => {
   const imageFile = req.files.logo;
-  
-  if (imageFile.truncated) { 
-    return res.status(413)
-              .json({ err: "Your image size exceeds max limit of 0.4mb" });
+
+  if (imageFile.truncated) {
+    return res
+      .status(413)
+      .json({ err: "Your image size exceeds max limit of 0.4mb" });
   }
 
   const supportedMimeTypes = ["image/jpeg", "image/png"];
   const contentType = imageFile.mimetype;
   if (supportedMimeTypes.indexOf(contentType) === -1) {
-    return res.status(STATUS_USER_ERROR)
-              .json({ err: "You are permitted to upload the following image types jpeg and png" });
+    return res
+      .status(STATUS_USER_ERROR)
+      .json({
+        err:
+          "You are permitted to upload the following image types jpeg and png"
+      });
   }
 
   const userId = req.query.userId;
   Users.findById(userId, (err, user) => {
-    if (err) { 
-      return res.status(STATUS_SERVER_ERROR)
-                .json({ err: 'Couldn\'t find user' }); 
+    if (err) {
+      return res
+        .status(STATUS_SERVER_ERROR)
+        .json({ err: "Couldn't find user" });
     }
-    const binaryData = imageFile.data.toString('base64');
+    const binaryData = imageFile.data.toString("base64");
     const logo = { binaryData, contentType };
     user.logo = logo;
     user.save((err, updatedUser) => {
-      if (err) { 
-        return res.status(STATUS_SERVER_ERROR)
-                  .json({ err: 'Couldn\'t save changes' });
+      if (err) {
+        return res
+          .status(STATUS_SERVER_ERROR)
+          .json({ err: "Couldn't save changes" });
       }
       res.status(200).json(updatedUser.logo);
     });
   });
-})
+});
 
 /**
  * Get logo and company name
  */
 
-server.get('/logo', verifyToken, (req, res) => {
+server.get("/logo", verifyToken, (req, res) => {
   const userId = req.query.userId;
   Users.findById(userId, (err, user) => {
-    if (err) { 
-      return res.status(STATUS_SERVER_ERROR)
-                .json({ err: 'Couldn\'t find user' }); 
+    if (err) {
+      return res
+        .status(STATUS_SERVER_ERROR)
+        .json({ err: "Couldn't find user" });
     }
     const userLogo = user.logo;
     if (!userLogo.contentType) {
-      return res.status(200)
-                .json({ message: 'Logo is not selected' });
+      return res.status(200).json({ message: "Logo is not selected" });
     }
     const companyName = user.companyName;
     const companyAddress = user.companyAddress;
@@ -786,19 +786,21 @@ server.get('/logo', verifyToken, (req, res) => {
  * Company name update
  */
 
-server.put('/company-name', verifyToken, (req, res) => {
+server.put("/company-name", verifyToken, (req, res) => {
   const userId = req.query.userId;
   const companyName = req.body.companyName;
   Users.findById(userId, (err, user) => {
-    if (err) { 
-      return res.status(STATUS_SERVER_ERROR)
-                .json({ err: 'Couldn\'t find user' }); 
+    if (err) {
+      return res
+        .status(STATUS_SERVER_ERROR)
+        .json({ err: "Couldn't find user" });
     }
     user.companyName = companyName;
     user.save((err, updatedUser) => {
-      if (err) { 
-        return res.status(STATUS_SERVER_ERROR)
-                  .json({ err: 'Couldn\'t save changes' });
+      if (err) {
+        return res
+          .status(STATUS_SERVER_ERROR)
+          .json({ err: "Couldn't save changes" });
       }
       res.status(200).json(updatedUser.companyName);
     });
@@ -809,21 +811,23 @@ server.put('/company-name', verifyToken, (req, res) => {
  * Company address update
  */
 
-server.put('/company-address', verifyToken, (req, res) => {
+server.put("/company-address", verifyToken, (req, res) => {
   const userId = req.query.userId;
   const companyAddress = req.body.companyAddress;
   Users.findById(userId, (err, user) => {
-    if (err) { 
-      return res.status(STATUS_SERVER_ERROR)
-                .json({ err: 'Couldn\'t find user' }); 
+    if (err) {
+      return res
+        .status(STATUS_SERVER_ERROR)
+        .json({ err: "Couldn't find user" });
     }
     user.companyAddress = companyAddress;
     user.save((err, updatedUser) => {
-      if (err) { 
-        return res.status(STATUS_SERVER_ERROR)
-                  .json({ err: 'Couldn\'t save changes' });
+      if (err) {
+        return res
+          .status(STATUS_SERVER_ERROR)
+          .json({ err: "Couldn't save changes" });
       }
       res.status(200).json(updatedUser.companyAddress);
     });
   });
-})
+});

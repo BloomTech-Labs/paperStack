@@ -61,6 +61,7 @@ export default class InvoiceHeader extends Component {
   render() {
     return (
       <div style={{ width: "90%", margin: "auto" }}>
+      <p>{this.props.invoiceNumber}</p>
         {/* This container holds everything */}
         <Form>
           <Row>
@@ -118,6 +119,7 @@ export default class InvoiceHeader extends Component {
                         id="customerAddress"
                         placeholder="name, address, city, state, zip"
                         onBlur={this.handleCustomerAddressChange}
+                        value={this.props.customerAddress}
                       />
                     </Col>
                   </FormGroup>
@@ -142,6 +144,7 @@ export default class InvoiceHeader extends Component {
                         id="invoiceNumber"
                         placeholder="Invoice #"
                         onBlur={this.handleInvoiceNumberChange}
+                        value={this.props.invoiceNumber}
                       />
                     </Col>
                   </FormGroup>
@@ -154,6 +157,7 @@ export default class InvoiceHeader extends Component {
                     <Col sm={8}>
                       <CurrentDatePicker
                         changeInvoiceDate={this.props.changeInvoiceDate}
+                        value={this.props.invoiceDate}
                       />
                     </Col>
                   </FormGroup>
