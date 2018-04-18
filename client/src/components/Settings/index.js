@@ -5,9 +5,8 @@ import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 
 import placeholderImg from './placeholder.png';
 import './Settings.css';
-// import emailValidation from '../Authorisation/emailRegExp';
+
 class Settings extends Component {
-  // email and password state
   state = {
     oldpassword: '',
     newpassword: '',
@@ -18,39 +17,13 @@ class Settings extends Component {
     companyName: '',
     newCompanyName: 'not selected',
     companyAddress: '',
-    newCompanyAddress: 'not selected'
+    newCompanyAddress: 'not selected',
+    invoiceNumber: '',
+    newInvoiceNumber: 0
   };
   
-  // click on submit button event handle
   handleSubmit = e => {
     e.preventDefault();
-    // const email = this.state.email;
-    // const oldpassword = this.state.oldpasword;
-    // const newpassword = this.state.newpassword;
-    // check email is not empty string
-    // if (!email) {
-    //   return this.setState({ emailErr: '***** email need to provide *****' });
-    // }
-    // } else {
-    //   this.setState({ emailErr: '' });
-    // if (!oldpassword) {
-    //   return this.setState({
-    //     oldpasswordErr: '***** password should not empty blank *****'
-    //   });
-    // }
-    // } else {
-    //   this.setState({ oldpasswordErr: '' });
-    // if (!emailValidation.test(email)) {
-    //   return this.setState({ emailErr: '*invalid email format mr@-x-x-.xxx' });
-    // }
-    // }else {
-    //    this.setState({ emailErr: '' });
-    // }
-    // console.log(
-    //   this.state.email,
-    //   this.state.oldpassword,
-    //   this.state.newpassword
-    // );
     axios.put(`http://localhost:3001/new-password`,
       {
         oldpassword: this.state.oldpassword,
@@ -95,6 +68,9 @@ class Settings extends Component {
   handleChangeCompanyAddress = event => {
     this.setState({ companyAddress: event.target.value });
   }
+  handleChangeInvoiceNumber = event => {
+    this.setState({ invoiceNumber: event.target.value });
+  }
   changeCompanyName = event => {
     event.preventDefault();
     const companyName = this.state.companyName;
@@ -108,8 +84,14 @@ class Settings extends Component {
       }
     }
     ).then((res) => {
+      let newCompanyName;
+      if (res.data.length > 15) {
+        newCompanyName = res.data.substring(0, 15) + '...';
+      } else {
+        newCompanyName = res.data;
+      }
       this.setState({ 
-        newCompanyName: res.data,
+        newCompanyName,
         modalHeader: `Success!`,
         modalBody: `Your Company Name was saved!`,
         modal: true
@@ -132,8 +114,8 @@ class Settings extends Component {
 
   changeCompanyAddress = event => {
     event.preventDefault();
-    const companyAddress = this.state.companyAddress;
-    axios.put('http://localhost:3001/company-address', { companyAddress },
+    const invoiceNumber = this.state.invoiceNumber;
+    axios.put('http://localhost:3001/invoice-number', { invoiceNumber },
     {
       params: { 
         userId: localStorage.getItem('userId'),
@@ -141,12 +123,51 @@ class Settings extends Component {
       headers: { 
         'Authorization': localStorage.getItem('tkn')
       }
-    }
-    ).then((res) => {
+    }).then((res) => {
       this.setState({ 
-        newCompanyAddress: res.data,
+        newInvoiceNumber: res.data,
         modalHeader: `Success!`,
-        modalBody: `Your Company Address was saved!`,
+        modalBody: `Your Current Invoice Number was saved!`,
+        modal: true
+      });
+    }).catch((err) => {
+      console.log(err);
+      if (err.response) {
+        const message = err.response.data.err;
+        console.log(message)
+        if (message) {
+          this.setState({ 
+            modalHeader: `Failure!`,
+            modalBody: message,
+            modal: true,
+          });
+        }
+      }
+    });
+  }
+
+  changeInvoiceNumber  = event => {
+    event.preventDefault();
+    const invoiceNumber = this.state.invoiceNumber;
+    axios.put('http://localhost:3001/invoice-number', { invoiceNumber },
+    {
+      params: { 
+        userId: localStorage.getItem('userId'),
+      },
+      headers: { 
+        'Authorization': localStorage.getItem('tkn')
+      }
+    }).then((res) => {
+      let newInvoiceNumber;
+      if (res.data) {
+        newInvoiceNumber = res.data;
+      } else {
+        newInvoiceNumber = 0
+      }
+      this.setState({
+        newInvoiceNumber,
+        modalHeader: `Success!`,
+        modalBody: `Your Current Invoice Number was saved!`,
         modal: true
       });
     }).catch((err) => {
@@ -177,8 +198,7 @@ class Settings extends Component {
         'Authorization': localStorage.getItem('tkn'),
         'Content-Type': imageFile.type
       }
-    }
-    ).then((res) => {
+    }).then((res) => {
       this.setState({ 
         logo: `data:${res.data.contentType};base64,${res.data.binaryData}`,
         modalHeader: `Success!`,
@@ -211,68 +231,82 @@ class Settings extends Component {
     return (
       <div className="UserSetting">
         <Navigation />
-        <h3 className="UserSetting-header">User Settings Page</h3>
         <main>
-          <form onSubmit={this.handleSubmit.bind(this)} encType="multipart/form-data">
-            <div className="UserSetting-logo-section">
-              <img className="UserSetting-logo-preview" src={this.state.logo} alt="logo"/>
-              <h6 className="Upload-images-header"> Select image to upload:</h6>
-              <p>Only *.jpeg and *.png images <br/> will be accepted with the size &lt; 0.4mb</p>
-              <input className="UserSetting-logo-input" type="file" name="logo" accept="image/*" 
-                onChange={(event)=> { this.handleUploadImage(event) }} />
-            </div>       
-            <div className="UserSetting-password-section">
+          <header>
+            <h3 className="UserSetting-header">Account</h3>
+            <h5 className="UserSetting-subheader">Change your basic account settings.</h5>
+          </header>
+          <div className="UserSetting-password-section">
+            <form onSubmit={this.handleSubmit} >
               <div>
-                <label>Old Password:</label>
+                <label>Old Password</label>&emsp;
                 <input
                   className="Old-Password-field"
                   type="password"
                   onChange={this.handleOldPasswordChange}
                   value={this.state.oldpassword}
                 />
-                <br />
               </div>
               <div>
-                <label>New Password:</label>
+                <label>New Password</label>&emsp;
                 <input
                   className="New-Password-field"
                   type="password"
                   onChange={this.handleNewPasswordChange}
                   value={this.state.newpassword}
                 />
-                <br />
-                <br />
               </div>
-              <button type="submit" className="usersetting">
-                SAVE
+              <button type="submit" className="UserSetting-password-btn">
+                Save
               </button>
-              <br />
-              <br />
-            </div>      
-          </form>
-          <form onSubmit={(event) => {this.changeCompanyName(event)}}>
-            <label>Company Name: {this.state.newCompanyName}</label><br/>
-            <input
-                type="text"
-                value={this.state.companyName}
-                onChange={this.handleChangeCompanyName}
-              />
-            <Button color="secondary">
-              Save
-            </Button>
-          </form>
-          <br/>
-          <form onSubmit={(event) => {this.changeCompanyAddress(event)}}>
-            <label>Company Address: {this.state.newCompanyAddress}</label><br/>
-            <input
-                type="text"
-                value={this.state.companyAddress}
-                onChange={this.handleChangeCompanyAddress}
-              />
-            <Button color="secondary" onClick={this.changeCompanyAddress}>
-              Save
-            </Button>
-          </form>
+            </form>
+          </div>
+          <div className="UserSetting-logo-section">
+            <header>
+              <h4 className="UserSetting-logo-header">Content</h4>
+              <h5 className="UserSetting-logo-subheader">Select image to upload.</h5>
+            </header>
+            <form encType="multipart/form-data">
+                <img className="UserSetting-logo-preview" src={this.state.logo} alt="logo"/>
+                
+                <p>Only *.jpeg and *.png images <br/> will be accepted with the size &lt; 0.4mb</p>
+                <input className="UserSetting-logo-input" type="file" name="logo" accept="image/*" 
+                  onChange={(event)=> { this.handleUploadImage(event) }} />
+            </form>
+          </div>
+          <div className="UserSetting-company-section">
+            <form onSubmit={(event) => {this.changeCompanyName(event)}}>
+              <label>Company Name: {this.state.newCompanyName}</label><br/>
+              <input
+                  type="text"
+                  value={this.state.companyName}
+                  onChange={this.handleChangeCompanyName}
+                />
+              <Button color="secondary">Save</Button>
+            </form>
+            <br/>
+            <form onSubmit={(event) => {this.changeCompanyAddress(event)}}>
+              <label>Company Address: {this.state.newCompanyAddress}</label><br/>
+              <input
+                  type="text"
+                  value={this.state.companyAddress}
+                  onChange={this.handleChangeCompanyAddress}
+                />
+              <Button color="secondary">Save</Button>
+            </form>
+            <br/>
+            <div className="UserSetting-invoice-section">
+              <form onSubmit={(event) => {this.changeInvoiceNumber(event)}}>
+                <label>Current Invoice Number: {this.state.newInvoiceNumber}</label><br/>
+                <input
+                    type="text"
+                    value={this.state.invoiceNumber}
+                    onChange={this.handleChangeInvoiceNumber}
+                  />
+                <Button color="secondary">Save</Button>
+              </form>
+            </div>
+          </div>
         </main>
         {/* Modal */}
         <div>
@@ -301,14 +335,27 @@ class Settings extends Component {
         this.setState({ logo: `data:${res.data.userLogo.contentType};base64,${res.data.userLogo.binaryData}`});
       }
 
-      const newCompanyName = res.data.companyName;
+      let newCompanyName = res.data.companyName;
       if (newCompanyName) {
-        this.setState({ newCompanyName });
+        if (newCompanyName.length > 15) {
+          this.setState({ newCompanyName: newCompanyName.substring(0, 15) + '...'});
+        } else {
+          this.setState({ newCompanyName });
+        }
       }
 
       const newCompanyAddress = res.data.companyAddress;
       if (newCompanyAddress) {
-        this.setState({ newCompanyAddress });
+        if (newCompanyAddress.length > 13) {
+          this.setState({ newCompanyAddress: newCompanyAddress.substring(0, 13) + '...'});
+        } else {
+          this.setState({ newCompanyAddress });
+        }
+      }
+
+      const newInvoiceNumber = res.data.currentInvoiceNumber;
+      if (newInvoiceNumber) {
+        this.setState({ newInvoiceNumber });
       }
     }).catch((err) => {
       console.log(err)

@@ -41,6 +41,11 @@ const UsersSchema = new Schema({
         required: false,
         default: null
     },
+    currentInvoiceNumber: {
+        type: Number,
+        required: false,
+        default: 0
+    },
     createdAt: {
         type: Date,
         default: Date.now
