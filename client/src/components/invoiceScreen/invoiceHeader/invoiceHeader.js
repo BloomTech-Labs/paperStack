@@ -118,7 +118,7 @@ export default class InvoiceHeader extends Component {
                         name="text"
                         id="customerAddress"
                         placeholder="name, address, city, state, zip"
-                        onBlur={this.handleCustomerAddressChange}
+                        onChange={this.handleCustomerAddressChange}
                         value={this.props.customerAddress}
                       />
                     </Col>
@@ -143,7 +143,7 @@ export default class InvoiceHeader extends Component {
                         name="invoiceNumber"
                         id="invoiceNumber"
                         placeholder="Invoice #"
-                        onBlur={this.handleInvoiceNumberChange}
+                        onChange={this.handleInvoiceNumberChange}
                         value={this.props.invoiceNumber}
                       />
                     </Col>
@@ -157,7 +157,7 @@ export default class InvoiceHeader extends Component {
                     <Col sm={8}>
                       <CurrentDatePicker
                         changeInvoiceDate={this.props.changeInvoiceDate}
-                        value={this.props.invoiceDate}
+                        {...this.props}
                       />
                     </Col>
                   </FormGroup>
@@ -168,7 +168,7 @@ export default class InvoiceHeader extends Component {
                       Due Date
                     </Label>
                     <Col sm={8}>
-                      <DueDatePicker changeDueDate={this.props.changeDueDate} />
+                      <DueDatePicker changeDueDate={this.props.changeDueDate} {...this.props}/>
                     </Col>
                   </FormGroup>
 

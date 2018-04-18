@@ -19,9 +19,9 @@ const corsOptions = {
 };
 
 const Users = require("./invoice/userModel.js");
-const Customers = require("./invoice/custModel.js");
+// const Customers = require("./invoice/custModel.js");
 const Invoices = require("./invoice/invModel.js");
-const FinTran = require("./invoice/finTranModel.js");
+// const FinTran = require("./invoice/finTranModel.js");
 // const InvLine = require("./invoice/invLineItemsModel.js");
 
 const server = express();

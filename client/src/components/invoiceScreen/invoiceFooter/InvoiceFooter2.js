@@ -76,8 +76,8 @@ export default class InvoiceFooter2 extends Component {
                   type="number"
                   step="0.01"
                   placeholder="reduces the subtotal by a percentage"
-                  onBlur={this.handleDiscountChange.bind(this)}
-                  defaultValue={this.props.discount}
+                  onChange={this.handleDiscountChange.bind(this)}
+                  value={this.props.discount}
                 />
                 <InputGroupAddon addonType="append">%</InputGroupAddon>
               </InputGroup>
@@ -94,7 +94,8 @@ export default class InvoiceFooter2 extends Component {
                   type="number"
                   step=".01"
                   placeholder="increases by your tax rate"
-                  onBlur={this.handleTaxChange}
+                  onChange={this.handleTaxChange}
+                  value={this.props.tax}
                 />
                 <InputGroupAddon addonType="append">%</InputGroupAddon>
               </InputGroup>
@@ -112,7 +113,8 @@ export default class InvoiceFooter2 extends Component {
                   type="number"
                   step=".01"
                   placeholder="your full shipping charges"
-                  onBlur={this.handleShippingChange}
+                  onChange={this.handleShippingChange}
+                  value={this.props.shipping}
                 />
               </InputGroup>
             </Col>
@@ -151,7 +153,8 @@ export default class InvoiceFooter2 extends Component {
                       type="number"
                       step=".01"
                       placeholder="amount pre-paid by the customer, if any"
-                      onBlur={this.handleDepositChange}
+                      onChange={this.handleDepositChange}
+                      value={this.props.deposit}
                     />
                   </InputGroup>
                 </Col>
@@ -188,7 +191,8 @@ export default class InvoiceFooter2 extends Component {
                     name="notes"
                     type="text"
                     placeholder="any notes for the customer"
-                    onBlur={this.handleNotesChange}
+                    onChange={this.handleNotesChange}
+                    value={this.props.notes}
                     maxLength='200'
                   />
                 </Col>

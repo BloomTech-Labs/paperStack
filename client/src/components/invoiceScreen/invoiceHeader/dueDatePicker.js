@@ -13,11 +13,17 @@ export default class DueDatePicker extends Component {
     this.state = {
       startDate: moment().add(1, "days")
     };
-
-    this.handleChange = this.handleChange.bind(this);
   }
 
-  handleChange(date) {
+  componentWillReceiveProps = (nextProps) => {
+    this.handleSavedDate();
+  }
+
+  handleSavedDate = () => {
+    localStorage.getItem("invoiceId") ? this.setState({startDate: moment(this.props.dueDate)}) : moment().add(1, "days");
+  };
+
+  handleChange = (date) => {
     this.setState({
       startDate: date
     });

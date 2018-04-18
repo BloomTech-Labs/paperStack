@@ -112,7 +112,7 @@ class InvoiceScreen extends Component {
               }`
             },
             () => {
-              console.log("");
+              console.log("from the getUserInfo to force synchronicity");
             }
           );
         }
@@ -201,19 +201,18 @@ class InvoiceScreen extends Component {
   };
 
   getExistingInvoice = (invoiceId) => {
-    console.log(invoiceId);
     axios
         .get(`${serverURL}invoice`, {
         params: { invoiceId: localStorage.getItem("invoiceId") },
         headers: { Authorization: localStorage.getItem("tkn") }
       })
         .then(res => {
-          console.log(res.data)
+          console.log("from the parent Get res.data: ", res.data)
           this.setState(
             {
               customerAddress: res.data.invCustomerAddress,
               invoiceNumber: res.data.invNumber,
-              invoiceDate: res.data.invDate + "test",
+              invoiceDate: res.data.invDate,
               dueDate: res.data.invDueDate,
               billableItems: JSON.parse(res.data.invBillableItems, [
                 "id",
@@ -229,7 +228,7 @@ class InvoiceScreen extends Component {
               notes: res.data.invComment,
               terms: res.data.invTerms
             }, () => {
-              console.log(this.state.billableItems)
+              console.log("from the parent Get setState: ", this.state.billableItems)
             }
           );
         })
@@ -710,6 +709,10 @@ class InvoiceScreen extends Component {
     // });
   };
 
+  iAmABlankFunction = () => {
+    
+  }
+
   /**
    * these functions pass the form values into state
    */
@@ -722,19 +725,23 @@ class InvoiceScreen extends Component {
   };
 
   changeCustomerAddress = customerAddress => {
-    this.setState({ customerAddress });
+    this.setState({ customerAddress }, () => {
+      this.recalculate();
+    });
   };
 
   changeInvoiceNumber = invoiceNumber => {
-    this.setState({ invoiceNumber });
+    this.setState({ invoiceNumber }, () => {this.recalculate();});
   };
 
   changeInvoiceDate = invoiceDate => {
-    this.setState({ invoiceDate });
+    this.setState({ invoiceDate }, () => {this.recalculate();});
   };
 
   changeDueDate = dueDate => {
-    this.setState({ dueDate });
+    this.setState({ dueDate }, () => {
+      this.recalculate();
+    });
   };
 
   addBillableItems = lineItem => {
@@ -746,7 +753,7 @@ class InvoiceScreen extends Component {
           billableItems: [...prevState.billableItems, JSON.parse(lineItem)]
         }),
         () => {
-          console.log(this.state.billableItems);
+          console.log('from the parent addBillableItems: ', this.state.billableItems);
         }
       );
       sessionStorage.removeItem("lineItem");
@@ -885,7 +892,6 @@ class InvoiceScreen extends Component {
   render() {
     return (
       <div className="invoiceForm">
-      <p>{this.state.invoiceDate}</p>
         <Navigation />
         <br />
         <hr />
