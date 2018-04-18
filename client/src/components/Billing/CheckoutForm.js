@@ -2,12 +2,13 @@ import React from "react";
 import { injectStripe } from "react-stripe-elements";
 import axios from "axios";
 import CardSection from "./CardSection";
-import { Container, Row, Button, Input, Form, Badge } from "reactstrap";
+import { Container, Row, Button, Input, Form, Badge, Col } from "reactstrap";
 
 class CheckoutForm extends React.Component {
   state = {
     sub: false,
     one: false,
+    email: "",
     subErr: false,
     oneErr: false
   };
@@ -25,6 +26,7 @@ class CheckoutForm extends React.Component {
     ev.preventDefault();
     const sub = this.state.sub;
     const one = this.state.one;
+    const email = this.state.email;
     if (!sub && !one) {
       return this.setState({ subErr: "Please choose one payment plan" });
     } else {
@@ -41,7 +43,8 @@ class CheckoutForm extends React.Component {
           .post("http://localhost:3001/api/checkout", {
             token: token.id,
             sub,
-            one
+            one,
+            email
           })
           .then(res => {
             console.log("Charge success: ", res.data);
@@ -64,30 +67,36 @@ class CheckoutForm extends React.Component {
     return (
       <div>
         <Form onSubmit={this.handleSubmit}>
-          <h1 align="left">
+          <h1 align="center">
             Billing <Badge />
           </h1>
           <Container>
             <CardSection />
             {/* <AddressSection /> */}
-            <Row>
-              <Input
-                type="checkbox"
-                value={this.state.sub}
-                onChange={this.handleSubChange}
-              />
-              <span>{this.state.subErr}</span>
-              1 Year Subscription - $9.99
-            </Row>
-            <Row>
-              <Input
-                type="checkbox"
-                value={this.state.one}
-                onChange={this.handleOneChange}
-              />
-              <span>{this.state.oneErr}</span>
-              1 Invoice - $0.99
-            </Row>
+            <Col>
+              <Row>
+                <Col sm={{ size: 6, order: 2, offset: 0 }}>
+                  <Input
+                    type="checkbox"
+                    value={this.state.sub}
+                    onChange={this.handleSubChange}
+                  />
+                  <span>{this.state.subErr}</span>
+                  1 Year Subscription - $9.99
+                </Col>
+              </Row>
+              <Row>
+                <Col sm={{ size: 6, order: 2, offset: 0 }}>
+                  <Input
+                    type="checkbox"
+                    value={this.state.one}
+                    onChange={this.handleOneChange}
+                  />
+                  <span>{this.state.oneErr}</span>
+                  1 Invoice - $0.99
+                </Col>
+              </Row>
+            </Col>
             <Button>Buy Now</Button>
           </Container>
         </Form>
