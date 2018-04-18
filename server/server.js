@@ -33,8 +33,8 @@ server.use(cors());
 require("dotenv").config();
 mongoose.Promise = global.Promise;
 mongoose
-  .connect(process.env.MONGO_URI)
-  // .connect('mongodb://localhost:27017/users')
+  // .connect(process.env.MONGO_URI)
+  .connect('mongodb://localhost:27017/users')
   .then(function(db) {
     console.log("All your dbs belong to us!");
     server.listen(3001, function() {
@@ -317,8 +317,22 @@ server.post("/new", (req, res) => {
         .status(STATUS_SERVER_ERROR)
         .json({ error: "Could not create the invoice." });
     }
-    // res.status(201).json(invoice);
-    res.status(200).send({ invoiceId: invoice._id });
+    Users.findById(userId, (err, user) => {
+      if (err) {
+        return res
+          .status(STATUS_SERVER_ERROR)
+          .json({ err: "Couldn't find user" });
+      }
+      user.currentInvoiceNumber += 1;
+      user.save((err, updatedUser) => {
+        if (err) {
+          return res
+            .status(STATUS_SERVER_ERROR)
+            .json({ err: "Couldn't save current Invoice Number" });
+        }
+        res.status(201).send({ invoiceId: invoice._id });
+      });
+    });
   });
 });
 /**
@@ -781,7 +795,8 @@ server.get("/logo", verifyToken, (req, res) => {
     }
     const companyName = user.companyName;
     const companyAddress = user.companyAddress;
-    res.status(200).json({ userLogo, companyName, companyAddress });
+    const currentInvoiceNumber = user.currentInvoiceNumber;
+    res.status(200).json({ userLogo, companyName, companyAddress, currentInvoiceNumber });
   });
 });
 
@@ -835,6 +850,30 @@ server.put("/company-address", verifyToken, (req, res) => {
   });
 })
 
+/**
+ * Current invoice number update
+ */
+
+server.put("/invoice-number", verifyToken, (req, res) => {
+  const userId = req.query.userId;
+  const currentInvoiceNumber = req.body.invoiceNumber;
+  Users.findById(userId, (err, user) => {
+    if (err) {
+      return res
+        .status(STATUS_SERVER_ERROR)
+        .json({ err: "Couldn't find user" });
+    }
+    user.currentInvoiceNumber = currentInvoiceNumber;
+    user.save((err, updatedUser) => {
+      if (err) {
+        return res
+          .status(STATUS_SERVER_ERROR)
+          .json({ err: "Couldn't save changes" });
+      }
+      res.status(200).json(updatedUser.currentInvoiceNumber);
+    });
+  });
+})
 
 /**
  * Change User Password
