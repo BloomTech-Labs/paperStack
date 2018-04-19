@@ -219,7 +219,7 @@ class InvoiceScreen extends Component {
         }
       )
       .then(res => {
-        console.log(res.data);
+        alert("Changes Saved!");
       })
       .catch(err => {
         console.log(err);
@@ -273,6 +273,9 @@ class InvoiceScreen extends Component {
   saveAndClose = () => {
     if (!this.state.invoiceNumber) {
       alert("Invoices must have at least an Invoice Number to save.");
+    } else if (localStorage.getItem("invoiceId")) {
+      this.saveChangesToExistingInvoice();
+      this.props.history.push("/invoices");
     } else {
       this.saveOnly();
       this.props.history.push("/invoices");
@@ -435,13 +438,13 @@ class InvoiceScreen extends Component {
         .text(450, 120, "Date:", null, null, "right");
       pdf
         .setTextColor(30)
-        .text(555, 120, this.state.invoiceDate, null, null, "right");
+        .text(555, 120, moment(this.state.invoiceDate).format("MM/DD/YYYY"), null, null, "right");
 
       // Due Date:
       pdf.setTextColor(100).text(450, 140, "Due Date:", null, null, "right");
       pdf
         .setTextColor(30)
-        .text(555, 140, this.state.dueDate, null, null, "right");
+        .text(555, 140, moment(this.state.dueDate).format("MM/DD/YYYY"), null, null, "right");
 
       // Balance Due:
       pdf
