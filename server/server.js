@@ -162,6 +162,7 @@ server.post("/new", (req, res) => {
   const {
     invCustomerAddress,
     invNumber,
+    invNumberExtension,
     invDate,
     invDueDate,
     invBillableItems,
@@ -182,6 +183,7 @@ server.post("/new", (req, res) => {
     usersId: userId,
     invCustomerAddress,
     invNumber,
+    invNumberExtension,
     invDate,
     invDueDate,
     invBillableItems,
@@ -211,6 +213,7 @@ server.put("/invoice/:id", verifyToken, (req, res) => {
   const invoiceId = req.query.invoiceId;
   const invCustomerAddress = req.body.customerAddress;
   const invNumber = req.body.invoiceNumber;
+  const invNumberExtension = req.body.invoiceNumberExtension;
   const invDate = req.body.invoiceDate;
   const invDueDate = req.body.dueDate;
   const invBillableItems = req.body.billableItems;
@@ -229,6 +232,7 @@ server.put("/invoice/:id", verifyToken, (req, res) => {
     }
     invoice.invCustomerAddress = invCustomerAddress,
     invoice.invNumber = invNumber,
+    invoice.invNumberExtension = invoiceNumberExtension;
     invoice.invDate = invDate,
     invoice.invDueDate = invDueDate,
     invoice.invBillableItems = invBillableItems,

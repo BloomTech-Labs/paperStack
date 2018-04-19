@@ -29,6 +29,7 @@ class InvoiceScreen extends Component {
       companyAddress: "start addy",
       customerAddress: "",
       invoiceNumber: "",
+      invoiceNumberExtension: "",
       invoiceDate: moment().format("MM/DD/YYYY"),
       dueDate: moment()
         .add(1, "days")
@@ -112,7 +113,8 @@ class InvoiceScreen extends Component {
               companyName: res.data.companyName,
               companyLogo: `data:${res.data.userLogo.contentType};base64,${
                 res.data.userLogo.binaryData
-              }`
+              }`,
+              // invoiceNumber: res.data.currentInvoiceNumber
               // subscription: res.data.subscription
               // oneTimePaid: res.data.oneTimePaid
             },
@@ -137,6 +139,7 @@ class InvoiceScreen extends Component {
       data: {
         invCustomerAddress: this.state.customerAddress,
         invNumber: this.state.invoiceNumber,
+        invNumberExtension: this.state.invoiceNumberExtension,
         invDate: this.state.invoiceDate,
         invDueDate: this.state.dueDate,
         invBillableItems: JSON.stringify(this.state.billableItems, [
@@ -168,6 +171,7 @@ class InvoiceScreen extends Component {
   saveChangesToExistingInvoice = () => {
     const invCustomerAddress = this.state.customerAddress;
     const invNumber = this.state.invoiceNumber;
+    const invNumberExtension = this.state.invoiceNumberExtension;
     const invDate = this.state.invoiceDate;
     const invDueDate = this.state.dueDate;
     const invBillableItems = JSON.stringify(this.state.billableItems, [
@@ -190,6 +194,7 @@ class InvoiceScreen extends Component {
         {
           invCustomerAddress,
           invNumber,
+          invNumberExtension,
           invDate,
           invDueDate,
           invBillableItems,
@@ -228,6 +233,7 @@ class InvoiceScreen extends Component {
           {
             customerAddress: res.data.invCustomerAddress,
             invoiceNumber: res.data.invNumber,
+            invoiceNumberExtension: res.data.invNumberExtension,
             invoiceDate: res.data.invDate,
             dueDate: res.data.invDueDate,
             billableItems: JSON.parse(res.data.invBillableItems, [
@@ -274,7 +280,7 @@ class InvoiceScreen extends Component {
       this.state.companyName === "company name missing" ||
       this.state.companyAddress === "company address missing"
     ) {
-      alert("Please update your user settings");
+      alert("Please update your user settings, missing either your company logo, company name, or company address.");
     } else if (!this.state.invoiceNumber) {
       alert(
         "Invoices must have at least an Invoice Number to save or create PDF."
@@ -376,7 +382,7 @@ class InvoiceScreen extends Component {
         .text(
           560,
           60,
-          "Invoice # " + this.state.invoiceNumber,
+          "Invoice # " + this.state.invoiceNumber + this.state.invoiceNumberExtension,
           null,
           null,
           "right"
@@ -767,6 +773,12 @@ class InvoiceScreen extends Component {
     });
   };
 
+  changeInvoiceNumberExtension = invoiceNumberExtension => {
+    this.setState({ invoiceNumberExtension }, () => {
+      this.recalculate();
+    });
+  };
+
   changeInvoiceDate = invoiceDate => {
     this.setState({ invoiceDate }, () => {
       this.recalculate();
@@ -930,7 +942,6 @@ class InvoiceScreen extends Component {
   render() {
     return (
       <div className="invoiceForm">
-        <p>{localStorage.getItem("invoiceId")}</p>
         <Navigation />
         <br />
         <hr />
@@ -943,6 +954,7 @@ class InvoiceScreen extends Component {
             changeCompanyAddress={this.changeCompanyAddress}
             changeCustomerAddress={this.changeCustomerAddress}
             changeInvoiceNumber={this.changeInvoiceNumber}
+            changeInvoiceNumberExtension={this.changeInvoiceNumberExtension}
             changeInvoiceDate={this.changeInvoiceDate}
             changeDueDate={this.changeDueDate}
             calculateAmountDue={this.calculateAmountDue}

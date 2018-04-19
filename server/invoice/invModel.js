@@ -17,8 +17,12 @@ const InvoicesSchema = new Schema({
         required: false
     },
     invNumber: {
-        type: String,
+        type: Number,
         autoIncrement: false,
+        required: true
+    },
+    invNumberExtension: {
+        type: String,
         required: false
     },
     invDate: {

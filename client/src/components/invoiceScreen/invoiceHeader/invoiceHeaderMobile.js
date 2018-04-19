@@ -108,23 +108,46 @@ export default class InvoiceHeader extends Component {
                 </Col>
               </FormGroup>
 
-              {/* invoice number, currently accepts alpha numberic typing -> should pre-populate */}
+              {/* invoice number, currently accepts numeric typing only -> should pre-populate */}
               <FormGroup row>
                 <Label for="invoiceNumber" sm={3}>
                   Invoice #
                 </Label>
                 <Col sm={9}>
                   <Input
-                    type="text"
+                    type="number"
                     name="invoiceNumber"
                     id="invoiceNumber"
                     placeholder="Invoice #"
                     onChange={this.handleInvoiceNumberChange}
                         value={this.props.invoiceNumber}
                   />
+                  <FormText color="muted">
+                    Please use only numbers in your main Invoice #.
+                  </FormText>
                 </Col>
               </FormGroup>
 
+              {/* invoice number extension, accepts alpha numeric typing*/}
+              <FormGroup row>
+              <Label for="invoiceNumberExtension" sm={3}>
+                Invoice Extension
+              </Label>
+              <Col sm={9}>
+                <Input
+                  type="text"
+                  name="invoiceNumberExtension"
+                  id="invoiceNumberExtension"
+                  placeholder="Invoice Extension"
+                  onChange={this.handleInvoiceNumberExtensionChange}
+                  value={this.props.invoiceNumberExtension}
+                />
+                <FormText color="muted">
+                  Letters or hyphenated sections can be added here.
+                </FormText>
+              </Col>
+            </FormGroup>
+            
               {/* current date picker -> defaults to today */}
               <FormGroup row>
                 <Label for="currentDate" sm={3}>
