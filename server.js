@@ -26,6 +26,7 @@ const InvLine = require("./invoice/invLineItemsModel.js");
 
 const server = express();
 
+server.use(express.static(path.resolve(__dirname, "./client/build")));
 server.use(bodyParser.urlencoded({ extended: false })); // added
 server.use(bodyParser.json());
 server.use(fileUpload({ limits: { fileSize: 400 * 1024 } }));
