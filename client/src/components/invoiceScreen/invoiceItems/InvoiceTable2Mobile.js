@@ -17,19 +17,16 @@ let newObj = {};
 export default class InvoiceItemsTable2 extends Component {
   constructor(props) {
     super(props);
-
-    // this.onAfterInsertRow = this.onAfterInsertRow.bind(this);
-
-    this.state = {
-      data: this.props.billableItems
-      // ^^ data must be presented as an array per docs
-    };
   }
 
   // see https://engineering.musefind.com/how-to-benchmark-react-components-the-quick-and-dirty-guide-f595baf1014c for more information on why this is being used to prevent un-necessary re-renders (causes loss of line items which weren't saved)
   // lies ^^ is a good article, but this is where I got it from https://engineering.musefind.com/react-lifecycle-methods-how-and-when-to-use-them-2111a1b692b1
   shouldComponentUpdate(nextProps, nextState) {
+    if (nextProps.billableItems !== this.props.billableItems) {
+      return true;
+    } else {
     return false;
+    }
   }
 
   /* 
@@ -227,7 +224,7 @@ export default class InvoiceItemsTable2 extends Component {
         />
         <BootstrapTable
           id="table"
-          data={this.data}
+          data={this.props.billableItems}
           striped
           hover
           condensed

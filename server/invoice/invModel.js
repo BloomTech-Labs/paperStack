@@ -61,6 +61,11 @@ const InvoicesSchema = new Schema({
     createdAt: {
         type: Date,
         default: Date.now
+    },
+    invPaidFor: {
+        type: Boolean,
+        default: false,
+        required: false
     }
 });
 

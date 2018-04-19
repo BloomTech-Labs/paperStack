@@ -22,11 +22,6 @@ import "./datePicker.css";
 export default class InvoiceHeader extends Component {
   constructor(props) {
     super(props);
-
-    this.toggleDropDown = this.toggleDropDown.bind(this);
-    this.state = {
-      dropdownOpen: false
-    };
   }
 
   saveAndChange = () => {
@@ -51,12 +46,6 @@ export default class InvoiceHeader extends Component {
   handleAmountDueChange = e => {
     this.props.calculateAmountDue(e.target.value);
   };
-
-  toggleDropDown() {
-    this.setState({
-      dropdownOpen: !this.state.dropdownOpen
-    });
-  }
 
   render() {
     return (

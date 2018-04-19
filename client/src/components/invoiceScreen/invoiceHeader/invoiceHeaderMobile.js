@@ -20,15 +20,6 @@ import "react-datepicker/dist/react-datepicker.css";
 import "./datePicker.css";
 
 export default class InvoiceHeader extends Component {
-  constructor(props) {
-    super(props);
-
-    this.toggleDropDown = this.toggleDropDown.bind(this);
-    this.state = {
-      dropdownOpen: false
-    };
-  }
-
   saveAndChange = () => {
     this.props.saveOnly();
   };
@@ -51,12 +42,6 @@ export default class InvoiceHeader extends Component {
   handleAmountDueChange = e => {
     this.props.calculateAmountDue(e.target.value);
   };
-
-  toggleDropDown() {
-    this.setState({
-      dropdownOpen: !this.state.dropdownOpen
-    });
-  }
 
   render() {
     return (
@@ -117,8 +102,8 @@ export default class InvoiceHeader extends Component {
                     type="textarea"
                     name="text"
                     id="customerAddress"
-                    placeholder="name, address, city, state, zip"
-                    onBlur={this.handleCustomerAddressChange}
+                    onChange={this.handleCustomerAddressChange}
+                    value={this.props.customerAddress}
                   />
                 </Col>
               </FormGroup>
@@ -134,7 +119,8 @@ export default class InvoiceHeader extends Component {
                     name="invoiceNumber"
                     id="invoiceNumber"
                     placeholder="Invoice #"
-                    onBlur={this.handleInvoiceNumberChange}
+                    onChange={this.handleInvoiceNumberChange}
+                        value={this.props.invoiceNumber}
                   />
                 </Col>
               </FormGroup>
@@ -146,7 +132,7 @@ export default class InvoiceHeader extends Component {
                 </Label>
                 <Col sm={9}>
                   <CurrentDatePicker
-                    changeInvoiceDate={this.props.changeInvoiceDate}
+                    changeInvoiceDate={this.props.changeInvoiceDate} {...this.props}
                   />
                 </Col>
               </FormGroup>
@@ -157,7 +143,7 @@ export default class InvoiceHeader extends Component {
                   Due Date
                 </Label>
                 <Col sm={9}>
-                    <DueDatePicker changeDueDate={this.props.changeDueDate} />
+                    <DueDatePicker changeDueDate={this.props.changeDueDate} {...this.props} />
                 </Col>
               </FormGroup>
 

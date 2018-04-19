@@ -16,36 +16,16 @@ let newObj = {};
 export default class InvoiceItemsTable2 extends Component {
   constructor(props) {
     super(props);
-
-    // this.state = {
-    //   data: this.props.billableItems
-    //   // ^^ data must be presented as an array per docs
-    // };
   }
-
-  // componentDidMount() {
-  //   this.setState({data: this.props.billableItems}, () => {
-  //     console.log('from componentDidMount: ', this.state.data)
-  //   })
-  // } // component doesn't receive it's props until AFTER it and the rest of the children are rendered
-
-  // componentWillReceiveProps(nextProps) {
-  //   if (nextProps.billableItems !== this.props.billableItems) {
-  //     this.setState({data: nextProps.billableItems}, () => {
-  //       console.log('from componentWillReceiveProps: ', this.state.data)
-  //     })
-  //   }
-  // }
 
   // see https://engineering.musefind.com/how-to-benchmark-react-components-the-quick-and-dirty-guide-f595baf1014c for more information on why this is being used to prevent un-necessary re-renders (causes loss of line items which weren't saved)
   // lies ^^ is a good article, but this is where I got it from https://engineering.musefind.com/react-lifecycle-methods-how-and-when-to-use-them-2111a1b692b1
   shouldComponentUpdate(nextProps, nextState) {
-    if (nextProps.billableItems != this.props.billableItems) {
+    if (nextProps.billableItems !== this.props.billableItems) {
       return true;
     } else {
     return false;
     }
-    // return nextState.billableItems != this.state.data;
   }
 
   /* 

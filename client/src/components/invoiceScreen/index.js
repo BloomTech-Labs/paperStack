@@ -19,8 +19,6 @@ import "react-datepicker/dist/react-datepicker.css";
 
 const serverURL = "http://localhost:3001/";
 
-const enableUpdateButton = localStorage.getItem("invoiceId");
-
 class InvoiceScreen extends Component {
   constructor(props) {
     super(props);
@@ -44,18 +42,23 @@ class InvoiceScreen extends Component {
       shipping: 0,
       amountDue: 0,
       notes: "",
-      terms: ""
+      terms: "",
+      subscription: false,
+      oneTimePaid: false,
+      paidInvoice: false,
+      buttonEnabled: false
     };
   }
 
   componentWillMount() {
     sessionStorage.removeItem("lineItem", "modifyMe");
   }
-  
+
   componentDidMount() {
     this.getUserInfo();
     if (localStorage.getItem("invoiceId")) {
       this.getExistingInvoice(localStorage.getItem("invoiceId"));
+      this.setState({ buttonEnabled: true });
     }
   }
 
@@ -110,6 +113,8 @@ class InvoiceScreen extends Component {
               companyLogo: `data:${res.data.userLogo.contentType};base64,${
                 res.data.userLogo.binaryData
               }`
+              // subscription: res.data.subscription
+              // oneTimePaid: res.data.oneTimePaid
             },
             () => {
               console.log("from the getUserInfo to force synchronicity");
@@ -146,7 +151,8 @@ class InvoiceScreen extends Component {
         invDeposit: this.state.deposit,
         invShipping: this.state.shipping,
         invComment: this.state.notes,
-        invTerms: this.state.terms
+        invTerms: this.state.terms,
+        invPaidFor: this.state.paidInvoice
       },
       headers: { Authorization: localStorage.getItem("tkn") }
     })
@@ -160,82 +166,97 @@ class InvoiceScreen extends Component {
   };
 
   saveChangesToExistingInvoice = () => {
-    if (!localStorage.getItem("invoiceNumber")) {
-      return;
-    } else {
-      axios({
-        method: "put",
-        url: `${serverURL}invoices/`,
-        params: {
-          invoiceId: localStorage.getItem("invoiceId")
+    const invCustomerAddress = this.state.customerAddress;
+    const invNumber = this.state.invoiceNumber;
+    const invDate = this.state.invoiceDate;
+    const invDueDate = this.state.dueDate;
+    const invBillableItems = JSON.stringify(this.state.billableItems, [
+      "id",
+      "item",
+      "qty",
+      "rate",
+      "amount"
+    ]);
+    const invDiscount = this.state.discount;
+    const invTax = this.state.tax;
+    const invDeposit = this.state.deposit;
+    const invShipping = this.state.shipping;
+    const invComment = this.state.notes;
+    const invTerms = this.state.terms;
+    const invPaidFor = this.state.paidInvoice;
+    axios
+      .put(
+        `${serverURL}updated-invoice`,
+        {
+          invCustomerAddress,
+          invNumber,
+          invDate,
+          invDueDate,
+          invBillableItems,
+          invDiscount,
+          invTax,
+          invDeposit,
+          invShipping,
+          invComment,
+          invTerms,
+          invPaidFor
         },
-        data: {
-          invCustomerAddress: this.state.customerAddress,
-          invNumber: this.state.invoiceNumber,
-          invDate: this.state.invoiceDate,
-          invDueDate: this.state.dueDate,
-          invBillableItems: JSON.stringify(this.state.billableItems, [
-            "id",
-            "item",
-            "qty",
-            "rate",
-            "amount"
-          ]),
-          invDiscount: this.state.discount,
-          invTax: this.state.tax,
-          invDeposit: this.state.deposit,
-          invShipping: this.state.shipping,
-          invComment: this.state.notes,
-          invTerms: this.state.terms
-        },
-        headers: { Authorization: localStorage.getItem("tkn") }
+        {
+          params: {
+            invoiceId: localStorage.getItem("invoiceId")
+          },
+          headers: { Authorization: localStorage.getItem("tkn") }
+        }
+      )
+      .then(res => {
+        console.log(res.data);
       })
-        .then(res => {
-          console.log(res.data);
-        })
-        .catch(err => {
-          const message = err.response.data.error;
-          console.log(message);
-        });
-    }
+      .catch(err => {
+        console.log(err);
+      });
   };
 
-  getExistingInvoice = (invoiceId) => {
+  getExistingInvoice = invoiceId => {
     axios
-        .get(`${serverURL}invoice`, {
+      .get(`${serverURL}invoice`, {
         params: { invoiceId: localStorage.getItem("invoiceId") },
         headers: { Authorization: localStorage.getItem("tkn") }
       })
-        .then(res => {
-          console.log("from the parent Get res.data: ", res.data)
-          this.setState(
-            {
-              customerAddress: res.data.invCustomerAddress,
-              invoiceNumber: res.data.invNumber,
-              invoiceDate: res.data.invDate,
-              dueDate: res.data.invDueDate,
-              billableItems: JSON.parse(res.data.invBillableItems, [
-                "id",
-                "item",
-                "qty",
-                "rate",
-                "amount"
-              ]),
-              discount: res.data.invDiscount,
-              tax: res.data.invTax,
-              deposit: res.data.invDeposit,
-              shipping: res.data.invShipping,
-              notes: res.data.invComment,
-              terms: res.data.invTerms
-            }, () => {
-              console.log("from the parent Get setState: ", this.state.billableItems)
-            }
-          );
-        })
-        .catch(err => {
-          // const message = err.response.data.error;
-          console.log(err);
-        });
+      .then(res => {
+        console.log("from the parent Get res.data: ", res.data);
+        this.setState(
+          {
+            customerAddress: res.data.invCustomerAddress,
+            invoiceNumber: res.data.invNumber,
+            invoiceDate: res.data.invDate,
+            dueDate: res.data.invDueDate,
+            billableItems: JSON.parse(res.data.invBillableItems, [
+              "id",
+              "item",
+              "qty",
+              "rate",
+              "amount"
+            ]),
+            discount: res.data.invDiscount,
+            tax: res.data.invTax,
+            deposit: res.data.invDeposit,
+            shipping: res.data.invShipping,
+            notes: res.data.invComment,
+            terms: res.data.invTerms,
+            paidInvoice: res.data.invPaidFor
+          },
+          () => {
+            console.log(
+              "from the parent Get setState: ",
+              this.state.billableItems
+            );
+          }
+        );
+      })
+      .catch(err => {
+        // const message = err.response.data.error;
+        console.log(err);
+      });
   };
 
   saveAndClose = () => {
@@ -254,6 +275,18 @@ class InvoiceScreen extends Component {
       this.state.companyAddress === "company address missing"
     ) {
       alert("Please update your user settings");
+    } else if (!this.state.invoiceNumber) {
+      alert(
+        "Invoices must have at least an Invoice Number to save or create PDF."
+      );
+    } else if (
+      !this.state.subscription ||
+      !this.state.oneTimePaid ||
+      !this.state.paidInvoice
+    ) {
+      this.saveOnly();
+      alert("Paid feature only");
+      this.props.history.push("/billing");
     } else {
       this.pdfToHTML();
     }
@@ -709,10 +742,6 @@ class InvoiceScreen extends Component {
     // });
   };
 
-  iAmABlankFunction = () => {
-    
-  }
-
   /**
    * these functions pass the form values into state
    */
@@ -731,11 +760,15 @@ class InvoiceScreen extends Component {
   };
 
   changeInvoiceNumber = invoiceNumber => {
-    this.setState({ invoiceNumber }, () => {this.recalculate();});
+    this.setState({ invoiceNumber }, () => {
+      this.recalculate();
+    });
   };
 
   changeInvoiceDate = invoiceDate => {
-    this.setState({ invoiceDate }, () => {this.recalculate();});
+    this.setState({ invoiceDate }, () => {
+      this.recalculate();
+    });
   };
 
   changeDueDate = dueDate => {
@@ -753,7 +786,10 @@ class InvoiceScreen extends Component {
           billableItems: [...prevState.billableItems, JSON.parse(lineItem)]
         }),
         () => {
-          console.log('from the parent addBillableItems: ', this.state.billableItems);
+          console.log(
+            "from the parent addBillableItems: ",
+            this.state.billableItems
+          );
         }
       );
       sessionStorage.removeItem("lineItem");
@@ -892,6 +928,7 @@ class InvoiceScreen extends Component {
   render() {
     return (
       <div className="invoiceForm">
+        <p>{localStorage.getItem("invoiceId")}</p>
         <Navigation />
         <br />
         <hr />
@@ -966,8 +1003,8 @@ class InvoiceScreen extends Component {
             <ButtonGroup size="lg">
               <Button
                 color="secondary"
-                disabled={!enableUpdateButton}
-                // onClick={this.saveChangesToExistingInvoice()}
+                disabled={!this.state.buttonEnabled}
+                onClick={this.saveChangesToExistingInvoice}
               >
                 Update Invoice
               </Button>
@@ -985,9 +1022,9 @@ class InvoiceScreen extends Component {
             {/*<ButtonGroup size="lg">*/}
             <Button
               color="secondary"
-              disabled={!enableUpdateButton}
+              disabled={!this.state.buttonEnabled}
               block
-              // onClick={this.saveChangesToExistingInvoice()}
+              onClick={this.saveChangesToExistingInvoice}
             >
               Update Invoice
             </Button>

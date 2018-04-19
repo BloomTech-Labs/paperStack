@@ -137,7 +137,8 @@ let userId,
   invDeposit,
   invShipping,
   invComment,
-  invTerms;
+  invTerms,
+  invPaidFor;
 /**
  * Get All Invoices
  */
@@ -169,7 +170,8 @@ server.post("/new", (req, res) => {
     invDeposit,
     invShipping,
     invComment,
-    invTerms
+    invTerms,
+    invPaidFor
   } = req.body;
   if (!invNumber) {
     return res
@@ -188,7 +190,8 @@ server.post("/new", (req, res) => {
     invDeposit,
     invShipping,
     invComment,
-    invTerms
+    invTerms,
+    invPaidFor
   });
   newInv.save((err, invoice) => {
     if (err) {
@@ -204,29 +207,47 @@ server.post("/new", (req, res) => {
 /**
  * Update an Invoice
  */
-server.put("/invoices/:id", function(req, res) {
-  const {
-    invCustomerAddress,
-    invNumber,
-    invDate,
-    invDueDate,
-    invBillableItems,
-    invDiscount,
-    invTax,
-    invDeposit,
-    invShipping,
-    invComment,
-    invTerms
-  } = req.body;
-  Invoices.findByIdAndUpdate(req.params.id, { $set: req.body }, function(
-    err,
-    invoices
-  ) {
+server.put("/invoice/:id", verifyToken, (req, res) => {
+  const invoiceId = req.query.invoiceId;
+  const invCustomerAddress = req.body.customerAddress;
+  const invNumber = req.body.invoiceNumber;
+  const invDate = req.body.invoiceDate;
+  const invDueDate = req.body.dueDate;
+  const invBillableItems = req.body.billableItems;
+  const invDiscount = req.body.dicsount;
+  const invTax = req.body.tax;
+  const invDeposit = req.body.deposit;
+  const invShipping = req.body.shipping;
+  const invComment = req.body.notes;
+  const invTerms = req.body.terms;
+  const invPaidFor = req.body.paidInvoice;
+  Invoices.findByIdAndUpdate(invoiceId, (err, invoice) => {
     if (err) {
-      res.status(STATUS_USER_ERROR).json({ error: "Could not update invoice" });
-    } else {
-      res.status(200).json({ success: "Invoice updated!" });
+      return res
+        .status(STATUS_USER_ERROR)
+        .json({ error: "Could not update invoice" });
     }
+    invoice.invCustomerAddress = invCustomerAddress,
+    invoice.invNumber = invNumber,
+    invoice.invDate = invDate,
+    invoice.invDueDate = invDueDate,
+    invoice.invBillableItems = invBillableItems,
+    invoice.invDiscount = invDiscount,
+    invoice.invTax = invTax,
+    invoice.invDeposit = invDeposit,
+    invoice.invShipping = invShipping,
+    invoice.invComment = invComment,
+    invoice.invTerms = invTerms,
+    invoice.invPaidFor = invPaidFor
+    invoice.save((err, updatedInvoice) => {
+      if (err) {
+        return res
+          .status(STATUS_SERVER_ERROR)
+          json({err: "couldn't save changes"})
+      }
+      // res.status(200).json({ success: "Invoice updated!" });
+      res.status(200).json(updatedInvoice);
+    });
   });
 });
 /**
