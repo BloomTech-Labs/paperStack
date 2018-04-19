@@ -33,8 +33,8 @@ server.use(cors());
 require("dotenv").config();
 mongoose.Promise = global.Promise;
 mongoose
-  // .connect(process.env.MONGO_URI)
-  .connect('mongodb://localhost:27017/users')
+  .connect(process.env.MONGO_URI)
+  //.connect('mongodb://localhost:27017/users')
   .then(function(db) {
     console.log("All your dbs belong to us!");
     server.listen(3001, function() {
@@ -44,7 +44,6 @@ mongoose
   .catch(function(err) {
     console.log("DB connection failed..", err.message);
   });
-
 
 /**
  * Middleware for token verification
@@ -263,10 +262,11 @@ let userId,
 server.get("/invoices", verifyToken, (req, res) => {
   const userId = req.query.userId;
   Invoices.find({ usersId: userId }, (err, invoices) => {
-    if (err) { 
-      return res.status(STATUS_SERVER_ERROR)
-                .json({ error: "Could not retrieve invoices" }); 
-              }
+    if (err) {
+      return res
+        .status(STATUS_SERVER_ERROR)
+        .json({ error: "Could not retrieve invoices" });
+    }
     return res.status(200).json(invoices);
   });
 });
@@ -386,8 +386,9 @@ server.delete("/invoices", verifyToken, (req, res) => {
   const invoiceId = req.query.invoiceId;
   Invoices.findByIdAndRemove(invoiceId, (err, invoices) => {
     if (err) {
-      return res.status(STATUS_SERVER_ERROR)
-                .json({ error: "Could not delete invoice" });
+      return res
+        .status(STATUS_SERVER_ERROR)
+        .json({ error: "Could not delete invoice" });
     }
     res.status(200).json({ message: "Invoice deleted!" });
   });
@@ -796,7 +797,9 @@ server.get("/logo", verifyToken, (req, res) => {
     const companyName = user.companyName;
     const companyAddress = user.companyAddress;
     const currentInvoiceNumber = user.currentInvoiceNumber;
-    res.status(200).json({ userLogo, companyName, companyAddress, currentInvoiceNumber });
+    res
+      .status(200)
+      .json({ userLogo, companyName, companyAddress, currentInvoiceNumber });
   });
 });
 
@@ -848,7 +851,7 @@ server.put("/company-address", verifyToken, (req, res) => {
       res.status(200).json(updatedUser.companyAddress);
     });
   });
-})
+});
 
 /**
  * Current invoice number update
@@ -873,19 +876,20 @@ server.put("/invoice-number", verifyToken, (req, res) => {
       res.status(200).json(updatedUser.currentInvoiceNumber);
     });
   });
-})
+});
 
 /**
  * Change User Password
  */
 
-server.put('/new-password', verifyToken, (req, res) => {
+server.put("/new-password", verifyToken, (req, res) => {
   const userId = req.query.userId;
   const { oldpassword, newpassword } = req.body;
   Users.findById(userId, (err, user) => {
-    if (err) { 
-      return res.status(STATUS_SERVER_ERROR)
-                .json({ err: 'Couldn\'t find user' }); 
+    if (err) {
+      return res
+        .status(STATUS_SERVER_ERROR)
+        .json({ err: "Couldn't find user" });
     }
     const hashedPw = user.hashPassword;
     bcrypt
@@ -899,9 +903,10 @@ server.put('/new-password', verifyToken, (req, res) => {
           .then(pw => {
             user.hashPassword = pw;
             user.save((err, updatedUser) => {
-              if (err) { 
-                return res.status(STATUS_SERVER_ERROR)
-                          .json({ err: 'Couldn\'t save changes' });
+              if (err) {
+                return res
+                  .status(STATUS_SERVER_ERROR)
+                  .json({ err: "Couldn't save changes" });
               }
               res.status(200).json({ message: "The password was changed" });
             });
