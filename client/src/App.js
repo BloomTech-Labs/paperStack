@@ -1,5 +1,6 @@
 import React, { Component } from "react";
-import { HashRouter } from "react-router-dom";
+//import { HashRouter } from "react-router-dom";
+import { BrowserRouter as Router } from "react-router-dom";
 import { Route, Switch } from "react-router-dom";
 
 import LandingPage from "./components/LandingPage";
@@ -14,7 +15,7 @@ import InvoiceScreen from "./components/invoiceScreen";
 class App extends Component {
   render() {
     return (
-      <HashRouter>
+      <Router>
         <Switch>
           <Route exact path="/" component={LandingPage} />
           <Route path="/authorisation" component={Authorisation} />
@@ -24,7 +25,7 @@ class App extends Component {
           <Route path="/settings" component={RequireAuth(Settings)} />
           <Route component={NotFound} />
         </Switch>
-      </HashRouter>
+      </Router>
     );
   }
 }
