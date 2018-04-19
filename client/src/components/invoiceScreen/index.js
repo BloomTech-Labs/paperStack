@@ -12,6 +12,7 @@ import InvoiceHeaderMobile from "./invoiceHeader/invoiceHeaderMobile";
 import InvoiceItemsTable2 from "./invoiceItems/InvoiceTable2";
 import InvoiceItemsTable2Mobile from "./invoiceItems/InvoiceTable2Mobile";
 import InvoiceFooter2 from "./invoiceFooter/InvoiceFooter2";
+import InvoiceFooter2Mobile from "./invoiceFooter/InvoiceFooter2Mobile";
 import Navigation from "../Navigation";
 import logoNotFound from "./logoNotFound.svg";
 
@@ -999,6 +1000,7 @@ class InvoiceScreen extends Component {
         </MediaQuery>
         <hr />
         {/*Footer*/}
+        <MediaQuery minDeviceWidth={1224}>
         <InvoiceFooter2
           {...this.state}
           changeDiscount={this.changeDiscount}
@@ -1011,6 +1013,21 @@ class InvoiceScreen extends Component {
           changeNotes={this.changeNotes}
           changeTerms={this.changeTerms}
         />
+        </MediaQuery>
+        <MediaQuery maxDeviceWidth={1223}>
+        <InvoiceFooter2Mobile
+          {...this.state}
+          changeDiscount={this.changeDiscount}
+          changeTax={this.changeTax}
+          changeShipping={this.changeShipping}
+          calculateGrandTotal={this.calculateGrandTotal}
+          changeDeposit={this.changeDeposit}
+          changeSubtotal={this.changeSubtotal}
+          calculateAmountDue={this.calculateAmountDue}
+          changeNotes={this.changeNotes}
+          changeTerms={this.changeTerms}
+        />
+        </MediaQuery>
         {/*Buttons*/}
         <MediaQuery minDeviceWidth={1224}>
           <div style={{ width: "90%", margin: "auto" }}>
