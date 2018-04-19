@@ -114,8 +114,8 @@ class Settings extends Component {
 
   changeCompanyAddress = event => {
     event.preventDefault();
-    const invoiceNumber = this.state.invoiceNumber;
-    axios.put('http://localhost:3001/invoice-number', { invoiceNumber },
+    const companyAddress = this.state.companyAddress;
+    axios.put('http://localhost:3001/company-address', { companyAddress },
     {
       params: { 
         userId: localStorage.getItem('userId'),
@@ -125,9 +125,9 @@ class Settings extends Component {
       }
     }).then((res) => {
       this.setState({ 
-        newInvoiceNumber: res.data,
+        newCompanyAddress: res.data,
         modalHeader: `Success!`,
-        modalBody: `Your Current Invoice Number was saved!`,
+        modalBody: `Your new address was saved!`,
         modal: true
       });
     }).catch((err) => {
