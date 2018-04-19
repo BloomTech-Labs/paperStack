@@ -90,6 +90,13 @@ class InvoiceScreen extends Component {
       modal: true
     });
   }
+  openEditedInvoiceModal = (id, i) => {
+    this.setState({
+      modalHeader: `Invoice changes have been saved`,
+      modalBody: `You can find your saved invoices on the "Invoices" tab`,
+      modal: true
+    });
+  }
   // retrieve companyLogo, companyAddress
   getUserInfo = () => {
     axios
@@ -183,11 +190,15 @@ class InvoiceScreen extends Component {
       headers: { Authorization: localStorage.getItem("tkn") }
     })
       .then(res => {
-        console.log(res.data);
+        this.toggleModal();
+        this.openSavedInvoiceModal();
+        // this.openSavedInvoiceModal();
+        if (this.shouldRedirect) {
+          this.props.history.push("/invoices")
+          }
       })
       .catch(err => {
-        const message = err.response.data.error;
-        console.log(message);
+        console.log(err);
       });
   };
 
@@ -238,62 +249,10 @@ class InvoiceScreen extends Component {
       )
       .then(res => {
         this.toggleModal();
+        this.openEditedInvoiceModal();
         if (this.shouldRedirect) {
         this.props.history.push("/invoices")
         }
-      })
-      .catch(err => {
-        console.log(err);
-      });
-  };
-
-  saveChangesToExistingInvoice2 = () => {
-    const invCustomerAddress = this.state.customerAddress;
-    const invNumber = this.state.invoiceNumber;
-    const invNumberExtension = this.state.invoiceNumberExtension;
-    const invDate = this.state.invoiceDate;
-    const invDueDate = this.state.dueDate;
-    const invBillableItems = JSON.stringify(this.state.billableItems, [
-      "id",
-      "item",
-      "qty",
-      "rate",
-      "amount"
-    ]);
-    const invDiscount = this.state.discount;
-    const invTax = this.state.tax;
-    const invDeposit = this.state.deposit;
-    const invShipping = this.state.shipping;
-    const invComment = this.state.notes;
-    const invTerms = this.state.terms;
-    const invPaidFor = this.state.paidInvoice;
-    axios
-      .put(
-        `${serverURL}updated-invoice`,
-        {
-          invCustomerAddress,
-          invNumber,
-          invNumberExtension,
-          invDate,
-          invDueDate,
-          invBillableItems,
-          invDiscount,
-          invTax,
-          invDeposit,
-          invShipping,
-          invComment,
-          invTerms,
-          invPaidFor
-        },
-        {
-          params: {
-            invoiceId: localStorage.getItem("invoiceId")
-          },
-          headers: { Authorization: localStorage.getItem("tkn") }
-        }
-      )
-      .then(res => {
-        this.toggleModal();
       })
       .catch(err => {
         console.log(err);
@@ -351,9 +310,8 @@ class InvoiceScreen extends Component {
       this.shouldRedirect = true;
       this.saveChangesToExistingInvoice();
     } else {
-      this.shouldRedirect = false;
-      this.saveOnly();
-      this.props.history.push("/invoices");
+      this.shouldRedirect = true;
+      this.saveOnly();  
     }
   };
 
