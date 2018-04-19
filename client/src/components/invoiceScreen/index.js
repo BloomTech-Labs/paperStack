@@ -115,7 +115,7 @@ class InvoiceScreen extends Component {
               companyLogo: `data:${res.data.userLogo.contentType};base64,${
                 res.data.userLogo.binaryData
               }`,
-              // invoiceNumber: res.data.currentInvoiceNumber
+              invoiceNumber: res.data.currentInvoiceNumber
               // subscription: res.data.subscription
               // oneTimePaid: res.data.oneTimePaid
             },
@@ -281,7 +281,9 @@ class InvoiceScreen extends Component {
       this.state.companyName === "company name missing" ||
       this.state.companyAddress === "company address missing"
     ) {
-      alert("Please update your user settings, missing either your company logo, company name, or company address.");
+      alert(
+        "Please update your user settings, missing either your company logo, company name, or company address."
+      );
     } else if (!this.state.invoiceNumber) {
       alert(
         "Invoices must have at least an Invoice Number to save or create PDF."
@@ -383,7 +385,9 @@ class InvoiceScreen extends Component {
         .text(
           560,
           60,
-          "Invoice # " + this.state.invoiceNumber + this.state.invoiceNumberExtension,
+          "Invoice # " +
+            this.state.invoiceNumber +
+            this.state.invoiceNumberExtension,
           null,
           null,
           "right"
@@ -1001,32 +1005,32 @@ class InvoiceScreen extends Component {
         <hr />
         {/*Footer*/}
         <MediaQuery minDeviceWidth={1224}>
-        <InvoiceFooter2
-          {...this.state}
-          changeDiscount={this.changeDiscount}
-          changeTax={this.changeTax}
-          changeShipping={this.changeShipping}
-          calculateGrandTotal={this.calculateGrandTotal}
-          changeDeposit={this.changeDeposit}
-          changeSubtotal={this.changeSubtotal}
-          calculateAmountDue={this.calculateAmountDue}
-          changeNotes={this.changeNotes}
-          changeTerms={this.changeTerms}
-        />
+          <InvoiceFooter2
+            {...this.state}
+            changeDiscount={this.changeDiscount}
+            changeTax={this.changeTax}
+            changeShipping={this.changeShipping}
+            calculateGrandTotal={this.calculateGrandTotal}
+            changeDeposit={this.changeDeposit}
+            changeSubtotal={this.changeSubtotal}
+            calculateAmountDue={this.calculateAmountDue}
+            changeNotes={this.changeNotes}
+            changeTerms={this.changeTerms}
+          />
         </MediaQuery>
         <MediaQuery maxDeviceWidth={1223}>
-        <InvoiceFooter2Mobile
-          {...this.state}
-          changeDiscount={this.changeDiscount}
-          changeTax={this.changeTax}
-          changeShipping={this.changeShipping}
-          calculateGrandTotal={this.calculateGrandTotal}
-          changeDeposit={this.changeDeposit}
-          changeSubtotal={this.changeSubtotal}
-          calculateAmountDue={this.calculateAmountDue}
-          changeNotes={this.changeNotes}
-          changeTerms={this.changeTerms}
-        />
+          <InvoiceFooter2Mobile
+            {...this.state}
+            changeDiscount={this.changeDiscount}
+            changeTax={this.changeTax}
+            changeShipping={this.changeShipping}
+            calculateGrandTotal={this.calculateGrandTotal}
+            changeDeposit={this.changeDeposit}
+            changeSubtotal={this.changeSubtotal}
+            calculateAmountDue={this.calculateAmountDue}
+            changeNotes={this.changeNotes}
+            changeTerms={this.changeTerms}
+          />
         </MediaQuery>
         {/*Buttons*/}
         <MediaQuery minDeviceWidth={1224}>
