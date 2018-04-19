@@ -31,7 +31,7 @@ class InvoiceList extends Component {
 
   handleDelete = () => {
     this.toggleModal();
-    axios.delete(`http://localhost:3001/invoices`, {
+    axios.delete(`https://lspaperstack.herokuapp.com/invoices`, {
       params: { 
         invoiceId: this.state.invoiceId,
         userId: localStorage.getItem('userId')
@@ -192,7 +192,7 @@ class InvoiceList extends Component {
   componentDidMount () {
     axios({
       method: 'get',
-      url: `http://localhost:3001/invoices`,
+      url: `https://lspaperstack.herokuapp.com/invoices`,
       params: { userId: localStorage.getItem('userId') },
       headers: { Authorization: localStorage.getItem('tkn') }
     }).then((res) => {

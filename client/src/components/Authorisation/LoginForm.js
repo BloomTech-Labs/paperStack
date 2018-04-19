@@ -35,7 +35,7 @@ class LoginForm extends Component {
     else { this.setState({ emailErr: '' }); }
 
     axios
-      .post(`http://localhost:3001/login`, { email, password })
+      .post(`https://lspaperstack.herokuapp.com/login`, { email, password })
       .then((res) => {
         localStorage.setItem('tkn', res.data.token);
         localStorage.setItem("userId", res.data.userId);
