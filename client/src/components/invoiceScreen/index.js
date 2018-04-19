@@ -12,7 +12,7 @@ import Navigation from "../Navigation";
 
 import "react-datepicker/dist/react-datepicker.css";
 
-const serverURL = "http://localhost:3001/";
+const serverURL = "https://lspaperstack.herokuapp.com";
 
 const enableUpdateButton = localStorage.getItem("invoiceId");
 
@@ -45,7 +45,7 @@ class InvoiceScreen extends Component {
 
   componentWillMount() {
     sessionStorage.removeItem("lineItem", "modifyMe");
-    if(localStorage.getItem("invoiceId")) {
+    if (localStorage.getItem("invoiceId")) {
       this.getExistingInvoice();
     }
   }
