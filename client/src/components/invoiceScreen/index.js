@@ -292,6 +292,8 @@ class InvoiceScreen extends Component {
     }
   };
 
+  // the function that creates PDF's -> passed to the generatePDF function above
+  // the commented out sections are for a future time where we extrapolate the PDF function out into it's own component
   pdfToHTML = () => {
     const pdf = new jsPDF({
       orientation: "p",
@@ -1019,7 +1021,6 @@ class InvoiceScreen extends Component {
         </MediaQuery>
         <MediaQuery maxDeviceWidth={1223}>
           <div style={{ width: "90%", margin: "auto" }}>
-            {/*<ButtonGroup size="lg">*/}
             <Button
               color="secondary"
               disabled={!this.state.buttonEnabled}
@@ -1036,7 +1037,6 @@ class InvoiceScreen extends Component {
             <Button color="secondary" onClick={() => this.generatePDF()} block>
               Generate PDF
             </Button>
-            {/*</ButtonGroup>*/}
           </div>
         </MediaQuery>
         <br />
