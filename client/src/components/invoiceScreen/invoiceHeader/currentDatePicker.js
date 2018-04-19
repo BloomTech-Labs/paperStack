@@ -12,6 +12,13 @@ export default class CurrentDatePicker extends Component {
     };
   }
 
+  componentWillReceiveProps = (nextProps) => {
+    this.handleSavedDate();
+  }
+
+  handleSavedDate = () => {
+    localStorage.getItem("invoiceId") ? this.setState({startDate: moment(this.props.invoiceDate)}) : moment();
+  };
 
   handleChange = (date) => {
     this.setState({

@@ -17,8 +17,12 @@ const InvoicesSchema = new Schema({
         required: false
     },
     invNumber: {
-        type: String,
+        type: Number,
         autoIncrement: false,
+        required: true
+    },
+    invNumberExtension: {
+        type: String,
         required: false
     },
     invDate: {
@@ -61,6 +65,11 @@ const InvoicesSchema = new Schema({
     createdAt: {
         type: Date,
         default: Date.now
+    },
+    invPaidFor: {
+        type: Boolean,
+        default: false,
+        required: false
     }
 });
 

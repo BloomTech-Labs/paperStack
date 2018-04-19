@@ -7,33 +7,22 @@ import currency from "currency.js";
  */
 // select a row, for use in delete row
 const selectRowProp = {
-  mode: "checkbox"
-};
-
-// click to edit a cell
-const cellEditProp = {
-  mode: "click"
+  mode: "checkbox",
+  columnWidth: "7%"
 };
 
 // variable for use in onAfterRowInsert
 let newObj = {};
 
-export default class InvoiceItemsTable extends Component {
-  constructor(props) {
-    super(props);
-
-    this.onAfterInsertRow = this.onAfterInsertRow.bind(this);
-
-    this.state = {
-      data: this.props.billableItems
-      // ^^ data must be presented as an array per docs
-    };
-  }
-
+export default class InvoiceItemsTable2 extends Component {
   // see https://engineering.musefind.com/how-to-benchmark-react-components-the-quick-and-dirty-guide-f595baf1014c for more information on why this is being used to prevent un-necessary re-renders (causes loss of line items which weren't saved)
   // lies ^^ is a good article, but this is where I got it from https://engineering.musefind.com/react-lifecycle-methods-how-and-when-to-use-them-2111a1b692b1
   shouldComponentUpdate(nextProps, nextState) {
+    if (nextProps.billableItems !== this.props.billableItems) {
+      return true;
+    } else {
     return false;
+    }
   }
 
   /* 
@@ -96,7 +85,8 @@ export default class InvoiceItemsTable extends Component {
     } else if (nan) {
       response.isValid = false;
       response.notification.type = "error";
-      response.notification.msg = "Please use numbers only";
+      response.notification.msg =
+        "Please use numbers only. If using a decimal value, please use a leading 0";
       response.notification.title = "Invalid Rate Type";
     }
     return response;
@@ -111,12 +101,22 @@ export default class InvoiceItemsTable extends Component {
     this.props.changeSubtotal(subtotal);
   }
 
-  handleBillableItemsChange = () => {
-    this.props.changeBillableItems(sessionStorage.getItem('lineItem'))
+  handleAddBillableItems = () => {
+    this.props.addBillableItems(sessionStorage.getItem("lineItem"));
+  };
+
+  handleDeleteBillableItems = () => {
+    this.props.deleteBillableItems(sessionStorage.getItem("deleteMe"));
+  };
+
+  handleUpdateBillableItems = () => {
+    this.props.updateBillableItems(sessionStorage.getItem('modifyMe'));
   }
 
   changeGroup() {
-    this.handleBillableItemsChange();
+    this.handleAddBillableItems();
+    this.handleDeleteBillableItems();
+    this.handleUpdateBillableItems();
     this.handleSubtotalChange();
   }
 
@@ -128,16 +128,25 @@ export default class InvoiceItemsTable extends Component {
     insertText: "Add Line Item",
     deleteText: "Delete Line Item",
     noDataText: "No billable items",
-    afterInsertRow: this.onAfterInsertRow
+    afterInsertRow: this.onAfterInsertRow,
+    afterDeleteRow: this.onAfterDeleteRow
+  };
+  // click to edit a cell
+  cellEditProp = {
+    mode: "click",
+    afterSaveCell: this.onAfterSaveCell
+    // blurToSave: true
   };
   // format the rate field to be in USD, 2 decimal positions
   rateFormatter(cell, row) {
-    return currency(cell);
+    return currency(cell).format();
   }
 
   // format the amount field to be in USD, 2 decimal positions
   amountFormatter2(cell, row) {
-    return currency(row.rate).multiply(row.qty);
+    return currency(row.rate)
+      .multiply(row.qty)
+      .format();
   }
 
   // format the index to be a line number -> used to override the autoNumber creation, which is alphaNumeric and very long
@@ -149,26 +158,37 @@ export default class InvoiceItemsTable extends Component {
   onAfterInsertRow(row) {
     const tempArray = [];
     for (const prop in row) {
-      const tempObj = {}
-      tempObj[prop]=row[prop]
+      const tempObj = {};
+      tempObj[prop] = row[prop];
       tempArray.push(tempObj);
     }
     newObj = JSON.stringify(Object.assign({}, ...tempArray));
-    // newObj === null ? sessionStorage.removeItem('lineItem') : sessionStorage.setItem("lineItem", newObj);
-    sessionStorage.setItem('lineItem', newObj);
+    sessionStorage.setItem("lineItem", newObj);
   }
 
-  render() {
-    {
-      /*
-  This creates the data for the table to render in the footer only
-  */
+  onAfterSaveCell(row, cellName, cellValue) {
+    const tempArray2 = [];
+    for (const prop in row) {
+      const tempObj = {};
+      tempObj[prop] = row[prop];
+      tempArray2.push(tempObj);
     }
+    newObj = JSON.stringify(Object.assign({}, ...tempArray2));
+    sessionStorage.setItem("modifyMe", newObj);
+  }
+
+  onAfterDeleteRow(rowKeys, rows) {
+    sessionStorage.setItem("deleteMe", rowKeys);
+  }
+
+  // footerData handles the subtotal for the table
+  render() {
+
     const footerData = [
       [
         {
           label: "Subtotal",
-          columnIndex: 1
+          columnIndex: 1,
         },
         {
           label: "Subtotal",
@@ -178,15 +198,12 @@ export default class InvoiceItemsTable extends Component {
             for (let i = 0; i < tableData.length; i++) {
               total += tableData[i].qty * tableData[i].rate;
             }
-            sessionStorage.setItem("tableSubtotal", Number(total));
+            sessionStorage.setItem("tableSubtotal", currency(total).format());
             return (
               <div>
-                <b
-                  id="subtotal"
-                  onChange={this.changeGroup()}
-                >
-                  {total}
-                </b>
+                <span id="subtotal" style={{margin:-8}} onChange={this.changeGroup()}>
+                  {currency(total, { formatWithSymbol: true }).format()}
+                </span>
               </div>
             );
           }
@@ -203,10 +220,11 @@ export default class InvoiceItemsTable extends Component {
         />
         <BootstrapTable
           id="table"
-          data={this.data}
+          data={this.props.billableItems}
           striped
           hover
           condensed
+          // remote={true}
           footerData={footerData}
           footer // <- cannot be disbled or updated subtotal will not be pushed to sessionStorage
           options={this.options}
@@ -214,16 +232,18 @@ export default class InvoiceItemsTable extends Component {
           deleteRow={true}
           insertRow={true}
           selectRow={selectRowProp}
-          cellEdit={cellEditProp}
+          cellEdit={this.cellEditProp}
           onChange={this.changeGroup}
+          containerStyle={{width: '100%',overflowX: 'scroll',fontSize:'.75rem'}}
         >
           {/*This is column 0 - line item number, the checkmark column doesn't count and can't be modified here*/}
+          {/*Hidden in mobile view*/}
           <TableHeaderColumn
             dataField="id"
             autoValue={true}
             isKey
             dataFormat={this.idFormatter}
-            width="15"
+            width="10%"
             hiddenOnInsert
           >
             #
@@ -232,26 +252,26 @@ export default class InvoiceItemsTable extends Component {
           {/*Column 1 - Item/Description field*/}
           <TableHeaderColumn
             dataField="item"
-            width="200"
+            width="50%"
             editable={{ validator: this.itemNameValidator }}
           >
-            Item/Description
+            Item
           </TableHeaderColumn>
 
           {/*Column 2 - Qty field*/}
           <TableHeaderColumn
             dataField="qty"
-            width="30"
+            width="15%"
             editable={{ validator: this.quantityValidator }}
           >
-            Quantity
+            Qty
           </TableHeaderColumn>
 
           {/*Column 3 - Rate Field*/}
           <TableHeaderColumn
             dataField="rate"
             dataFormat={this.rateFormatter}
-            width="40"
+            width="15%"
             editable={{ validator: this.rateValidator }}
           >
             Rate
@@ -261,12 +281,12 @@ export default class InvoiceItemsTable extends Component {
           <TableHeaderColumn
             dataField="amount"
             dataFormat={this.amountFormatter2}
-            width="40"
+            width="20%"
             editable={{ readOnly: true }}
             disabled
             hiddenOnInsert
           >
-            Amount
+            Amt
           </TableHeaderColumn>
         </BootstrapTable>
       </div>

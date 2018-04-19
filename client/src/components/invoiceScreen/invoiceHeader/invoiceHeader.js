@@ -17,17 +17,9 @@ import DueDatePicker from "./dueDatePicker";
 import CurrentDatePicker from "./currentDatePicker";
 
 import "react-datepicker/dist/react-datepicker.css";
+import "./datePicker.css";
 
 export default class InvoiceHeader extends Component {
-  constructor(props) {
-    super(props);
-
-    this.toggleDropDown = this.toggleDropDown.bind(this);
-    this.state = {
-      dropdownOpen: false
-    };
-  }
-
   saveAndChange = () => {
     this.props.saveOnly();
   }
@@ -47,15 +39,13 @@ export default class InvoiceHeader extends Component {
     this.props.changeInvoiceNumber(e.target.value);
   };
 
+  handleInvoiceNumberExtensionChange = e => {
+    this.props.changeInvoiceNumberExtension(e.target.value);
+  };
+
   handleAmountDueChange = e => {
     this.props.calculateAmountDue(e.target.value);
   };
-
-  toggleDropDown() {
-    this.setState({
-      dropdownOpen: !this.state.dropdownOpen
-    });
-  }
 
   render() {
     return (
@@ -116,7 +106,8 @@ export default class InvoiceHeader extends Component {
                         name="text"
                         id="customerAddress"
                         placeholder="name, address, city, state, zip"
-                        onBlur={this.handleCustomerAddressChange}
+                        onChange={this.handleCustomerAddressChange}
+                        value={this.props.customerAddress}
                       />
                     </Col>
                   </FormGroup>
@@ -129,41 +120,67 @@ export default class InvoiceHeader extends Component {
               <Row>
                 {/* constrain the proportions */}
                 <Col xs={{ size: 12 }}>
-                  {/* invoice number, currently accepts alpha numberic typing -> should pre-populate */}
+                  {/* invoice number, currently accepts numeric typing only-> should pre-populate */}
                   <FormGroup row>
-                    <Label for="invoiceNumber" sm={4}>
+                    <Label for="invoiceNumber" sm={3}>
                       Invoice #
                     </Label>
-                    <Col sm={8}>
+                    <Col sm={9}>
                       <Input
-                        type="text"
+                        type="number"
                         name="invoiceNumber"
                         id="invoiceNumber"
                         placeholder="Invoice #"
-                        onBlur={this.handleInvoiceNumberChange}
+                        onChange={this.handleInvoiceNumberChange}
+                        value={this.props.invoiceNumber}
                       />
+                      <FormText color="muted">
+                        Please use only numbers in your main Invoice #.
+                      </FormText>
+                    </Col>
+                  </FormGroup>
+
+                  {/* invoice number extension, accepts alpha numeric typing*/}
+                  <FormGroup row>
+                    <Label for="invoiceNumberExtension" sm={3}>
+                      Invoice Extension
+                    </Label>
+                    <Col sm={9}>
+                      <Input
+                        type="text"
+                        name="invoiceNumberExtension"
+                        id="invoiceNumberExtension"
+                        placeholder="Invoice Extension"
+                        onChange={this.handleInvoiceNumberExtensionChange}
+                        value={this.props.invoiceNumberExtension}
+                        maxLength={27-(this.props.invoiceNumber).toString().length}
+                      />
+                      <FormText color="muted">
+                        Letters or hyphenated sections can be added here.
+                      </FormText>
                     </Col>
                   </FormGroup>
 
                   {/* current date picker -> defaults to today */}
                   <FormGroup row>
-                    <Label for="currentDate" sm={4}>
-                      Current Date
+                    <Label for="currentDate" sm={3}>
+                      Invoice Date
                     </Label>
-                    <Col sm={8}>
+                    <Col sm={9}>
                       <CurrentDatePicker
                         changeInvoiceDate={this.props.changeInvoiceDate}
+                        {...this.props}
                       />
                     </Col>
                   </FormGroup>
 
                   {/* due date picker -> highlights 7,14,30,60 days out */}
                   <FormGroup row>
-                    <Label for="dueDate" sm={4}>
+                    <Label for="dueDate" sm={3}>
                       Due Date
                     </Label>
-                    <Col sm={8}>
-                      <DueDatePicker changeDueDate={this.props.changeDueDate} />
+                    <Col sm={9}>
+                      <DueDatePicker changeDueDate={this.props.changeDueDate} {...this.props}/>
                     </Col>
                   </FormGroup>
 
@@ -171,10 +188,10 @@ export default class InvoiceHeader extends Component {
                       (grand total - deposit)
                       */}
                   <FormGroup row>
-                    <Label for="amountDue" sm={4}>
+                    <Label for="amountDue" sm={3}>
                       Amount Due
                     </Label>
-                    <Col sm={8}>
+                    <Col sm={9}>
                       <InputGroup>
                         <InputGroupAddon addonType="prepend">$</InputGroupAddon>
                         <Input

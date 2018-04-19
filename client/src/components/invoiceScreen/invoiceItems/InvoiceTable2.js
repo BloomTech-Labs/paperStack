@@ -14,21 +14,14 @@ const selectRowProp = {
 let newObj = {};
 
 export default class InvoiceItemsTable2 extends Component {
-  constructor(props) {
-    super(props);
-
-    // this.onAfterInsertRow = this.onAfterInsertRow.bind(this);
-
-    this.state = {
-      data: this.props.billableItems
-      // ^^ data must be presented as an array per docs
-    };
-  }
-
   // see https://engineering.musefind.com/how-to-benchmark-react-components-the-quick-and-dirty-guide-f595baf1014c for more information on why this is being used to prevent un-necessary re-renders (causes loss of line items which weren't saved)
   // lies ^^ is a good article, but this is where I got it from https://engineering.musefind.com/react-lifecycle-methods-how-and-when-to-use-them-2111a1b692b1
   shouldComponentUpdate(nextProps, nextState) {
+    if (nextProps.billableItems !== this.props.billableItems) {
+      return true;
+    } else {
     return false;
+    }
   }
 
   /* 
@@ -187,12 +180,8 @@ export default class InvoiceItemsTable2 extends Component {
     sessionStorage.setItem("deleteMe", rowKeys);
   }
 
+  // footerData handles the subtotal for the table
   render() {
-    {
-      /*
-  This creates the data for the table to render in the footer only
-  */
-    }
     const footerData = [
       [
         {
@@ -229,13 +218,13 @@ export default class InvoiceItemsTable2 extends Component {
         />
         <BootstrapTable
           id="table"
-          data={this.data}
+          data={this.props.billableItems}
           striped
           hover
           condensed
           // remote={true}
           footerData={footerData}
-          footer // <- cannot be disbled or updated subtotal will not be pushed to sessionStorage
+          footer // <- cannot be disbled or the updated subtotal will not be pushed to sessionStorage
           options={this.options}
           version="4"
           deleteRow={true}
@@ -250,7 +239,7 @@ export default class InvoiceItemsTable2 extends Component {
             autoValue={true}
             isKey
             dataFormat={this.idFormatter}
-            width="15"
+            width="5%"
             hiddenOnInsert
           >
             #
@@ -259,7 +248,7 @@ export default class InvoiceItemsTable2 extends Component {
           {/*Column 1 - Item/Description field*/}
           <TableHeaderColumn
             dataField="item"
-            width="200"
+            width="55%"
             editable={{ validator: this.itemNameValidator }}
           >
             Item/Description
@@ -268,7 +257,7 @@ export default class InvoiceItemsTable2 extends Component {
           {/*Column 2 - Qty field*/}
           <TableHeaderColumn
             dataField="qty"
-            width="30"
+            width="10%"
             editable={{ validator: this.quantityValidator }}
           >
             Quantity
@@ -278,7 +267,7 @@ export default class InvoiceItemsTable2 extends Component {
           <TableHeaderColumn
             dataField="rate"
             dataFormat={this.rateFormatter}
-            width="40"
+            width="10%"
             editable={{ validator: this.rateValidator }}
           >
             Rate
@@ -288,7 +277,7 @@ export default class InvoiceItemsTable2 extends Component {
           <TableHeaderColumn
             dataField="amount"
             dataFormat={this.amountFormatter2}
-            width="40"
+            width="20%"
             editable={{ readOnly: true }}
             disabled
             hiddenOnInsert

@@ -9,7 +9,7 @@ import {
   InputGroup,
   InputGroupAddon
 } from "reactstrap";
-import moment from 'moment';
+import moment from "moment";
 
 export default class InvoiceFooter2 extends Component {
   /**
@@ -64,64 +64,68 @@ export default class InvoiceFooter2 extends Component {
     return (
       <div style={{ width: "90%", margin: "auto" }}>
         <Form>
-          <FormGroup row>
-            {/* Discount given to customer -> decreases the subtotal before it goes to tax */}
-            <Label for="discount" sm={1}>
-              Discount
-            </Label>
-            <Col sm={3}>
-              <InputGroup>
-                <Input
-                  name="discount"
-                  type="number"
-                  step="0.01"
-                  placeholder="reduces the subtotal by a percentage"
-                  onChange={this.handleDiscountChange.bind(this)}
-                  value={this.props.discount}
-                />
-                <InputGroupAddon addonType="append">%</InputGroupAddon>
-              </InputGroup>
-            </Col>
-
-            {/* tax increases the subtotal by x% -> applied AFTER the discount */}
-            <Label for="tax" sm={1}>
-              Tax
-            </Label>
-            <Col sm={3}>
-              <InputGroup>
-                <Input
-                  name="tax"
-                  type="number"
-                  step=".01"
-                  placeholder="increases by your tax rate"
-                  onChange={this.handleTaxChange}
-                  value={this.props.tax}
-                />
-                <InputGroupAddon addonType="append">%</InputGroupAddon>
-              </InputGroup>
-            </Col>
-
-            {/* shipping field increases the total plus tax -> tax is paid by the invoicing company for shipping, should be passed on to the customer */}
-            <Label for="shipping" sm={1}>
-              Shipping
-            </Label>
-            <Col sm={3}>
-              <InputGroup>
-                <InputGroupAddon addonType="prepend">$</InputGroupAddon>
-                <Input
-                  name="shipping"
-                  type="number"
-                  step=".01"
-                  placeholder="your full shipping charges"
-                  onChange={this.handleShippingChange}
-                  value={this.props.shipping}
-                />
-              </InputGroup>
-            </Col>
-          </FormGroup>
-
           <Row>
-            <Col>
+            <Col sm={{ size: 12, offset: 0.5 }}>
+              <FormGroup row>
+                {/* Discount given to customer -> decreases the subtotal before it goes to tax */}
+                <Label for="discount" sm={1}>
+                  Discount
+                </Label>
+                <Col sm={3}>
+                  <InputGroup>
+                    <Input
+                      name="discount"
+                      type="number"
+                      step="0.01"
+                      placeholder="reduces the subtotal by a percentage"
+                      onChange={this.handleDiscountChange.bind(this)}
+                      value={this.props.discount}
+                    />
+                    <InputGroupAddon addonType="append">%</InputGroupAddon>
+                  </InputGroup>
+                </Col>
+              </FormGroup>
+
+              <FormGroup row>
+                {/* tax increases the subtotal by x% -> applied AFTER the discount */}
+                <Label for="tax" sm={1}>
+                  Tax
+                </Label>
+                <Col sm={3}>
+                  <InputGroup>
+                    <Input
+                      name="tax"
+                      type="number"
+                      step=".01"
+                      placeholder="increases by your tax rate"
+                      onChange={this.handleTaxChange}
+                      value={this.props.tax}
+                    />
+                    <InputGroupAddon addonType="append">%</InputGroupAddon>
+                  </InputGroup>
+                </Col>
+              </FormGroup>
+
+              <FormGroup row>
+                {/* shipping field increases the total plus tax -> tax is paid by the invoicing company for shipping, should be passed on to the customer */}
+                <Label for="shipping" sm={1}>
+                  Shipping
+                </Label>
+                <Col sm={3}>
+                  <InputGroup>
+                    <InputGroupAddon addonType="prepend">$</InputGroupAddon>
+                    <Input
+                      name="shipping"
+                      type="number"
+                      step=".01"
+                      placeholder="your full shipping charges"
+                      onChange={this.handleShippingChange}
+                      value={this.props.shipping}
+                    />
+                  </InputGroup>
+                </Col>
+              </FormGroup>
+
               {/* grandTotal includes discount, tax, and shipping, but NOT deposit */}
               <FormGroup row>
                 <Label for="grandTotal" sm={1}>
@@ -177,10 +181,7 @@ export default class InvoiceFooter2 extends Component {
                   </InputGroup>
                 </Col>
               </FormGroup>
-            </Col>
-          </Row>
-          <Row>
-            <Col>
+
               {/* Notes from invoicing company to customer */}
               <FormGroup row>
                 <Label for="Notes" sm={1}>
@@ -193,7 +194,7 @@ export default class InvoiceFooter2 extends Component {
                     placeholder="any notes for the customer"
                     onChange={this.handleNotesChange}
                     value={this.props.notes}
-                    maxLength='200'
+                    maxLength="200"
                   />
                 </Col>
               </FormGroup>
@@ -209,11 +210,29 @@ export default class InvoiceFooter2 extends Component {
                     type="text"
                     placeholder="payment terms"
                     onBlur={this.handleTermsChange}
-                    value={moment(this.props.dueDate).diff(this.props.invoiceDate, 'days') === 0 
-                    ? `Please remit payment immediately` 
-                    : moment(this.props.dueDate).diff(this.props.invoiceDate, 'days') === 1 
-                    ? `Payment is due within ${moment(this.props.dueDate).diff(this.props.invoiceDate, 'days') } day from the date on this invoice.`
-                    : `Payment is due within ${moment(this.props.dueDate).diff(this.props.invoiceDate, 'days') } days from the date on this invoice.`}
+                    value={
+                      moment(this.props.dueDate).diff(
+                        this.props.invoiceDate,
+                        "days"
+                      ) === 0
+                        ? `Please remit payment immediately`
+                        : moment(this.props.dueDate).diff(
+                            this.props.invoiceDate,
+                            "days"
+                          ) === 1
+                          ? `Payment is due within ${moment(
+                              this.props.dueDate
+                            ).diff(
+                              this.props.invoiceDate,
+                              "days"
+                            )} day from the date on this invoice.`
+                          : `Payment is due within ${moment(
+                              this.props.dueDate
+                            ).diff(
+                              this.props.invoiceDate,
+                              "days"
+                            )} days from the date on this invoice.`
+                    }
                     readOnly
                     // disabled
                   />
