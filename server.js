@@ -18,11 +18,11 @@ const corsOptions = {
   credentials: true // enable set cookie
 };
 
-const Users = require("./invoice/userModel.js");
-const Customers = require("./invoice/custModel.js");
-const Invoices = require("./invoice/invModel.js");
-const FinTran = require("./invoice/finTranModel.js");
-const InvLine = require("./invoice/invLineItemsModel.js");
+const Users = require("./server/invoice/userModel.js");
+const Customers = require("./server/invoice/custModel.js");
+const Invoices = require("./server/invoice/invModel.js");
+const FinTran = require("./server/invoice/finTranModel.js");
+const InvLine = require("./server/invoice/invLineItemsModel.js");
 
 const server = express();
 
