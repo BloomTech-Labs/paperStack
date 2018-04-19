@@ -144,7 +144,7 @@ class InvoiceList extends Component {
         <Card key={invoice._id}>
           <CardBody>
             <CardTitle>Invoice Number  &#35;</CardTitle>
-            <CardText>{invoice.invNumber}</CardText>
+            <CardText>{invoice.invNumber}{invoice.invNumberExtension}</CardText>
             {this.renderCompanyAddress(invoice.invCustomerAddress)}      
             {this.renderItems(invoice.invBillableItems)}
             <div className="Invoice-List-date-wrapper">

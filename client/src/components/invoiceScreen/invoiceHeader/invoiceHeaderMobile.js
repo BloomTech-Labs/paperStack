@@ -141,6 +141,7 @@ export default class InvoiceHeader extends Component {
                   placeholder="Invoice Extension"
                   onChange={this.handleInvoiceNumberExtensionChange}
                   value={this.props.invoiceNumberExtension}
+                  maxLength={27-(this.props.invoiceNumber).toString().length}
                 />
                 <FormText color="muted">
                   Letters or hyphenated sections can be added here.

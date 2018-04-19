@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Button, ButtonGroup } from "reactstrap";
+import { Button, ButtonGroup, Modal, ModalHeader, ModalBody, ModalFooter, } from "reactstrap";
 import currency from "currency.js";
 import axios from "axios";
 import moment from "moment";
@@ -23,6 +23,8 @@ const serverURL = "http://localhost:3001/";
 class InvoiceScreen extends Component {
   constructor(props) {
     super(props);
+
+    this.shouldRedirect = false;
 
     this.state = {
       companyLogo: "",
@@ -48,7 +50,11 @@ class InvoiceScreen extends Component {
       subscription: false,
       oneTimePaid: false,
       paidInvoice: false,
-      buttonEnabled: false
+      buttonEnabled: false,
+      modal: false,
+      modalHeader: '',
+      modalBody: '',
+
     };
   }
 
@@ -68,10 +74,22 @@ class InvoiceScreen extends Component {
     localStorage.removeItem("invoiceId");
   }
 
+  
   /**
    * these functions are for the buttons at the bottom of the page
    */
-
+  toggleModal = () => {
+    this.setState({
+      modal: !this.state.modal
+    });
+  }
+  openSavedInvoiceModal = (id, i) => {
+    this.setState({
+      modalHeader: `Invoice has been saved`,
+      modalBody: `You can find your saved invoices on the "Invoices" tab`,
+      modal: true
+    });
+  }
   // retrieve companyLogo, companyAddress
   getUserInfo = () => {
     axios
@@ -219,7 +237,63 @@ class InvoiceScreen extends Component {
         }
       )
       .then(res => {
-        alert("Changes Saved!");
+        this.toggleModal();
+        if (this.shouldRedirect) {
+        this.props.history.push("/invoices")
+        }
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  };
+
+  saveChangesToExistingInvoice2 = () => {
+    const invCustomerAddress = this.state.customerAddress;
+    const invNumber = this.state.invoiceNumber;
+    const invNumberExtension = this.state.invoiceNumberExtension;
+    const invDate = this.state.invoiceDate;
+    const invDueDate = this.state.dueDate;
+    const invBillableItems = JSON.stringify(this.state.billableItems, [
+      "id",
+      "item",
+      "qty",
+      "rate",
+      "amount"
+    ]);
+    const invDiscount = this.state.discount;
+    const invTax = this.state.tax;
+    const invDeposit = this.state.deposit;
+    const invShipping = this.state.shipping;
+    const invComment = this.state.notes;
+    const invTerms = this.state.terms;
+    const invPaidFor = this.state.paidInvoice;
+    axios
+      .put(
+        `${serverURL}updated-invoice`,
+        {
+          invCustomerAddress,
+          invNumber,
+          invNumberExtension,
+          invDate,
+          invDueDate,
+          invBillableItems,
+          invDiscount,
+          invTax,
+          invDeposit,
+          invShipping,
+          invComment,
+          invTerms,
+          invPaidFor
+        },
+        {
+          params: {
+            invoiceId: localStorage.getItem("invoiceId")
+          },
+          headers: { Authorization: localStorage.getItem("tkn") }
+        }
+      )
+      .then(res => {
+        this.toggleModal();
       })
       .catch(err => {
         console.log(err);
@@ -274,9 +348,10 @@ class InvoiceScreen extends Component {
     if (!this.state.invoiceNumber) {
       alert("Invoices must have at least an Invoice Number to save.");
     } else if (localStorage.getItem("invoiceId")) {
+      this.shouldRedirect = true;
       this.saveChangesToExistingInvoice();
-      this.props.history.push("/invoices");
     } else {
+      this.shouldRedirect = false;
       this.saveOnly();
       this.props.history.push("/invoices");
     }
@@ -1082,6 +1157,15 @@ class InvoiceScreen extends Component {
           </div>
         </MediaQuery>
         <br />
+        <div>
+          <Modal isOpen={this.state.modal} toggle={this.toggleModal}>
+            <ModalHeader toggle={this.toggleModal}>{this.state.modalHeader}</ModalHeader>
+            <ModalBody>{this.state.modalBody}</ModalBody>
+            <ModalFooter>
+              <Button color="secondary" onClick={this.toggleModal}>Ok</Button>
+            </ModalFooter>
+          </Modal>
+        </div>
       </div>
     );
   }
