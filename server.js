@@ -7,6 +7,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const fileUpload = require("express-fileupload");
 const stripe = require("stripe")("sk_test_K04zveK9MnFXMgiIxhHv6mIa");
+const port = process.env.PORT || 3001;
 const STATUS_USER_ERROR = 422;
 const STATUS_SERVER_ERROR = 500;
 const STATUS_UNAUTHORIZED_ERROR = 401;
@@ -39,7 +40,7 @@ mongoose
   //.connect('mongodb://localhost:27017/users')
   .then(function(db) {
     console.log("All your dbs belong to us!");
-    server.listen(3001, function() {
+    server.listen(port, function() {
       console.log("server running on port 3001");
     });
   })
