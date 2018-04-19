@@ -119,7 +119,7 @@ class InvoiceScreen extends Component {
               companyLogo: `data:${res.data.userLogo.contentType};base64,${
                 res.data.userLogo.binaryData
               }`,
-              invoiceNumber: res.data.currentInvoiceNumber+1
+              invoiceNumber: res.data.currentInvoiceNumber + 1
               // subscription: res.data.subscription
               // oneTimePaid: res.data.oneTimePaid
             },
@@ -292,17 +292,18 @@ class InvoiceScreen extends Component {
       alert(
         "Invoices must have at least an Invoice Number to save or create PDF."
       );
-    } else if (
-      this.state.subscription ||
-      this.state.oneTimePaid ||
-      this.state.paidInvoice
-    ) {
+    } else if (!this.state.subscription || !this.state.oneTimePaid || !this.state.paidInvoice) {
       this.saveOnly();
       alert("Paid feature only");
       this.props.history.push("/billing");
     } else {
+      this.setState({ paidInvoice: true });
       this.pdfToHTML();
-      this.saveOnly();
+        if(localStorage.getItem("invoiceId")) { 
+          this.saveChangesToExistingInvoice();
+        } else {
+          this.saveOnly();
+        }
     }
   };
 
