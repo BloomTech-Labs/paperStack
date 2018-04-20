@@ -4,17 +4,20 @@ import axios from "axios";
 import CardSection from "./CardSection";
 import { Container, Row, Button, Input, Form, Badge, Col } from "reactstrap";
 
+// const serverURL = "https://lspaperstack.herokuapp.com/";
+const serverURL = "http://localhost:3001/";
+
 class CheckoutForm extends React.Component {
   state = {
-    sub: false,
+    subscription: false,
+    oneTimePaid: false,
     one: false,
-    email: "",
     subErr: false,
     oneErr: false
   };
 
   handleSubChange = ev => {
-    this.setState({ sub: ev.target.value });
+    this.setState({ subscription: ev.target.value });
   };
 
   handleOneChange = ev => {
@@ -24,10 +27,9 @@ class CheckoutForm extends React.Component {
   handleSubmit = ev => {
     // We don't want to let default form submission happen here, which would refresh the page.
     ev.preventDefault();
-    const sub = this.state.sub;
+    const subscription = this.state.subscription;
     const one = this.state.one;
-    const email = this.state.email;
-    if (!sub && !one) {
+    if (!subscription && !one) {
       return this.setState({ subErr: "Please choose one payment plan" });
     } else {
       this.setState({ subErr: "" });
@@ -40,12 +42,20 @@ class CheckoutForm extends React.Component {
       .then(({ token }) => {
         console.log("Received Stripe token:", token);
         axios
-          .post("http://localhost:3001/api/checkout", {
-            token: token.id,
-            sub,
-            one,
-            email
-          })
+          .post(
+            `${serverURL}api/checkout`,
+            {
+              token: token.id,
+              subscription,
+              one
+            },
+            {
+              params: { userId: localStorage.getItem("userId") },
+              headers: {
+                Authorization: localStorage.getItem("tkn")
+              }
+            }
+          )
           .then(res => {
             console.log("Charge success: ", res.data);
             window.location = "/invoices";
@@ -78,7 +88,7 @@ class CheckoutForm extends React.Component {
                 <Col sm={{ size: 6, order: 2, offset: 0 }}>
                   <Input
                     type="checkbox"
-                    value={this.state.sub}
+                    value={this.state.subscription}
                     onChange={this.handleSubChange}
                   />
                   <span>{this.state.subErr}</span>

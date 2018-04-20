@@ -1,5 +1,12 @@
 import React, { Component } from "react";
-import { Button, ButtonGroup, Modal, ModalHeader, ModalBody, ModalFooter, } from "reactstrap";
+import {
+  Button,
+  ButtonGroup,
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter
+} from "reactstrap";
 import currency from "currency.js";
 import axios from "axios";
 import moment from "moment";
@@ -52,9 +59,8 @@ class InvoiceScreen extends Component {
       paidInvoice: false,
       buttonEnabled: false,
       modal: false,
-      modalHeader: '',
-      modalBody: '',
-
+      modalHeader: "",
+      modalBody: ""
     };
   }
 
@@ -74,7 +80,6 @@ class InvoiceScreen extends Component {
     localStorage.removeItem("invoiceId");
   }
 
-  
   /**
    * these functions are for the buttons at the bottom of the page
    */
@@ -82,21 +87,21 @@ class InvoiceScreen extends Component {
     this.setState({
       modal: !this.state.modal
     });
-  }
+  };
   openSavedInvoiceModal = (id, i) => {
     this.setState({
       modalHeader: `Invoice has been saved`,
       modalBody: `You can find your saved invoices on the "Invoices" tab`,
       modal: true
     });
-  }
+  };
   openEditedInvoiceModal = (id, i) => {
     this.setState({
       modalHeader: `Invoice changes have been saved`,
       modalBody: `You can find your saved invoices on the "Invoices" tab`,
       modal: true
     });
-  }
+  };
   // retrieve companyLogo, companyAddress
   getUserInfo = () => {
     axios
@@ -194,8 +199,8 @@ class InvoiceScreen extends Component {
         this.openSavedInvoiceModal();
         // this.openSavedInvoiceModal();
         if (this.shouldRedirect) {
-          this.props.history.push("/invoices")
-          }
+          this.props.history.push("/invoices");
+        }
       })
       .catch(err => {
         console.log(err);
@@ -251,7 +256,7 @@ class InvoiceScreen extends Component {
         this.toggleModal();
         this.openEditedInvoiceModal();
         if (this.shouldRedirect) {
-        this.props.history.push("/invoices")
+          this.props.history.push("/invoices");
         }
       })
       .catch(err => {
@@ -311,7 +316,7 @@ class InvoiceScreen extends Component {
       this.saveChangesToExistingInvoice();
     } else {
       this.shouldRedirect = true;
-      this.saveOnly();  
+      this.saveOnly();
     }
   };
 
@@ -328,18 +333,22 @@ class InvoiceScreen extends Component {
       alert(
         "Invoices must have at least an Invoice Number to save or create PDF."
       );
-    } else if (!this.state.subscription || !this.state.oneTimePaid || !this.state.paidInvoice) {
+    } else if (
+      !this.state.subscription ||
+      !this.state.oneTimePaid ||
+      !this.state.paidInvoice
+    ) {
       this.saveOnly();
       alert("Paid feature only");
       this.props.history.push("/billing");
     } else {
       this.setState({ paidInvoice: true });
       this.pdfToHTML();
-        if(localStorage.getItem("invoiceId")) { 
-          this.saveChangesToExistingInvoice();
-        } else {
-          this.saveOnly();
-        }
+      if (localStorage.getItem("invoiceId")) {
+        this.saveChangesToExistingInvoice();
+      } else {
+        this.saveOnly();
+      }
     }
   };
 
@@ -471,13 +480,27 @@ class InvoiceScreen extends Component {
         .text(450, 120, "Date:", null, null, "right");
       pdf
         .setTextColor(30)
-        .text(555, 120, moment(this.state.invoiceDate).format("MM/DD/YYYY"), null, null, "right");
+        .text(
+          555,
+          120,
+          moment(this.state.invoiceDate).format("MM/DD/YYYY"),
+          null,
+          null,
+          "right"
+        );
 
       // Due Date:
       pdf.setTextColor(100).text(450, 140, "Due Date:", null, null, "right");
       pdf
         .setTextColor(30)
-        .text(555, 140, moment(this.state.dueDate).format("MM/DD/YYYY"), null, null, "right");
+        .text(
+          555,
+          140,
+          moment(this.state.dueDate).format("MM/DD/YYYY"),
+          null,
+          null,
+          "right"
+        );
 
       // Balance Due:
       pdf
@@ -1117,10 +1140,14 @@ class InvoiceScreen extends Component {
         <br />
         <div>
           <Modal isOpen={this.state.modal} toggle={this.toggleModal}>
-            <ModalHeader toggle={this.toggleModal}>{this.state.modalHeader}</ModalHeader>
+            <ModalHeader toggle={this.toggleModal}>
+              {this.state.modalHeader}
+            </ModalHeader>
             <ModalBody>{this.state.modalBody}</ModalBody>
             <ModalFooter>
-              <Button color="secondary" onClick={this.toggleModal}>Ok</Button>
+              <Button color="secondary" onClick={this.toggleModal}>
+                Ok
+              </Button>
             </ModalFooter>
           </Modal>
         </div>
