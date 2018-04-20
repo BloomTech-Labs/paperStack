@@ -235,7 +235,7 @@ class InvoiceList extends Component {
   componentDidMount() {
     axios({
       method: "get",
-      url: `https://lspaperstack.herokuapp.com/get-invoices`,
+      url: `https://lspaperstack.herokuapp.com/invoices`,
       params: { userId: localStorage.getItem("userId") },
       headers: { Authorization: localStorage.getItem("tkn") }
     })

@@ -18,7 +18,7 @@ class App extends Component {
         <Switch>
           <Route exact path="/" component={LandingPage} />
           <Route path="/auth" component={Authorisation} />
-          <Route path="/invoices" component={RequireAuth(InvoiceList)} />
+          <Route path="/list" component={RequireAuth(InvoiceList)} />
           <Route path="/new" component={RequireAuth(InvoiceScreen)} />
           <Route path="/billing" component={Billing} />
           <Route path="/settings" component={RequireAuth(Settings)} />

@@ -52,7 +52,7 @@ Node.js project deployed using [Heroku](https://devcenter.heroku.com/articles/ge
 3.  git push heroku master
 4.  heroku open
 
-**TODO:** Enter detailed instructions for deploying the app, including continuous integration techniques.
+### Continuous Integration/Deployment
 
 [ ![Codeship Status for JasonNuhn/paperStack](https://app.codeship.com/projects/f1635580-1956-0136-a517-42b540a360ad/status?branch=master)](https://app.codeship.com/projects/284061)
 

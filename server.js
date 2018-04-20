@@ -164,7 +164,7 @@ let userId,
 /**
  * Get All Invoices
  */
-server.get("/get-invoices", verifyToken, (req, res) => {
+server.get("/invoices", verifyToken, (req, res) => {
   const userId = req.query.userId;
   Invoices.find({ usersId: userId }, (err, invoices) => {
     if (err) {

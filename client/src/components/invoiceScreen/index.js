@@ -199,7 +199,7 @@ class InvoiceScreen extends Component {
         this.openSavedInvoiceModal();
         // this.openSavedInvoiceModal();
         if (this.shouldRedirect) {
-          this.props.history.push("/invoices");
+          this.props.history.push("/list");
         }
       })
       .catch(err => {
@@ -256,7 +256,7 @@ class InvoiceScreen extends Component {
         this.toggleModal();
         this.openEditedInvoiceModal();
         if (this.shouldRedirect) {
-          this.props.history.push("/invoices");
+          this.props.history.push("/list");
         }
       })
       .catch(err => {
