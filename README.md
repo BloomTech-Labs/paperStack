@@ -2,17 +2,13 @@
 
 PaperStack is an option for businesses to create invoices on the go. With a simple interface and a few options of templates to choose from, businesses can create professional looking invoices with ease.
 
-## Setup
-
-Dependencies...
-
 ### Prerequisites
 
 What you'll need:
 
 * Stripe API key - In order to receive payments from subscribers, you'll need to set up a Stripe account at https://stripe.com to retrieve an API key
 
-### Installing
+### Installing and Setting up
 
 First, clone the repository from your terminal.
 
@@ -20,22 +16,23 @@ First, clone the repository from your terminal.
 git clone https://github.com/Lambda-School-Labs/paperStack.git
 ```
 
-Navigate in the local repo to the `server` directory, then install dependencies with yarn.
+Next, we are to add dependencies and run this locally on your computer for the front end. Type the following commands in your command line.
 
 ```bash
-cd paperStack/server
-yarn
+cd paperStack
+npm i
+yarn start
 ```
 
-Run `yarn start` to start the server.  
-Now move to the client directory and once again install dependencies.
+Lastly, we are to navigate in the server folder to run the server. Type the following commands in your command line.
 
 ```bash
-cd ../client
-yarn
+cd server
+npm i
+yarn start
 ```
 
-Now run `yarn start` to begin the development server. Browse to http://localhost:3000 to see changes you make to the application in realtime.
+Browse to http://localhost:3000 to see this up and running on your computer.
 
 ### Running Automated Tests
 
@@ -57,7 +54,7 @@ Node.js project deployed using [Heroku](https://devcenter.heroku.com/articles/ge
 
 **TODO:** Enter detailed instructions for deploying the app, including continuous integration techniques.
 
-## TBD...
+[ ![Codeship Status for JasonNuhn/paperStack](https://app.codeship.com/projects/f1635580-1956-0136-a517-42b540a360ad/status?branch=master)](https://app.codeship.com/projects/284061)
 
 ## Built With MERN
 
