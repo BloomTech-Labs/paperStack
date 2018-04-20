@@ -9,7 +9,7 @@ class CardSection extends React.Component {
         <h4>
           Payment Info <Badge />
         </h4>
-        <CardElement style={{ base: { fontSize: "18px" } }} />
+        <CardElement style={{ base: { fontSize: "11px" } }} />
       </Card>
     );
   }

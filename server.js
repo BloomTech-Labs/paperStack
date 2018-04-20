@@ -1,3 +1,4 @@
+const path = require("path");
 const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
@@ -6,6 +7,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const fileUpload = require("express-fileupload");
 const stripe = require("stripe")("sk_test_K04zveK9MnFXMgiIxhHv6mIa");
+const port = process.env.PORT || 3001;
 const STATUS_USER_ERROR = 422;
 const STATUS_SERVER_ERROR = 500;
 const STATUS_UNAUTHORIZED_ERROR = 401;
@@ -18,10 +20,12 @@ const corsOptions = {
   credentials: true // enable set cookie
 };
 
-const Users = require("./invoice/userModel.js");
-const Invoices = require("./invoice/invModel.js");
+const Users = require("./server/invoice/userModel.js");
+const Invoices = require("./server/invoice/invModel.js");
 
 const server = express();
+
+server.use(express.static(path.resolve(__dirname, "./client/build")));
 
 server.use(bodyParser.urlencoded({ extended: false })); // added
 server.use(bodyParser.json());
@@ -34,7 +38,7 @@ mongoose
   // .connect("mongodb://localhost:27017/users")
   .then(function(db) {
     console.log("All your dbs belong to us!");
-    server.listen(3001, function() {
+    server.listen(port, function() {
       console.log("server running on port 3001");
     });
   })
@@ -77,6 +81,27 @@ server.put("/users/:id", function(req, res) {
       res.status(STATUS_USER_ERROR).json({ error: "Could not update user" });
     } else {
       res.status(200).json({ success: "User updated!" });
+    }
+  });
+});
+
+/**
+ * Update a User Paid Flag ( oneTimePaid )
+ */
+server.put("/paidFlag", function(req, res) {
+  const { oneTimePaid } = req.body;
+  const userId = req.query.userId;
+  Users.findByIdAndUpdate(req.params.id, { $set: req.body }, function(
+    err,
+    users
+  ) {
+    if (err) {
+      res
+        .status(STATUS_USER_ERROR)
+        .json({ error: "Could not update paidFlag" });
+    } else {
+      console.log("hello!", Users.oneTimePaid);
+      res.status(200).json({ success: "PaidFlag updated!" });
     }
   });
 });
@@ -280,6 +305,7 @@ server.get("/invoice", verifyToken, (req, res) => {
     res.status(200).json(invoice);
   });
 });
+
 /**
  * Delete Invoices by _id
  */
@@ -411,22 +437,49 @@ server.get("/jwt", (req, res) => {
 
 server.post("/api/checkout", (req, res) => {
   console.log("checkout starting...");
-  const { token, sub, one } = req.body;
-
-  const amount = sub ? "999" : "99";
-  if (!token) return res.json({ err: "Payment Failed" });
-  stripe.charges.create(
-    {
-      amount: amount,
-      currency: "usd",
-      description: "Example charge",
-      source: token
-    },
-    (err, charge) => {
-      if (err) return res.json({ err: "Payment Failed", error: err });
-      res.send(charge);
+  const { token, subscription, one } = req.body;
+  const userId = req.query.userId;
+  Users.findById(userId, (err, user) => {
+    if (err) {
+      return res
+        .status(STATUS_SERVER_ERROR)
+        .json({ err: "Couldn't find user" });
     }
-  );
+    const amount = subscription ? "999" : "99";
+    if (!token) return res.json({ err: "Payment Failed" });
+    if (one === false) {
+      user.subscription = true;
+      user.save();
+      stripe.plans.create(
+        {
+          amount: amount,
+          currency: "usd",
+          interval: "year",
+          product: "prod_Ch5UI61HmNtmds",
+          nickname: user.email
+        },
+        (err, charge) => {
+          if (err) return res.json({ err: "Payment Failed", error: err });
+          res.send(charge);
+        }
+      );
+    } else {
+      user.oneTimePaid = true;
+      user.save();
+      stripe.charges.create(
+        {
+          amount: amount,
+          currency: "usd",
+          description: user.email,
+          source: token
+        },
+        (err, charge) => {
+          if (err) return res.json({ err: "Payment Failed", error: err });
+          res.send(charge);
+        }
+      );
+    }
+  });
 });
 
 /**
@@ -489,6 +542,7 @@ server.get("/logo", verifyToken, (req, res) => {
     const companyName = user.companyName;
     const companyAddress = user.companyAddress;
     const currentInvoiceNumber = user.currentInvoiceNumber;
+
     res
       .status(200)
       .json({ userLogo, companyName, companyAddress, currentInvoiceNumber });
@@ -568,4 +622,53 @@ server.put("/invoice-number", verifyToken, (req, res) => {
       res.status(200).json(updatedUser.currentInvoiceNumber);
     });
   });
+});
+
+/**
+ * Change User Password
+ */
+
+server.put("/new-password", verifyToken, (req, res) => {
+  const userId = req.query.userId;
+  const { oldpassword, newpassword } = req.body;
+  Users.findById(userId, (err, user) => {
+    if (err) {
+      return res
+        .status(STATUS_SERVER_ERROR)
+        .json({ err: "Couldn't find user" });
+    }
+    const hashedPw = user.hashPassword;
+    bcrypt
+      .compare(oldpassword, hashedPw)
+      .then(response => {
+        if (!response) throw new Error("Password hashes weren't compared");
+      })
+      .then(() => {
+        bcrypt
+          .hash(newpassword, BCRYPT_COST)
+          .then(pw => {
+            user.hashPassword = pw;
+            user.save((err, updatedUser) => {
+              if (err) {
+                return res
+                  .status(STATUS_SERVER_ERROR)
+                  .json({ err: "Couldn't save changes" });
+              }
+              res.status(200).json({ message: "The password was changed" });
+            });
+          })
+          .catch(err => {
+            throw new Error("The password wasn't hashed");
+          });
+      })
+      .catch(error => {
+        res
+          .status(STATUS_SERVER_ERROR)
+          .json({ error: "Incorrect creditentials" });
+      });
+  });
+});
+
+server.get("*", (request, response) => {
+  response.sendFile(path.resolve(__dirname, "./client/build", "index.html"));
 });

@@ -88,11 +88,11 @@ class SignUpForm extends Component {
     else this.setState({ confirmPasswordErr: "" });
 
     axios
-      .post(`http://localhost:3001/new-user`, { email, password })
+      .post(`https://lspaperstack.herokuapp.com/new-user`, { email, password })
       .then(res => {
         localStorage.setItem("tkn", res.data.token);
         localStorage.setItem("userId", res.data.userId);
-        this.props.history.push("/invoices");
+        this.props.history.push("/list");
       })
       .catch(err => {
         const message = err.response.data.error;

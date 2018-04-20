@@ -46,6 +46,26 @@ const UsersSchema = new Schema({
         required: false,
         default: 0
     },
+    subscription: {
+        type: Boolean,
+        default: false,
+        required: true
+    },
+    oneTimePaid: {
+        type: Boolean,
+        default: false,
+        required: true
+    },
+    subscription: {
+        type: Boolean,
+        default: false,
+        required: true
+    },
+    paidInvoice: {
+        type: Boolean,
+        default: false,
+        required: true
+    },
     createdAt: {
         type: Date,
         default: Date.now
