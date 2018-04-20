@@ -4,8 +4,7 @@ import axios from "axios";
 import CardSection from "./CardSection";
 import { Container, Row, Button, Input, Form, Badge, Col } from "reactstrap";
 
-// const serverURL = "https://lspaperstack.herokuapp.com/";
-const serverURL = "http://localhost:3001/";
+const serverURL = "https://lspaperstack.herokuapp.com/";
 
 class CheckoutForm extends React.Component {
   state = {
@@ -38,7 +37,7 @@ class CheckoutForm extends React.Component {
     // Within the context of `Elements`, this call to createToken knows which Element to
     // tokenize, since there's only one in this group.
     this.props.stripe
-      .createToken({ name: "Woody Carpenter" }) //User to purchase paperStack
+      .createToken() //User to purchase paperStack
       .then(({ token }) => {
         console.log("Received Stripe token:", token);
         axios

@@ -25,7 +25,7 @@ import logoNotFound from "./logoNotFound.svg";
 
 import "react-datepicker/dist/react-datepicker.css";
 
-const serverURL = "http://localhost:3001/";
+const serverURL = "https://lspaperstack.herokuapp.com/";
 
 class InvoiceScreen extends Component {
   constructor(props) {
@@ -149,9 +149,9 @@ class InvoiceScreen extends Component {
               companyLogo: `data:${res.data.userLogo.contentType};base64,${
                 res.data.userLogo.binaryData
               }`,
-              invoiceNumber: res.data.currentInvoiceNumber + 1
-              // subscription: res.data.subscription
-              // oneTimePaid: res.data.oneTimePaid
+              invoiceNumber: res.data.currentInvoiceNumber + 1,
+              subscription: res.data.subscription,
+              oneTimePaid: res.data.oneTimePaid
             },
             () => {
               console.log("from the getUserInfo to force synchronicity");
@@ -334,21 +334,43 @@ class InvoiceScreen extends Component {
         "Invoices must have at least an Invoice Number to save or create PDF."
       );
     } else if (
-      !this.state.subscription ||
-      !this.state.oneTimePaid ||
-      !this.state.paidInvoice
+      this.state.subscription === false &&
+      this.state.oneTimePaid === false &&
+      this.state.paidInvoice === false
     ) {
       this.saveOnly();
       alert("Paid feature only");
       this.props.history.push("/billing");
     } else {
-      this.setState({ paidInvoice: true });
+      this.setState({ paidInvoice: true }, () => {
+        if (localStorage.getItem("invoiceId")) {
+          this.saveChangesToExistingInvoice();
+        } else {
+          this.saveOnly();
+        }
+      });
       this.pdfToHTML();
-      if (localStorage.getItem("invoiceId")) {
-        this.saveChangesToExistingInvoice();
-      } else {
-        this.saveOnly();
-      }
+      axios
+        .put(
+          `${serverURL}paidFlag`,
+          {
+            oneTimePaid: false
+          },
+          {
+            params: {
+              userId: localStorage.getItem("userId")
+            },
+            headers: {
+              Authorization: localStorage.getItem("tkn")
+            }
+          }
+        )
+        .then(res => {
+          console.log(res);
+        })
+        .catch(err => {
+          console.log(err);
+        });
     }
   };
 
@@ -1006,7 +1028,9 @@ class InvoiceScreen extends Component {
   };
 
   changeTerms = terms => {
-    this.setState({ terms });
+    this.setState({ terms }, () => {
+      this.calculateAmountDue();
+    });
   };
 
   render() {

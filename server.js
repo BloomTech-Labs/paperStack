@@ -84,6 +84,27 @@ server.put("/users/:id", function(req, res) {
     }
   });
 });
+
+/**
+ * Update a User Paid Flag ( oneTimePaid )
+ */
+server.put("/paidFlag", function(req, res) {
+  const { oneTimePaid } = req.body;
+  const userId = req.query.userId;
+  Users.findByIdAndUpdate(req.params.id, { $set: req.body }, function(
+    err,
+    users
+  ) {
+    if (err) {
+      res
+        .status(STATUS_USER_ERROR)
+        .json({ error: "Could not update paidFlag" });
+    } else {
+      console.log("hello!", Users.oneTimePaid);
+      res.status(200).json({ success: "PaidFlag updated!" });
+    }
+  });
+});
 /**
  * Get all Users
  */
@@ -443,6 +464,8 @@ server.post("/api/checkout", (req, res) => {
         }
       );
     } else {
+      user.oneTimePaid = true;
+      user.save();
       stripe.charges.create(
         {
           amount: amount,

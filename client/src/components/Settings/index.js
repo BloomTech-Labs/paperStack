@@ -1,44 +1,47 @@
-import React, { Component } from 'react';
-import axios from 'axios';
-import Navigation from '../Navigation';
-import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
+import React, { Component } from "react";
+import axios from "axios";
+import Navigation from "../Navigation";
+import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
 
-import placeholderImg from './placeholder.png';
-import './Settings.css';
+import placeholderImg from "./placeholder.png";
+import "./Settings.css";
 
 class Settings extends Component {
   state = {
-    oldpassword: '',
-    newpassword: '',
-    logo: '',
+    oldpassword: "",
+    newpassword: "",
+    logo: "",
     modal: false,
-    modalHeader: '',
-    modalBody: '',
-    companyName: '',
-    newCompanyName: 'not selected',
-    companyAddress: '',
-    newCompanyAddress: 'not selected',
-    invoiceNumber: '',
+    modalHeader: "",
+    modalBody: "",
+    companyName: "",
+    newCompanyName: "not selected",
+    companyAddress: "",
+    newCompanyAddress: "not selected",
+    invoiceNumber: "",
     newInvoiceNumber: 0
   };
-  
+
   handleSubmit = e => {
     e.preventDefault();
-    axios.put(`http://localhost:3001/new-password`,
-      {
-        oldpassword: this.state.oldpassword,
-        newpassword: this.state.newpassword
-      },
-      {
-        params: { 
-          userId: localStorage.getItem('userId'),
+    axios
+      .put(
+        `https://lspaperstack.herokuapp.com/new-password`,
+        {
+          oldpassword: this.state.oldpassword,
+          newpassword: this.state.newpassword
         },
-        headers: { 
-          'Authorization': localStorage.getItem('tkn')
+        {
+          params: {
+            userId: localStorage.getItem("userId")
+          },
+          headers: {
+            Authorization: localStorage.getItem("tkn")
+          }
         }
-      })
+      )
       .then(res => {
-        this.setState({ 
+        this.setState({
           modalHeader: `Success!`,
           modalBody: `Your password was changed!!!`,
           modal: true
@@ -46,7 +49,7 @@ class Settings extends Component {
       })
       .catch(err => {
         alert(
-          'Old Password does not match or new password is same as old password!!!'
+          "Old Password does not match or new password is same as old password!!!"
         );
         // const message = err.response.data.error;
         //   if (err.response.status === 500) {
@@ -64,168 +67,187 @@ class Settings extends Component {
   };
   handleChangeCompanyName = event => {
     this.setState({ companyName: event.target.value });
-  }
+  };
   handleChangeCompanyAddress = event => {
     this.setState({ companyAddress: event.target.value });
-  }
+  };
   handleChangeInvoiceNumber = event => {
     this.setState({ invoiceNumber: event.target.value });
-  }
+  };
   changeCompanyName = event => {
     event.preventDefault();
     const companyName = this.state.companyName;
-    axios.put('http://localhost:3001/company-name', { companyName },
-    {
-      params: { 
-        userId: localStorage.getItem('userId'),
-      },
-      headers: { 
-        'Authorization': localStorage.getItem('tkn')
-      }
-    }
-    ).then((res) => {
-      let newCompanyName;
-      if (res.data.length > 15) {
-        newCompanyName = res.data.substring(0, 15) + '...';
-      } else {
-        newCompanyName = res.data;
-      }
-      this.setState({ 
-        newCompanyName,
-        modalHeader: `Success!`,
-        modalBody: `Your Company Name was saved!`,
-        modal: true
-      });
-    }).catch((err) => {
-      console.log(err);
-      if (err.response) {
-        const message = err.response.data.err;
-        console.log(message)
-        if (message) {
-          this.setState({ 
-            modalHeader: `Failure!`,
-            modalBody: message,
-            modal: true,
-          });
+    axios
+      .put(
+        "https://lspaperstack.herokuapp.com/company-name",
+        { companyName },
+        {
+          params: {
+            userId: localStorage.getItem("userId")
+          },
+          headers: {
+            Authorization: localStorage.getItem("tkn")
+          }
         }
-      }
-    });
-  }
+      )
+      .then(res => {
+        let newCompanyName;
+        if (res.data.length > 15) {
+          newCompanyName = res.data.substring(0, 15) + "...";
+        } else {
+          newCompanyName = res.data;
+        }
+        this.setState({
+          newCompanyName,
+          modalHeader: `Success!`,
+          modalBody: `Your Company Name was saved!`,
+          modal: true
+        });
+      })
+      .catch(err => {
+        console.log(err);
+        if (err.response) {
+          const message = err.response.data.err;
+          console.log(message);
+          if (message) {
+            this.setState({
+              modalHeader: `Failure!`,
+              modalBody: message,
+              modal: true
+            });
+          }
+        }
+      });
+  };
 
   changeCompanyAddress = event => {
     event.preventDefault();
     const companyAddress = this.state.companyAddress;
-    axios.put('http://localhost:3001/company-address', { companyAddress },
-    {
-      params: { 
-        userId: localStorage.getItem('userId'),
-      },
-      headers: { 
-        'Authorization': localStorage.getItem('tkn')
-      }
-    }).then((res) => {
-      this.setState({ 
-        newCompanyAddress: res.data,
-        modalHeader: `Success!`,
-        modalBody: `Your new address was saved!`,
-        modal: true
-      });
-    }).catch((err) => {
-      console.log(err);
-      if (err.response) {
-        const message = err.response.data.err;
-        console.log(message)
-        if (message) {
-          this.setState({ 
-            modalHeader: `Failure!`,
-            modalBody: message,
-            modal: true,
-          });
+    axios
+      .put(
+        "https://lspaperstack.herokuapp.com/company-address",
+        { companyAddress },
+        {
+          params: {
+            userId: localStorage.getItem("userId")
+          },
+          headers: {
+            Authorization: localStorage.getItem("tkn")
+          }
         }
-      }
-    });
-  }
+      )
+      .then(res => {
+        this.setState({
+          newCompanyAddress: res.data,
+          modalHeader: `Success!`,
+          modalBody: `Your new address was saved!`,
+          modal: true
+        });
+      })
+      .catch(err => {
+        console.log(err);
+        if (err.response) {
+          const message = err.response.data.err;
+          console.log(message);
+          if (message) {
+            this.setState({
+              modalHeader: `Failure!`,
+              modalBody: message,
+              modal: true
+            });
+          }
+        }
+      });
+  };
 
-  changeInvoiceNumber  = event => {
+  changeInvoiceNumber = event => {
     event.preventDefault();
     const invoiceNumber = this.state.invoiceNumber;
-    axios.put('http://localhost:3001/invoice-number', { invoiceNumber },
-    {
-      params: { 
-        userId: localStorage.getItem('userId'),
-      },
-      headers: { 
-        'Authorization': localStorage.getItem('tkn')
-      }
-    }).then((res) => {
-      let newInvoiceNumber;
-      if (res.data) {
-        newInvoiceNumber = res.data;
-      } else {
-        newInvoiceNumber = 0
-      }
-      this.setState({
-        newInvoiceNumber,
-        modalHeader: `Success!`,
-        modalBody: `Your Current Invoice Number was saved!`,
-        modal: true
-      });
-    }).catch((err) => {
-      console.log(err);
-      if (err.response) {
-        const message = err.response.data.err;
-        console.log(message)
-        if (message) {
-          this.setState({ 
-            modalHeader: `Failure!`,
-            modalBody: message,
-            modal: true,
-          });
+    axios
+      .put(
+        "https://lspaperstack.herokuapp.com/invoice-number",
+        { invoiceNumber },
+        {
+          params: {
+            userId: localStorage.getItem("userId")
+          },
+          headers: {
+            Authorization: localStorage.getItem("tkn")
+          }
         }
-      }
-    });
-  }
+      )
+      .then(res => {
+        let newInvoiceNumber;
+        if (res.data) {
+          newInvoiceNumber = res.data;
+        } else {
+          newInvoiceNumber = 0;
+        }
+        this.setState({
+          newInvoiceNumber,
+          modalHeader: `Success!`,
+          modalBody: `Your Current Invoice Number was saved!`,
+          modal: true
+        });
+      })
+      .catch(err => {
+        console.log(err);
+        if (err.response) {
+          const message = err.response.data.err;
+          console.log(message);
+          if (message) {
+            this.setState({
+              modalHeader: `Failure!`,
+              modalBody: message,
+              modal: true
+            });
+          }
+        }
+      });
+  };
 
   handleUploadImage = event => {
     const imageFile = event.target.files[0];
     if (!imageFile) return;
     const logo = new FormData();
-    logo.append('logo', imageFile);
-    axios.put('http://localhost:3001/upload', logo, 
-    {
-      params: { userId: localStorage.getItem('userId') },
-      headers: { 
-        'Authorization': localStorage.getItem('tkn'),
-        'Content-Type': imageFile.type
-      }
-    }).then((res) => {
-      this.setState({ 
-        logo: `data:${res.data.contentType};base64,${res.data.binaryData}`,
-        modalHeader: `Success!`,
-        modalBody: `Your logo was uploaded and saved!`,
-        modal: true
-      });
-    }).catch((err) => {
-      console.log(err);
-      if (err.response) {
-        const message = err.response.data.err;
-        console.log(message)
-        if (message) {
-          this.setState({ 
-            modalHeader: `Failure!`,
-            modalBody: message,
-            modal: true,
-          });
+    logo.append("logo", imageFile);
+    axios
+      .put("https://lspaperstack.herokuapp.com/upload", logo, {
+        params: { userId: localStorage.getItem("userId") },
+        headers: {
+          Authorization: localStorage.getItem("tkn"),
+          "Content-Type": imageFile.type
         }
-      }
-    });
-  }
+      })
+      .then(res => {
+        this.setState({
+          logo: `data:${res.data.contentType};base64,${res.data.binaryData}`,
+          modalHeader: `Success!`,
+          modalBody: `Your logo was uploaded and saved!`,
+          modal: true
+        });
+      })
+      .catch(err => {
+        console.log(err);
+        if (err.response) {
+          const message = err.response.data.err;
+          console.log(message);
+          if (message) {
+            this.setState({
+              modalHeader: `Failure!`,
+              modalBody: message,
+              modal: true
+            });
+          }
+        }
+      });
+  };
 
   toggleModal = () => {
     this.setState({
       modal: !this.state.modal
     });
-  }
+  };
 
   render() {
     return (
@@ -234,10 +256,12 @@ class Settings extends Component {
         <main>
           <header>
             <h3 className="UserSetting-header">Account</h3>
-            <h5 className="UserSetting-subheader">Change your basic account settings.</h5>
+            <h5 className="UserSetting-subheader">
+              Change your basic account settings.
+            </h5>
           </header>
           <div className="UserSetting-password-section">
-            <form onSubmit={this.handleSubmit} >
+            <form onSubmit={this.handleSubmit}>
               <div>
                 <label>Old Password</label>&emsp;
                 <input
@@ -264,45 +288,78 @@ class Settings extends Component {
           <div className="UserSetting-logo-section">
             <header>
               <h4 className="UserSetting-logo-header">Content</h4>
-              <h5 className="UserSetting-logo-subheader">Select image to upload.</h5>
+              <h5 className="UserSetting-logo-subheader">
+                Select image to upload.
+              </h5>
             </header>
             <form encType="multipart/form-data">
-                <img className="UserSetting-logo-preview" src={this.state.logo} alt="logo"/>
-                
-                <p>Only *.jpeg and *.png images <br/> will be accepted with the size &lt; 0.4mb</p>
-                <input className="UserSetting-logo-input" type="file" name="logo" accept="image/*" 
-                  onChange={(event)=> { this.handleUploadImage(event) }} />
+              <img
+                className="UserSetting-logo-preview"
+                src={this.state.logo}
+                alt="logo"
+              />
+
+              <p>
+                Only *.jpeg and *.png images <br /> will be accepted with the
+                size &lt; 0.4mb
+              </p>
+              <input
+                className="UserSetting-logo-input"
+                type="file"
+                name="logo"
+                accept="image/*"
+                onChange={event => {
+                  this.handleUploadImage(event);
+                }}
+              />
             </form>
           </div>
           <div className="UserSetting-company-section">
-            <form onSubmit={(event) => {this.changeCompanyName(event)}}>
-              <label>Company Name: {this.state.newCompanyName}</label><br/>
+            <form
+              onSubmit={event => {
+                this.changeCompanyName(event);
+              }}
+            >
+              <label>Company Name: {this.state.newCompanyName}</label>
+              <br />
               <input
-                  type="text"
-                  value={this.state.companyName}
-                  onChange={this.handleChangeCompanyName}
-                />
+                type="text"
+                value={this.state.companyName}
+                onChange={this.handleChangeCompanyName}
+              />
               <Button color="secondary">Save</Button>
             </form>
-            <br/>
-            <form onSubmit={(event) => {this.changeCompanyAddress(event)}}>
-              <label>Company Address: {this.state.newCompanyAddress}</label><br/>
+            <br />
+            <form
+              onSubmit={event => {
+                this.changeCompanyAddress(event);
+              }}
+            >
+              <label>Company Address: {this.state.newCompanyAddress}</label>
+              <br />
               <input
-                  type="text"
-                  value={this.state.companyAddress}
-                  onChange={this.handleChangeCompanyAddress}
-                />
+                type="text"
+                value={this.state.companyAddress}
+                onChange={this.handleChangeCompanyAddress}
+              />
               <Button color="secondary">Save</Button>
             </form>
-            <br/>
+            <br />
             <div className="UserSetting-invoice-section">
-              <form onSubmit={(event) => {this.changeInvoiceNumber(event)}}>
-                <label>Current Invoice Number: {this.state.newInvoiceNumber}</label><br/>
+              <form
+                onSubmit={event => {
+                  this.changeInvoiceNumber(event);
+                }}
+              >
+                <label>
+                  Current Invoice Number: {this.state.newInvoiceNumber}
+                </label>
+                <br />
                 <input
-                    type="text"
-                    value={this.state.invoiceNumber}
-                    onChange={this.handleChangeInvoiceNumber}
-                  />
+                  type="text"
+                  value={this.state.invoiceNumber}
+                  onChange={this.handleChangeInvoiceNumber}
+                />
                 <Button color="secondary">Save</Button>
               </form>
             </div>
@@ -310,11 +367,19 @@ class Settings extends Component {
         </main>
         {/* Modal */}
         <div>
-          <Modal isOpen={this.state.modal} toggle={this.toggleModal} className={this.props.className}>
-            <ModalHeader toggle={this.toggleModal}>{this.state.modalHeader}</ModalHeader>
+          <Modal
+            isOpen={this.state.modal}
+            toggle={this.toggleModal}
+            className={this.props.className}
+          >
+            <ModalHeader toggle={this.toggleModal}>
+              {this.state.modalHeader}
+            </ModalHeader>
             <ModalBody>{this.state.modalBody}</ModalBody>
             <ModalFooter>
-              <Button color="secondary" onClick={this.toggleModal}>OK</Button>
+              <Button color="secondary" onClick={this.toggleModal}>
+                OK
+              </Button>
             </ModalFooter>
           </Modal>
         </div>
@@ -323,45 +388,56 @@ class Settings extends Component {
   }
 
   componentDidMount() {
-    axios.get('http://localhost:3001/logo', {
-      params: { userId: localStorage.getItem('userId') },
-      headers: { 
-        'Authorization': localStorage.getItem('tkn'),
-      }
-    }).then((res) => {
-      if (res.data.message  === 'Logo is not selected') {
-        this.setState({ logo: placeholderImg });
-      } else {
-        this.setState({ logo: `data:${res.data.userLogo.contentType};base64,${res.data.userLogo.binaryData}`});
-      }
-
-      let newCompanyName = res.data.companyName;
-      if (newCompanyName) {
-        if (newCompanyName.length > 15) {
-          this.setState({ newCompanyName: newCompanyName.substring(0, 15) + '...'});
-        } else {
-          this.setState({ newCompanyName });
+    axios
+      .get("https://lspaperstack.herokuapp.com/logo", {
+        params: { userId: localStorage.getItem("userId") },
+        headers: {
+          Authorization: localStorage.getItem("tkn")
         }
-      }
-
-      const newCompanyAddress = res.data.companyAddress;
-      if (newCompanyAddress) {
-        if (newCompanyAddress.length > 13) {
-          this.setState({ newCompanyAddress: newCompanyAddress.substring(0, 13) + '...'});
+      })
+      .then(res => {
+        if (res.data.message === "Logo is not selected") {
+          this.setState({ logo: placeholderImg });
         } else {
-          this.setState({ newCompanyAddress });
+          this.setState({
+            logo: `data:${res.data.userLogo.contentType};base64,${
+              res.data.userLogo.binaryData
+            }`
+          });
         }
-      }
 
-      const newInvoiceNumber = res.data.currentInvoiceNumber;
-      if (newInvoiceNumber) {
-        this.setState({ newInvoiceNumber });
-      }
-    }).catch((err) => {
-      console.log(err)
-      // const message = err.response.data.err;
-      // console.log(message)
-    });
+        let newCompanyName = res.data.companyName;
+        if (newCompanyName) {
+          if (newCompanyName.length > 15) {
+            this.setState({
+              newCompanyName: newCompanyName.substring(0, 15) + "..."
+            });
+          } else {
+            this.setState({ newCompanyName });
+          }
+        }
+
+        const newCompanyAddress = res.data.companyAddress;
+        if (newCompanyAddress) {
+          if (newCompanyAddress.length > 13) {
+            this.setState({
+              newCompanyAddress: newCompanyAddress.substring(0, 13) + "..."
+            });
+          } else {
+            this.setState({ newCompanyAddress });
+          }
+        }
+
+        const newInvoiceNumber = res.data.currentInvoiceNumber;
+        if (newInvoiceNumber) {
+          this.setState({ newInvoiceNumber });
+        }
+      })
+      .catch(err => {
+        console.log(err);
+        // const message = err.response.data.err;
+        // console.log(message)
+      });
   }
 }
 export default Settings;
