@@ -20,8 +20,8 @@ const corsOptions = {
   credentials: true // enable set cookie
 };
 
-const Users = require("./invoice/userModel.js");
-const Invoices = require("./invoice/invModel.js");
+const Users = require("./server/invoice/userModel.js");
+const Invoices = require("./server/invoice/invModel.js");
 
 const server = express();
 
