@@ -26,7 +26,7 @@ class Settings extends Component {
     e.preventDefault();
     axios
       .put(
-        `https://lspaperstack.herokuapp.com/new-password`,
+        `https://www.paperstack.pro/new-password`,
         {
           oldpassword: this.state.oldpassword,
           newpassword: this.state.newpassword
@@ -79,7 +79,7 @@ class Settings extends Component {
     const companyName = this.state.companyName;
     axios
       .put(
-        "https://lspaperstack.herokuapp.com/company-name",
+        "https://www.paperstack.pro/company-name",
         { companyName },
         {
           params: {
@@ -125,7 +125,7 @@ class Settings extends Component {
     const companyAddress = this.state.companyAddress;
     axios
       .put(
-        "https://lspaperstack.herokuapp.com/company-address",
+        "https://www.paperstack.pro/company-address",
         { companyAddress },
         {
           params: {
@@ -165,7 +165,7 @@ class Settings extends Component {
     const invoiceNumber = this.state.invoiceNumber;
     axios
       .put(
-        "https://lspaperstack.herokuapp.com/invoice-number",
+        "https://www.paperstack.pro/invoice-number",
         { invoiceNumber },
         {
           params: {
@@ -212,7 +212,7 @@ class Settings extends Component {
     const logo = new FormData();
     logo.append("logo", imageFile);
     axios
-      .put("https://lspaperstack.herokuapp.com/upload", logo, {
+      .put("https://www.paperstack.pro/upload", logo, {
         params: { userId: localStorage.getItem("userId") },
         headers: {
           Authorization: localStorage.getItem("tkn"),
@@ -389,7 +389,7 @@ class Settings extends Component {
 
   componentDidMount() {
     axios
-      .get("https://lspaperstack.herokuapp.com/logo", {
+      .get("https://www.paperstack.pro/logo", {
         params: { userId: localStorage.getItem("userId") },
         headers: {
           Authorization: localStorage.getItem("tkn")

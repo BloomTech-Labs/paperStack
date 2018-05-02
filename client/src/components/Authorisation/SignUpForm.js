@@ -88,7 +88,7 @@ class SignUpForm extends Component {
     else this.setState({ confirmPasswordErr: "" });
 
     axios
-      .post(`https://lspaperstack.herokuapp.com/new-user`, { email, password })
+      .post(`https://www.paperstack.pro/new-user`, { email, password })
       .then(res => {
         localStorage.setItem("tkn", res.data.token);
         localStorage.setItem("userId", res.data.userId);
