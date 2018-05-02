@@ -4,7 +4,7 @@ import axios from "axios";
 import CardSection from "./CardSection";
 import { Container, Row, Button, Input, Form, Badge, Col } from "reactstrap";
 
-const serverURL = "https://lspaperstack.herokuapp.com/";
+const serverURL = "https://www.paperstack.pro";
 
 class CheckoutForm extends React.Component {
   state = {

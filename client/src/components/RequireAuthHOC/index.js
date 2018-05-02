@@ -21,7 +21,7 @@ export default ComposedComponent => {
 
       this.setState({ verifyingToken: true }, () => {
         axios
-          .get(`https://lspaperstack.herokuapp.com/jwt`, {
+          .get(`https://www.paperstack.pro/jwt`, {
             headers: {
               Authorization: localStorage.getItem("tkn")
             }

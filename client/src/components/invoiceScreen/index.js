@@ -25,7 +25,7 @@ import logoNotFound from "./logoNotFound.svg";
 
 import "react-datepicker/dist/react-datepicker.css";
 
-const serverURL = "https://lspaperstack.herokuapp.com/";
+const serverURL = "https://www.paperstack.pro";
 
 class InvoiceScreen extends Component {
   constructor(props) {
